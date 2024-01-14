@@ -7,7 +7,7 @@ import "core:slice"
 import "core:strings"
 
 import zd ".."
-import "../ir/odin"
+import "../../ir/odin"
 
 parse_command_line_args :: proc () -> (main_container_name: string, diagram_source_files : [dynamic]string,) {
     diagram_source_files = make ([dynamic]string)
