@@ -17,7 +17,7 @@ to create a new project:
 	- project.drawio (using draw.io)
 	- README.md
 6. open (with draw.io) project.drawio
-7. File >> Open Library ... 0D.xml
+7. close the General tab (click triangle) and open 0D tab for palette of builtin components
 
 
 Prerequisites, you need to have installed:
