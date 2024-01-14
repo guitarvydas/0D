@@ -1,6 +1,6 @@
 LIBSRC=0D/odin/std
 ODIN_FLAGS ?= -debug -o:none
-D2J=0d/odin/das2json/das2json
+D2J=0d/das2json/das2json
 
 run: project transpile.drawio.json
 	./project main project.drawio $(LIBSRC)/transpile.drawio
