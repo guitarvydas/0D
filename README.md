@@ -11,19 +11,19 @@ to create a new project:
 	- `git submodule add https://github.com/guitarvydas/0D`
 3. `cp 0D/templates/* .`
 4. `mv dot-gitignore .gitignore`
-5. modify the contents of files:
+5. `npm install ohm-js yargs`
+6. modify the contents of files:
 	- Makefile
 	- main.odin
 	- project.drawio (using draw.io)
 	- README.md
-6. open (with draw.io) project.drawio
-7. close the General tab (click triangle) and open 0D tab for palette of builtin components
+7. open (with draw.io) project.drawio
+8. close the General tab (click triangle) and open 0D tab for palette of builtin components
 
 
 Prerequisites, you need to have installed:
 - draw.io - [https://www.drawio.com](https://www.drawio.com)
 - node.js
-- ohm-js and yargs `npm install ohm-js yargs`
 - Odin language and compiler https://odin-lang.org
 
 Optional:
