@@ -16,6 +16,9 @@ to create a new project:
 	- main.odin
 	- project.drawio (using draw.io)
 	- README.md
+6. open (with draw.io) project.drawio
+7. File >> Open Library ... 0D.xml
+
 
 Prerequisites, you need to have installed:
 - draw.io - [https://www.drawio.com](https://www.drawio.com)
