@@ -1,0 +1,26 @@
+RWR {
+top = spaces name spaces "{" spaces rule+ spaces "}" spaces more*
+more = name spaces "{" spaces rule* spaces "}" spaces
+rule = applySyntactic<RuleLHS> spaces "=" spaces rewriteString -- up
+RuleLHS = 
+  | name "[" Param* "]" spaces downString spaces -- down
+  | name "[" Param* "]" -- nodown
+rewriteString = "‛" char* "’" spaces
+downString = "‛" char* "’"
+char =
+  | "«" nonBracketChar* "»" -- eval
+  | "\\" "n" -- newline
+  | "\\" any -- esc
+  | ~"’" ~"]]" any     -- raw
+nonBracketChar = ~"»" ~"«"  ~"’" ~"]]" any
+name = nameFirst nameRest*
+nameFirst = "_" | letter
+nameRest = "_" | alnum
+Param =
+  | name "+" -- plus
+  | name "*" -- star
+  | name "?" -- opt
+  | name     -- flat
+comment = "//" (~"\n" any)* "\n"
+space += comment
+}
