@@ -6,7 +6,7 @@ import "core:fmt"
 import "core:slice"
 import "core:strings"
 
-import zd "../0d"
+import zd ".."
 
 // run prints only the output on port "output", whereas run_demo prints all outputs
 run :: proc (r : ^zd.Component_Registry, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {

@@ -1,6 +1,6 @@
-package project0D
+package project
 
-import zd "0d/odin/0d"
+import zd "0d/odin"
 import "0d/odin/std"
 
 main :: proc() {

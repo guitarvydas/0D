@@ -2,7 +2,7 @@ package std
 
 import "core:log"
 import "core:fmt"
-import zd "../0d"
+import zd "../"
 
 log_hierarchy :: proc (c : ^zd.Eh) {
     fmt.eprintf ("%s\n", build_hierarchy (c))

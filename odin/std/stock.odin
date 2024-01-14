@@ -1,5 +1,5 @@
 package std
-import zd "../0d"
+import zd ".."
 
 // all of the the built-in leaves are listed here
 // future: refactor this such that programmers can pick and choose which (lumps of) builtins are used in a specific project
