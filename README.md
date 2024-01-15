@@ -7,7 +7,7 @@ drawware: component-based software using diagrams as source code
 to create a new project:
 
 1. create a fresh directory for the project
-2. cd into the fresh directory and create a submodule with this repo in it
+2. cd into the fresh directory and `git init`, then create a submodule with this repo in it
 	- `git submodule add https://github.com/guitarvydas/0D`
 3. `cp 0D/templates/* .`
 4. `mv dot-gitignore .gitignore`
