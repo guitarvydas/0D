@@ -12,7 +12,7 @@ package syntax
 
 import "core:os"
 import "core:encoding/xml"
-import "../../ir"
+import ir "../../ir/ir_odin"
 
 Error :: enum {
     None,

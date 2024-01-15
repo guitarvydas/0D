@@ -148,10 +148,17 @@
   },
   "active": "6dc63a92f40f050a",
   "lastOpenFiles": [
-    "odin/std/transpile.drawio",
-    "templates/#Makefile#",
-    "templates/0Dall.xml",
-    "templates/project.drawio",
+    "das2json/das2json.dSYM/Contents/Resources/DWARF/das2json",
+    "das2json/das2json.dSYM/Contents/Resources/DWARF",
+    "das2json/das2json.dSYM/Contents/Resources",
+    "das2json/das2json.dSYM/Contents/Info.plist",
+    "das2json/das2json.dSYM/Contents",
+    "das2json/das2json.dSYM",
+    "das2json/das2json",
+    "das2json/das2json.o",
+    "ir/ir_odin/ir.odin",
+    "ir/ir_odin",
+    "ir/odin/ir.odin",
     "templates/README.md"
   ]
 }

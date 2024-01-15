@@ -1,4 +1,4 @@
-package ir
+package ir_odin
 
 Container_Decl :: struct {
     file:        string,

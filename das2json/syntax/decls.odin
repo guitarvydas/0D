@@ -1,6 +1,6 @@
 package syntax
 
-import "../../ir"
+import ir "../../ir/ir_odin"
 import "core:fmt"
 
 // Collects all declarations on the passed page, using the semantics outlined below.

@@ -6,7 +6,7 @@ import "core:log"
 import "core:encoding/json" 
 import "core:path/filepath"
 
-import "../ir/odin"
+import ir "../ir/ir_odin"
 
 Registry_Stats :: struct {
     nleaves : int,
