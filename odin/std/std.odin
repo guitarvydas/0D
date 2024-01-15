@@ -9,7 +9,7 @@ import "core:os"
 import "core:unicode/utf8"
 
 import zd ".."
-import "../../ir/odin"
+import "../../ir/ir_odin"
 
 ///// exported
 
