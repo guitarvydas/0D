@@ -148,6 +148,7 @@
   },
   "active": "6dc63a92f40f050a",
   "lastOpenFiles": [
+    "#README.md#",
     "templates/null.js",
     "das2json/das2json.dSYM/Contents/Resources/DWARF/das2json",
     "das2json/das2json.dSYM/Contents/Resources/DWARF",
@@ -158,7 +159,6 @@
     "das2json/das2json",
     "das2json/das2json.o",
     "ir/ir_odin/ir.odin",
-    "ir/ir_odin",
     "templates/README.md"
   ]
 }
