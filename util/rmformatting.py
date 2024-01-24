@@ -10,8 +10,11 @@ for line in sys.stdin:
       .replace ("<br>", " ")\
       .replace ("<i>", "")\
       .replace (r"<i style=\"\">", "")\
+      .replace (r'<span style=\"border-color: var(--border-color);\">', "")\
+      .replace ("</span>", "")\
       .replace ('&nbsp;', " ")\
       .replace ("</i>", "")\
       .replace ("<b>", "")\
       .replace ("</b>", "")
     print (r, end='')
+#      .replace (r'<span [^>]*>', "")\
