@@ -14,6 +14,7 @@ for line in sys.stdin:
       .replace ("</span>", "")\
       .replace ('&nbsp;', " ")\
       .replace ("</i>", "")\
+      .replace ("⇒", "next (eh, msg)")\
       .replace ("<b>", "")\
       .replace ("</b>", "")
     print (r, end='')
