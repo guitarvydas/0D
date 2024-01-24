@@ -11,43 +11,31 @@ HtmlStripper {
 
   break = "<br>"
   nbsp = "&nbsp;"
-  italic =
-    | "<i " tail<"</i>"> -- withattributes
-    | "<i>" -- noattributes
-    | "</i>" -- end
-  bold = 
-    | "<b "  tail<"</b>"> -- withattributes
-    | "<b>" -- noattributes
-    | "</b>" -- end
-  span =
-    | "<span "  tail<"</span>"> -- withattributes
-    | "<span>" -- noattributes
-    | "</span>" -- end
+  italic = "<i" attr? ">" value<"</i>"> "</i>"
+  bold = "<b" attr? ">" value<"</b>"> "</b>"
+  span = "<span" attr? ">" value<"</span>"> "</span>"
 
   other = any
 
-  tail<s> = (~s any)* s
+  value<s> = (~s char)*
+  attr = ~">" " " (~">" any)*
 }
 `);
 
 const semantics = grammar.createSemantics();
 
 // Register the semantic action
-semantics.addOperation('stripHtml', {
+semantics.addOperation('stripHTML', {
+    stripHTML : function (cs) { return cs.stripHTML ().join (''); },
     break   : function (_) { return " "; },
     nbsp    : function (_) { return " "; },
-    italic_withattributes  : function (_1, _2) { return ""; },
-    italic_noattributes    : function (_1) { return ""; },
-    italic_end             : function (_1) { return ""; },
-    bold_withattributes    : function (_1, _2) { return ""; },
-    bold_noattributes      : function (_1) { return ""; },
-    bold_end               : function (_1) { return ""; },
-    span_withattributes    : function (_1, _2) { return ""; },
-    span_noattributes      : function (_1) { return ""; },
-    span_end               : function (_1) { return ""; },
+    italic  : function (_1, _attr, _3, stuff, _5) { return stuff.stripHTML (); },
+    bold  : function (_1, _attr, _3, stuff, _5) { return stuff.stripHTML (); },
+    span  : function (_1, _attr, _3, stuff, _5) { return stuff.stripHTML (); },
+    value : function (s) { return s.stripHTML ().join (''); },
     other   : function (c) { return this.sourceString; },
     _terminal: function () { return this.sourceString; },
-    _iter: function (...children) { return children.map(c => c.stripHtml ()); },
+    _iter: function (...children) { return children.map(c => c.stripHTML ()); },
 });
 
 function main () {
@@ -58,8 +46,8 @@ function main () {
 	let src = fs.readFileSync (srcFileName, 'utf-8');
 	const match = grammar.match(src);
 	if (match.succeeded()) {
-	    const strippedResult = semantics(match).stripHtml();
-	    console.log(strippedResult.join(''));
+	    const strippedResult = semantics(match).stripHTML();
+	    console.log(strippedResult);
 	} else {
 	    throw 'Failed to match input string against the grammar';
 	}
