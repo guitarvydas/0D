@@ -148,6 +148,8 @@
   },
   "active": "6dc63a92f40f050a",
   "lastOpenFiles": [
+    "util/rmformatting.py",
+    "util",
     "#README.md#",
     "templates/null.js",
     "das2json/das2json.dSYM/Contents/Resources/DWARF/das2json",
@@ -157,8 +159,6 @@
     "das2json/das2json.dSYM/Contents",
     "das2json/das2json.dSYM",
     "das2json/das2json",
-    "das2json/das2json.o",
-    "ir/ir_odin/ir.odin",
     "templates/README.md"
   ]
 }
