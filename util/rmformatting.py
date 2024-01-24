@@ -9,6 +9,8 @@ for line in sys.stdin:
     r = line\
       .replace ("<br>", " ")\
       .replace ("<i>", "")\
+      .replace (r"<i style=\"\">", "")\
+      .replace ('&nbsp;', " ")\
       .replace ("</i>", "")\
       .replace ("<b>", "")\
       .replace ("</b>", "")
