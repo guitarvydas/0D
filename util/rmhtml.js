@@ -27,7 +27,7 @@ const semantics = grammar.createSemantics();
 // Register the semantic action
 semantics.addOperation('stripHTML', {
     stripHTML : function (cs) { return cs.stripHTML ().join (''); },
-    break   : function (_) { return " "; },
+    //break   : function (_) { return " "; }, // leave <br> in - needed for newlines in code
     nbsp    : function (_) { return " "; },
     italic  : function (_1, _attr, _3, stuff, _5) { return stuff.stripHTML (); },
     bold  : function (_1, _attr, _3, stuff, _5) { return stuff.stripHTML (); },
