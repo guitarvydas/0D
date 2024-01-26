@@ -220,7 +220,7 @@ trash_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 ////////
 literal_instantiate :: proc (name: string, owner : ^zd.Eh) -> ^zd.Eh {
     i := strings.index_rune (name, '\'')  // strip parent names from front
-    quoted := name [i+1:(len (name) - 1)]
+    quoted, _ := strings.replace_all (name [i+1:(len (name) - 1)], "<br>", "\n")
     name_with_id := gensym(quoted)
     pstr := string_dup_to_heap (quoted)
     return zd.make_leaf (name_with_id, owner, pstr^, literal_handle)
