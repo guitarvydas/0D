@@ -41,6 +41,9 @@ https://github.com/guitarvydas/0dproto
 https://discord.gg/4422wwXf5Q
 
 # Examples:
+simple language built using this sourdough starter: https://github.com/guitarvydas/abc0d
+pduboy's arith example built using this starter, emits code in 4 dialects: JS,Python,Wasm,CL https://github.com/guitarvydas/arith0d
+
 earlier version of 0D repo:
 https://github.com/guitarvydas/0dproto
 - includes:
