@@ -219,7 +219,7 @@ trash_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 
 ////////
 literal_instantiate :: proc (name: string, owner : ^zd.Eh) -> ^zd.Eh {
-    i := strings.index_rune (name, '\'')
+    i := strings.index_rune (name, '\'')  // strip parent names from front
     quoted := name [i+1:(len (name) - 1)]
     name_with_id := gensym(quoted)
     pstr := string_dup_to_heap (quoted)
