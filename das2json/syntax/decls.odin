@@ -179,7 +179,7 @@ lint_connections :: proc(name : string, cells: []Cell) {
         target_port := cells[cell.target]
 
 	if ( (source_port.type == .Rhombus && source_port.parent == drawio_top_idx) )	    || ( (source_port.type == .Rect) && ((source_port.parent == drawio_top_idx ) ||  ( source_port.parent == drawio_second_idx )) )	    || ( (target_port.type == .Rhombus && target_port.parent == drawio_top_idx) )	    || ( (target_port.type == .Rect) && ((target_port.parent == drawio_top_idx ) || ( target_port.parent == drawio_second_idx )) ) {
-	    fmt.eprintf ("suspicious (in %v) cell %v->%v in connection\n",
+	    fmt.eprintf ("suspicious (in %v) cell %v->%v in connection (port not contained by container?)\n",
 			 name, source_port.value, target_port.value)
 		ok = false
 	    }
