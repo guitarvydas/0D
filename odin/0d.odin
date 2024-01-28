@@ -13,6 +13,7 @@ log_all :: 0
 log_full_handlers :: 4
 log_light_handlers :: 5
 
+
 // Data for an asyncronous component - effectively, a function with input
 // and output queues of messages.
 //
@@ -27,6 +28,9 @@ log_light_handlers :: 5
 // `instance_data` is a pointer to instance data that the `leaf_handler`
 // function may want whenever it is invoked again.
 //
+
+Stack :: FIFO // PENGTODO: MVI cheap-out, stacks can be more efficient than queues, but for this MVI, we'll just use a FIFO
+
 Eh_States :: enum { idle, active }
 Eh :: struct {
     name:         string,
@@ -248,19 +252,23 @@ step_children :: proc(container: ^Eh, causingMessage: ^Message) {
     for child in container.children {
         msg: ^Message
         ok: bool
+	is_tick := false
 
         switch {
         case child.input.len > 0:
             msg, ok = fifo_pop(&child.input)
 	case child.state != .idle:
 	    ok = true
+	    is_tick = true
 	    msg = force_tick (child, causingMessage)
         }
 
         if ok {
-            //light_receivef(child, ".%v.%v%s <- [%s]", child.depth, indent (child), child.name, msg.port)
             light_receivef(child, ".%v.%v%s", child.depth, indent (child), format_debug_based_on_depth (child.depth, child.name, msg.port))
             full_receivef(child, "HANDLE  0x%p %v%s <- %v (%v)", child, indent (child), child.name, msg, msg.datum.kind ())
+	    if !is_tick {
+		memo_accept (eh, msg)
+	    }
             child.handler(child, msg)
             destroy_message(msg)
         }
@@ -423,3 +431,7 @@ indent :: proc (eh : ^Eh) -> string {
     }
 }
 
+memo_accept :: proc (eh: ^Eh, msg: ^Message) {
+    // PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
+    fifo_push (&eh.accepted, msg)
+}
