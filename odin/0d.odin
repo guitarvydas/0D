@@ -435,3 +435,16 @@ memo_accept :: proc (eh: ^Eh, msg: ^Message) {
     // PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
     fifo_push (&eh.accepted, msg)
 }
+
+
+
+// return first msg.datum given a Port, else return nil,false
+inp :: proc (eh :^Eh, port: Port_Type) -> (^Datum, bool) {
+    iter := make_fifo_iterator(&eh.accepted)
+    for msg, idx in fifo_iterate(&iter) {
+	if msg.port == port {
+	    return msg.datum, true
+	}
+    }
+    return nil, false
+}
