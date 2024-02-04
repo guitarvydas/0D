@@ -53,7 +53,7 @@ process_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     
 
     switch msg.port {
-    case "input":
+    case "":
 	cmd := eh.instance_data.(string)
         handle := zd.process_start(cmd)
         defer zd.process_destroy_handle(handle)
@@ -93,7 +93,7 @@ process_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 		if len (stderr) > 0 {
 		    zd.send_string(eh, "error", fmt.aprintf ("%v: %v", cmd, stderr), msg)
 		} else {
-                    zd.send_string (eh, "output", transmute(string)stdout, msg)
+                    zd.send_string (eh, "", transmute(string)stdout, msg)
 		}
 	    } else {
 		// panic - we should never fail to collect stdout and stderr
@@ -158,7 +158,7 @@ command_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
         inst.buffer = msg.datum.repr (msg.datum)
         received_input := msg.datum.repr (msg.datum)
         captured_output, _ := zd.run_command (inst.buffer, received_input)
-        zd.send_string (eh, "output", captured_output, msg)
+        zd.send_string (eh, "", captured_output, msg)
 	case:
         fmt.assertf (false, "!!! ERROR: command got an illegal message port %v", msg.port)
     }
@@ -175,10 +175,10 @@ icommand_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     switch msg.port {
     case "command":
         inst.buffer = msg.datum.repr (msg.datum)
-    case "input":
+    case "":
         received_input := msg.datum.repr (msg.datum)
         captured_output, _ := zd.run_command (inst.buffer, received_input)
-        zd.send_string (eh, "output", captured_output, msg)
+        zd.send_string (eh, "", captured_output, msg)
 	case:
         fmt.assertf (false, "!!! ERROR: command got an illegal message port %v", msg.port)
     }
@@ -377,7 +377,7 @@ ensure_string_datum_instantiate :: proc(name: string, owner : ^zd.Eh) -> ^zd.Eh 
 ensure_string_datum_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     switch msg.datum.kind () {
     case "string":
-	zd.forward (eh, "output", msg)
+	zd.forward (eh, "", msg)
     case:
 	emsg := fmt.aprintf ("*** ensure: type error (expected a string datum) but got %v in %v", msg.datum.kind (), msg)
 	zd.send_string (eh, "error", emsg, msg)
@@ -437,7 +437,7 @@ bang_instantiate :: proc(name: string, owner : ^zd.Eh) -> ^zd.Eh {
 }
 
 bang_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
-    zd.send (eh, "output", zd.new_datum_bang (), msg)
+    zd.send (eh, "", zd.new_datum_bang (), msg)
 }
 
 ///
@@ -484,7 +484,7 @@ maybe_stringconcat :: proc (eh : ^zd.Eh, inst : ^StringConcat_Instance_Data, msg
 	} else {
 	    concatenated_string = fmt.aprintf ("%s%s", inst.buffer1, inst.buffer2)
 	}
-	zd.send_string (eh, "output", concatenated_string, msg)
+	zd.send_string (eh, "", concatenated_string, msg)
 	inst.buffer1 = ""
 	inst.buffer2 = ""
 	inst.count = 0
