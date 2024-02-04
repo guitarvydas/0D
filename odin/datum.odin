@@ -186,3 +186,32 @@ raw_datum_handle :: proc (src: ^Datum) -> []byte {
     fmt.assertf (false, "PANIC: raw_datum_handle Not Implemented: address=%v nbytes=%v\n", address, nbytes) 
     return []byte{}
 }
+
+new_datum_bool :: proc (v : bool) -> ^Datum {
+    my_kind :: proc () -> string {
+	return "bool"
+    }
+    p := new (Datum)
+    p.data = v
+    p.clone = clone_datum_bool
+    p.reclaim = reclaim_datum_bool
+    p.repr = repr_datum_bool    
+    p.raw = raw_datum_bool    
+    p.kind = my_kind
+    return p
+}
+
+clone_datum_bool :: proc (src: ^Datum) -> ^Datum {
+    return new_datum_bool ()
+}
+
+reclaim_datum_bool :: proc (src: ^Datum) {
+}
+
+repr_datum_bool :: proc (src : ^Datum) -> string {
+    return src.data
+}
+raw_datum_bool :: proc (src : ^Datum) -> []byte {
+    return cast([]byte)src.data.(bool)
+}
+
