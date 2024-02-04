@@ -148,6 +148,7 @@
   },
   "active": "6dc63a92f40f050a",
   "lastOpenFiles": [
+    "odin/std/#std.odin#",
     "doc/PARTIALINSTALL.bash",
     "doc/ExampleIncludeCode.md",
     "doc/EXAMPLE.md",
@@ -161,7 +162,6 @@
     "#PARTIALINSTALL.bash#",
     "cl/0d.lisp",
     "cl/#0d.lisp#",
-    "cl",
     "TODO.md",
     "templates/README.md"
   ]

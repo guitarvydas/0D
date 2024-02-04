@@ -91,7 +91,7 @@ process_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 		// fire only one output port
 		// on error, send both, stdout and stderr to the error port
 		if len (stderr) > 0 {
-		    zd.send_string(eh, "error", fmt.aprintf ("%v: %v", cmd, stderr), msg)
+		    zd.send_string(eh, "✗", fmt.aprintf ("%v: %v", cmd, stderr), msg)
 		} else {
                     zd.send_string (eh, "", transmute(string)stdout, msg)
 		}
@@ -322,14 +322,14 @@ low_level_read_text_file_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     if errnum == 0 {
 	data, success := os.read_entire_file_from_handle (fd)
 	if success {
-	    zd.send_string (eh, "str", transmute(string)data, msg)
+	    zd.send_string (eh, "", transmute(string)data, msg)
 	} else {
             emsg := fmt.aprintf("read error on file %s", msg.datum.repr (msg.datum))
-	    zd.send_string (eh, "error", emsg, msg)
+	    zd.send_string (eh, "✗", emsg, msg)
 	}
     } else {
         emsg := fmt.aprintf("open error on file %s with error code %v", msg.datum.repr (msg.datum), errnum)
-	zd.send_string (eh, "error", emsg, msg)
+	zd.send_string (eh, "✗", emsg, msg)
     }
 }
 
@@ -346,7 +346,7 @@ open_text_file_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 	zd.send (eh, "fd", zd.new_datum_handle (fd), msg)
     } else {
         emsg := fmt.aprintf("open error on file %s with error code %v", msg.datum.repr (msg.datum), errnum)
-	zd.send_string (eh, "error", emsg, msg)
+	zd.send_string (eh, "✗", emsg, msg)
     }
 }
 
@@ -361,10 +361,10 @@ low_level_read_text_from_fd_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     fd := msg.datum.data.(os.Handle)
     data, success := os.read_entire_file_from_handle (fd)
     if success {
-	zd.send_string (eh, "str", transmute(string)data, msg)
+	zd.send_string (eh, "", transmute(string)data, msg)
     } else {
         emsg := fmt.aprintf("read error on file %s", msg.datum.repr (msg.datum))
-	zd.send_string (eh, "error", emsg, msg)
+	zd.send_string (eh, "✗", emsg, msg)
     }
 }
 
@@ -376,11 +376,11 @@ ensure_string_datum_instantiate :: proc(name: string, owner : ^zd.Eh) -> ^zd.Eh 
 
 ensure_string_datum_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     switch msg.datum.kind () {
-    case "string":
+    case "":
 	zd.forward (eh, "", msg)
     case:
 	emsg := fmt.aprintf ("*** ensure: type error (expected a string datum) but got %v in %v", msg.datum.kind (), msg)
-	zd.send_string (eh, "error", emsg, msg)
+	zd.send_string (eh, "✗", emsg, msg)
     }
 }
 
@@ -418,12 +418,12 @@ syncfilewrite_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 	    if write_errnum == 0 {
 		zd.send (eh, "done", zd.new_datum_bang (), msg)
 	    } else {
-		zd.send_string (eh, "error", fmt.aprintf("/%v/: %v", inst.filename, write_errnum), msg)
-		zd.send_string (eh, "error", "write error", msg)
+		zd.send_string (eh, "✗", fmt.aprintf("/%v/: %v", inst.filename, write_errnum), msg)
+		zd.send_string (eh, "✗", "write error", msg)
 	    }
 	} else {
-	    zd.send_string (eh, "error", fmt.aprintf("/%v/: %v", inst.filename, open_errnum), msg)
-		zd.send_string (eh, "error", "open error", msg)
+	    zd.send_string (eh, "✗", fmt.aprintf("/%v/: %v", inst.filename, open_errnum), msg)
+		zd.send_string (eh, "✗", "open error", msg)
 	}
     }
 }
