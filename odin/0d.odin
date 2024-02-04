@@ -267,7 +267,7 @@ step_children :: proc(container: ^Eh, causingMessage: ^Message) {
             light_receivef(child, ".%v.%v%s", child.depth, indent (child), format_debug_based_on_depth (child.depth, child.name, msg.port))
             full_receivef(child, "HANDLE  0x%p %v%s <- %v (%v)", child, indent (child), child.name, msg, msg.datum.kind ())
 	    if !is_tick {
-		memo_accept (eh, msg)
+		memo_accept (container, msg)
 	    }
             child.handler(child, msg)
             destroy_message(msg)
