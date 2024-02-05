@@ -11,6 +11,6 @@ fakepipename_instantiate :: proc(name: string, owner : ^zd.Eh) -> ^zd.Eh {
 fakepipename_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
     @(static) rand := 0
     rand += 1 // not very random, but good enough - 'rand' must be unique within a single run
-    zd.send_string (eh, "output", fmt.aprintf ("/tmp/fakepipe%d", rand), msg)
+    zd.send_string (eh, "", fmt.aprintf ("/tmp/fakepipe%d", rand), msg)
 }
 
