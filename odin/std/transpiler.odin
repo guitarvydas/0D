@@ -31,9 +31,9 @@ ohmjs_maybe :: proc (eh: ^zd.Eh, inst: ^OhmJS_Instance_Data, causingMsg: ^zd.Mes
 
 	errstring := strings.trim_space (err)
 	if len (errstring) == 0 {
-            zd.send_string (eh, "output", strings.trim_space (captured_output), causingMsg)
+            zd.send_string (eh, "", strings.trim_space (captured_output), causingMsg)
 	} else {
-	    zd.send_string (eh, "error", errstring, causingMsg)
+	    zd.send_string (eh, "✗", errstring, causingMsg)
 	}
     }
 }
@@ -55,7 +55,7 @@ ohmjs_handle :: proc(eh: ^zd.Eh, msg: ^zd.Message) {
 	ohmjs_maybe (eh, inst, msg)
 	case:
         emsg := fmt.aprintf("!!! ERROR: OhmJS got an illegal message port %v", msg.port)
-	zd.send_string (eh, "error", emsg, msg)
+	zd.send_string (eh, "✗", emsg, msg)
     }
 }
 
