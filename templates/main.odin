@@ -11,7 +11,7 @@ main :: proc() {
 
 start_function :: proc (main_container : ^zd.Eh) {
     x := zd.new_datum_bang ()
-    msg := zd.make_message("input", x, zd.make_cause (main_container, nil) )
+    msg := zd.make_message("", x, zd.make_cause (main_container, nil) )
     main_container.handler(main_container, msg)
 }
 
