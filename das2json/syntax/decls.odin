@@ -116,8 +116,8 @@ collect_down_decls :: proc(cells: []Cell, decls: ^[dynamic]ir.Connect_Decl) {
         source_rhombus := cells[cell.source]
         if source_rhombus.type != .Rhombus do continue
 
-        // NOTE(z64): right now, i allow this to be any shape... might be ok?
         target_cell := cells[cell.target]
+        if target_cell.type != .Rect do continue
 
         decl.source_port = source_rhombus.value
         decl.target_port = target_cell.value
