@@ -148,6 +148,11 @@
   },
   "active": "6dc63a92f40f050a",
   "lastOpenFiles": [
+    "templates/PARTIALINSTALL.bash",
+    "templates/#PARTIALINSTALL.bash#",
+    "doc/DPL Syntax.pdf",
+    "odin/std/shapes.drawio",
+    "#README.md#",
     "PARTIALINSTALL.bash",
     "odin/std/hold-transpile.odin",
     "odin/std/hold.drawio",
@@ -157,11 +162,6 @@
     "doc/EXAMPLE.md",
     "doc",
     "templates/EXAMPLE.md",
-    "templates/#main.odin#",
-    "templates/#EXAMPLE.md#",
-    "templates/___.drawio",
-    "PARTIALINSTALL.bash~",
-    "#PARTIALINSTALL.bash#",
     "TODO.md",
     "templates/README.md"
   ]

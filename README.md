@@ -6,34 +6,40 @@ drawware: component-based software using diagrams as source code
 
 to create a new project:
 
+Prerequisites, you need to have installed:
+- draw.io - [https://www.drawio.com](https://www.drawio.com)
+- node.js
+- Odin language and compiler https://odin-lang.org
+
 1. create a fresh directory for the project
 2. cd into the fresh directory and `git init`, then create a submodule with this repo in it
 	- `git submodule add https://github.com/guitarvydas/0D`
 3. `cp 0D/templates/* .`
 4. `mv dot-gitignore .gitignore`
 5. `npm install ohm-js yargs`
-6. install Odin compiler https://odin-lang.org
-7. modify the contents of files:
+6. modify the contents of files:
 	- Makefile
 	- main.odin
 	- project.drawio (using draw.io)
 	- README.md
-8. open (with draw.io) project.drawio
-9. close the General tab (click triangle) and open 0D tab for palette of builtin components
+7. open (with draw.io) project.drawio
+8. close the General tab (click triangle) and open 0D tab for palette of builtin components
 
-
-Prerequisites, you need to have installed:
-- draw.io - [https://www.drawio.com](https://www.drawio.com)
-- node.js
-- Odin language and compiler https://odin-lang.org
-
-Optional:
+Optional install/use:
 - Ohm Editor is a REPL for creating grammars, it can be used in a browser
 	- [https://ohmjs.org/editor/](https://ohmjs.org/editor/)
 - SWIPL - useful for expressing exhaustive search, instead of using loops within loops
 	- SWI Prolog https://www.swi-prolog.org
 
 # DPL Documentation
+`doc/dpl.pdf`
+
+for reminders on how to write `components_to_include_in_project` code:
+`doc/ExampleIncludeCode.md`
+
+for an essay about these ideas:
+`doc/T2T Transpiling.pdf`
+
 https://github.com/guitarvydas/0dproto
 
 (scroll down README.md for pictures)
@@ -69,3 +75,5 @@ https://github.com/guitarvydas/0dproto
 - Dungeon Crawler game inspired by Ceptre
   - https://github.com/guitarvydas/ceptre/blob/jan17/presentation/Ceptre%20Walkthrough.pdf
   - WIP in https://github.com/guitarvydas/ceptre/tree/jan17/dc0D (view with drawio) branch "jan17"
+- cl0d - rewrite of 0D engine in a more recursive form
+  - https://github.com/guitarvydas/0D/tree/devcl0d
