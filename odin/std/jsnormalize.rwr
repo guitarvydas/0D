@@ -6,6 +6,7 @@ jsnormalize {
   item_word [x] = ‛«x»’
   item_other [x] = ‛«x»’
   word [c legalchar+] = ‛❲«_.encodews (c) + _.encodews (legalchar)»❳’
+  firstchar [x] = ‛«x»’
   legalchar [x] = ‛«x»’
   integer [digit+] = ‛«digit»’
   jscomment [_slsl any* nl] = ‛⦑«_.encodews (any)»⦒’
