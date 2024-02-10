@@ -60,15 +60,15 @@ initialize_component_palette :: proc (diagram_source_files: [dynamic]string,
 print_output_verbose :: proc (main_container : ^zd.Eh) {
     fmt.println("\n\n--- RESULT ---")
     fmt.printf ("... response ... \n")
-    zd.print_specific_output (main_container, "output", false)
+    zd.print_specific_output (main_container, "", false)
 }
 
 print_output :: proc (main_container : ^zd.Eh) {
-    zd.print_specific_output (main_container, "output", false)
+    zd.print_specific_output (main_container, "", false)
 }
 
 print_error_maybe :: proc (main_container : ^zd.Eh) {
-    error_port := "error"
+    error_port := "✗"
     err, found := zd.fetch_first_output (main_container, error_port)
     if found && (0 < len (strings.trim (err.repr (err), " \t\n"))) {
 	fmt.println("\n\n--- !!! ERRORS !!! ---")

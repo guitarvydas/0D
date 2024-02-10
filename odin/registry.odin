@@ -162,7 +162,7 @@ container_instantiator :: proc(reg: ^Component_Registry, owner : ^Eh, decl: ir.C
 
                 target_component, target_ok = child_id_map[c.target.id]
 		if !target_ok {
-		    fmt.printf ("internal error: .Down connection target not ok %v\n", c.target)
+		    fmt.printf ("internal error: .Down connection target internal error %v\n", c.target)
 		    os.exit (1)
 		}
                 connector.receiver = {
