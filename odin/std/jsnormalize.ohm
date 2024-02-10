@@ -1,0 +1,18 @@
+jsnormalize {
+  input = item+
+  item =
+    | string -- string
+    | space -- space
+    | integer -- integer
+    | word -- word
+
+  word = (letter | "_") legalchar+
+  legalchar = letter | digit | "_"
+
+  integer = digit+
+  jscomment = "//" (~"\n" any)* "\n"
+  comment = jscomment
+  space += comment
+  string = dq (~dq any)* dq
+  dq = "\""
+}

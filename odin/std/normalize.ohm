@@ -1,0 +1,20 @@
+normalize {
+  input = item+
+  item =
+    | string -- string
+    | space -- space
+    | integer -- integer
+    | word -- word
+
+  word = (letter | "_") legalchar+
+  legalchar = letter | digit | "_"
+
+  integer = digit+
+  pctcomment = "%" (~"\n" any)* "\n"
+  lispcomment = ";" (~"\n" any)* "\n"
+  jscomment = "//" (~"\n" any)* "\n"
+  comment = jscomment
+  space += comment
+  string = dq (~dq any)* dq
+  dq = "\""
+}

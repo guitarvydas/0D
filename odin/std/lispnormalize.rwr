@@ -1,0 +1,14 @@
+lispnormalize {
+  input [item+] = ‛«item»’
+  item_string [x] = ‛«x»’
+  item_space [x] = ‛«x»’
+  item_integer [x] = ‛«x»’
+  item_word [x] = ‛«x»’
+  word [c* legalchar+] = ‛❲«_.encodews (c) + _.encodews (legalchar)»❳’
+  legalchar [x] = ‛«x»’
+  integer [digit+] = ‛«digit»’
+  lispcomment [_semi any* nl] = ‛⦑«_.encodews (any)»⦒’
+  comment [x] = ‛«x»’
+  string [dq1 any* dq2] = ‛“«_.encodews (any)»”’
+  dq [x] = ‛«x»’
+}
