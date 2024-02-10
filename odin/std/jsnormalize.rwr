@@ -4,6 +4,7 @@ jsnormalize {
   item_space [x] = ‛«x»’
   item_integer [x] = ‛«x»’
   item_word [x] = ‛«x»’
+  item_other [x] = ‛«x»’
   word [c* legalchar+] = ‛❲«_.encodews (c) + _.encodews (legalchar)»❳’
   legalchar [x] = ‛«x»’
   integer [digit+] = ‛«digit»’

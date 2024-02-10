@@ -5,6 +5,7 @@ jsnormalize {
     | space -- space
     | integer -- integer
     | word -- word
+    | any -- other
 
   word = (letter | "_") legalchar+
   legalchar = letter | digit | "_"
