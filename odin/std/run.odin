@@ -56,7 +56,7 @@ run_demo :: proc (r : ^zd.Component_Registry, arg, main_container_name : string,
 
 
 
-run_demo_debug :: proc (r : ^zd.Component_Registry, arg: string, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (arg: string, ^zd.Eh)) {
+run_demo_debug :: proc (r : ^zd.Component_Registry, arg: string, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (string, ^zd.Eh)) {
     pregistry := r
     // get entrypoint container
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
