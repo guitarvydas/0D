@@ -9,14 +9,16 @@ import "core:strings"
 import zd ".."
 import ir "../../ir/ir_odin"
 
-parse_command_line_args :: proc () -> (main_container_name: string, diagram_source_files : [dynamic]string,) {
+// usage: app arg main diagram_filename1 diagram_filename2 ...
+parse_command_line_args :: proc () -> (arg : string, main_container_name: string, diagram_source_files : [dynamic]string,) {
     diagram_source_files = make ([dynamic]string)
-    if len (os.args) < (2+1) { // 0'th arg is the name of the program itself, we need at least 2 more args
-	fmt.eprintf ("usage: app <main tab name> <diagram file name 1> <diagram file name 2> ...\n")
+    if len (os.args) < (3+1) { // 0'th arg is the name of the program itself, we need at least 3 more args
+	fmt.eprintf ("usage: app <arg> <main tab name> <diagram file name 1> ...\n")
 	os.exit (1)
     }
-    main_container_name = slice.get(os.args, 1) or_else strings.clone ("main")
-    for i := 2 ; i < len (os.args) ; i += 1 {
+    arg = slice.get(os.args, 1) or_else strings.clone ("!")
+    main_container_name = slice.get(os.args, 2) or_else strings.clone ("main")
+    for i := 3 ; i < len (os.args) ; i += 1 {
 	dname, ok := slice.get (os.args, i)    
 	if !ok || !os.exists(dname) {
             fmt.println("[lib] Source diagram file", dname, "does not exist.")
@@ -26,7 +28,7 @@ parse_command_line_args :: proc () -> (main_container_name: string, diagram_sour
 	dname_in_heap^ = dname
 	append (&diagram_source_files, dname_in_heap^)
     }
-    return main_container_name,  diagram_source_files
+    return arg, main_container_name,  diagram_source_files
 }
 
 initialize_component_palette :: proc (diagram_source_files: [dynamic]string,
