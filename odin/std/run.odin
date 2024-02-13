@@ -9,7 +9,7 @@ import "core:strings"
 import zd ".."
 
 // run prints only the output on port "output", whereas run_demo prints all outputs
-run :: proc (r : ^zd.Component_Registry, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
+run :: proc (r : ^zd.Component_Registry, arg: string, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
     pregistry := r
     // get entrypoint container
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
@@ -19,12 +19,12 @@ run :: proc (r : ^zd.Component_Registry, main_container_name : string, diagram_s
         main_container_name,
         diagram_source_files,
     )
-    injectfn (main_container)
+    injectfn (arg, main_container)
     print_error_maybe (main_container)
     print_output (main_container)
 }
 
-run_all_outputs :: proc (r : ^zd.Component_Registry, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
+run_all_outputs :: proc (r : ^zd.Component_Registry, arg: string, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
     pregistry := r
     // get entrypoint container
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
@@ -34,12 +34,12 @@ run_all_outputs :: proc (r : ^zd.Component_Registry, main_container_name : strin
         main_container_name,
         diagram_source_files,
     )
-    injectfn (main_container)
+    injectfn (arg, main_container)
     print_error_maybe (main_container)
     dump_outputs (main_container)
 }
 
-run_demo :: proc (r : ^zd.Component_Registry, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
+run_demo :: proc (r : ^zd.Component_Registry, arg, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
     pregistry := r
     // get entrypoint container
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
@@ -49,14 +49,14 @@ run_demo :: proc (r : ^zd.Component_Registry, main_container_name : string, diag
         main_container_name,
         diagram_source_files,
     )
-    injectfn (main_container)
+    injectfn (arg, main_container)
     dump_outputs (main_container)
     fmt.println("\n\n--- done ---")
 }
 
 
 
-run_demo_debug :: proc (r : ^zd.Component_Registry, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
+run_demo_debug :: proc (r : ^zd.Component_Registry, arg: string, main_container_name : string, diagram_source_files : [dynamic]string, injectfn : #type proc (^zd.Eh)) {
     pregistry := r
     // get entrypoint container
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
@@ -69,7 +69,7 @@ run_demo_debug :: proc (r : ^zd.Component_Registry, main_container_name : string
 
     dump_hierarchy (main_container)
 
-    injectfn (main_container)
+    injectfn (arg, main_container)
 
     dump_outputs (main_container)
     dump_stats (pregistry)
