@@ -87,25 +87,35 @@ make_component_registry :: proc(leaves: []Leaf_Template, containers: [dynamic]ir
     reg :=  new (Component_Registry)
 
     for leaf_template in leaves {
-	add_leaf (reg, leaf_template)
+	add_template (reg, leaf_template)
     }
     for decl in containers {
-	add_container (reg, decl)
+	container_template := Container_Template { name=decl.name, decl = decl}
+	add_template (reg, container_template)
     }
     return reg
 }
 
-add_container :: proc (r : ^Component_Registry, decl: ir.Container_Decl) {
-    container_template := Container_Template { name=decl.name, decl = decl}
-    if decl.name in r.templates {
-	fmt.printf ("component \"%v\" superceded\n", decl.name)
-	reclaim_template (r.templates [decl.name])
+add_template :: proc (r : ^Component_Registry, templ : Template) {
+    switch t in templ {
+    case Leaf_Template:      add_leaf_template (r, t)
+    case Container_Template: add_container_template (r, t) 
+    case:
+	fmt.assertf (false, "internal error: invalid kind for template %v\n", templ)
     }
-    r.templates[decl.name] = container_template
+}
+
+
+add_container_template :: proc (r : ^Component_Registry, ct: Container_Template) {
+    if ct.name in r.templates {
+	fmt.printf ("component \"%v\" superceded\n", ct.name)
+	reclaim_template (r.templates [ct.name])
+    }
+    r.templates[ct.name] = ct
     r.stats.ncontainers += 1
 }
 
-add_leaf :: proc (r : ^Component_Registry, leaf_template : Leaf_Template) {
+add_leaf_template :: proc (r : ^Component_Registry, leaf_template : Leaf_Template) {
     if leaf_template.name in r.templates {
 	fmt.printf ("Leaf \"%v\" superceded\n", leaf_template.name)
 	reclaim_template (r.templates [leaf_template.name])
