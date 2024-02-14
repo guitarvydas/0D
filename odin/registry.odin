@@ -19,26 +19,19 @@ Component_Registry :: struct {
     stats : Registry_Stats,
 }
 
-Template_Kind :: enum {Leaf, Container}
+Leaf_Descriptor :: proc(name: string, owner : ^Eh) -> ^Eh
 
-Container_Template :: struct {
-    name: string,
-    decl: ir.Container_Decl,
+Container_Descriptor :: ir.Container_Decl
+
+Template :: struct {
+    name : string,
+    descriptor: union {
+	Leaf_Descriptor,
+	Container_Descriptor
+    }
 }
 
-Leaf_Template :: struct {
-    name: string,
-    instantiate: proc(name: string, owner : ^Eh) -> ^Eh,
-}
-
-Leaf_Instantiator :: Leaf_Template
-
-Template :: union {
-    Leaf_Template,
-    Container_Template,
-}
-
-
+Leaf_Template :: Template // for backwards compatibility with historical code
     
 json2internal :: proc (container_xml : string) -> [dynamic]ir.Container_Decl {
     fname := fmt.aprintf ("%v.json", filepath.base (container_xml))
@@ -65,20 +58,20 @@ delete_decls :: proc (decls: [dynamic]ir.Container_Decl) {
     /* } */
 }
 
-reclaim_container_template :: proc (c: Container_Template) {
+reclaim_container_template :: proc (c: Container_Descriptor) {
     // TODO
 }
 
-reclaim_leaf_template :: proc (d: Leaf_Template) {
+reclaim_leaf_template :: proc (d: Leaf_Descriptor) {
     // TODO
 }
 
 reclaim_template :: proc (t : Template) {
-    switch templ in t {
-    case Leaf_Template:
-	reclaim_leaf_template (templ)
-    case Container_Template:
-	reclaim_container_template (templ)
+    switch desc in t {
+    case Leaf_Descriptor:
+	reclaim_leaf_template (desc)
+    case Container_Descriptor:
+	reclaim_container_template (desc)
     case:
     }
 }
@@ -86,42 +79,23 @@ reclaim_template :: proc (t : Template) {
 make_component_registry :: proc(leaves: []Leaf_Template, containers: [dynamic]ir.Container_Decl) -> ^Component_Registry {
     reg :=  new (Component_Registry)
 
-    for leaf_template in leaves {
-	add_template (reg, leaf_template)
+    for t in leaves {
+	add_template (reg, t)
     }
     for decl in containers {
-	container_template := Container_Template { name=decl.name, decl = decl}
-	add_template (reg, container_template)
+	t := Container_Template { name=decl.name, descriptor = decl}
+	add_template (reg, t)
     }
     return reg
 }
 
-add_template :: proc (r : ^Component_Registry, templ : Template) {
-    switch t in templ {
-    case Leaf_Template:      add_leaf_template (r, t)
-    case Container_Template: add_container_template (r, t) 
-    case:
-	fmt.assertf (false, "internal error: invalid kind for template %v\n", templ)
-    }
-}
-
-
-add_container_template :: proc (r : ^Component_Registry, ct: Container_Template) {
-    if ct.name in r.templates {
+add_template :: proc (r : ^Component_Registry, t : Template) {
+    if t.name in r.templates {
 	fmt.printf ("component \"%v\" superceded\n", ct.name)
-	reclaim_template (r.templates [ct.name])
+	reclaim_template (r.templates [t.name])
     }
-    r.templates[ct.name] = ct
+    r.templates[t.name] = t
     r.stats.ncontainers += 1
-}
-
-add_leaf_template :: proc (r : ^Component_Registry, leaf_template : Leaf_Template) {
-    if leaf_template.name in r.templates {
-	fmt.printf ("Leaf \"%v\" superceded\n", leaf_template.name)
-	reclaim_template (r.templates [leaf_template.name])
-    }
-    r.templates[leaf_template.name] = leaf_template
-    r.stats.nleaves += 1
 }
 
 get_component_instance :: proc(reg: ^Component_Registry, name: string, owner : ^Eh) -> (instance: ^Eh, ok: bool) {
