@@ -127,7 +127,7 @@ container_instantiator :: proc(reg: ^Component_Registry, owner : ^Eh, decl: ir.C
         for child_decl in decl.children {
             child_instance, ok := get_component_instance(reg, child_decl.name, container)
 	    if !ok {
-		fmt.printf ("\n*** Registry Error: Can't find component %v\n", child_decl.name)
+		fmt.printf ("\n*** Registry Error: Can't find component %v (does it need to be declared in components_to_include_in_project?)\n", child_decl.name)
 		os.exit (1)
 	    }
             append(&children, child_instance)
