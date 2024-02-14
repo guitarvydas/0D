@@ -47,6 +47,24 @@ json2internal :: proc (container_xml : string) -> [dynamic]ir.Container_Decl {
     return decls
 }
 
+/* Tetralux — Today at 4:54 AM */
+/* Strings are just structures consisting of pointers to the bytes, and a byte count; identical to a []byte. */
+/* Struct values such as this have no extra requirements than normal pointers do, generally-speaking. */
+/* string is only different from []byte in a few semantic ways, like how s[i] = b isn't allowed. */
+
+/* Whether the bytes behind them are allocated or static is irrelevant to them; it's just a detail you as the programmer know. */
+/* s := "hi" creates one of those string structs on the stack with a pointer to static memory, and length 2. */
+/* As such, you generally don't need to allocate this string struct itself, any more than any other structure. */
+
+/* In the same way as you ask an allocator to free a pointer with free(p), you can free the bytes pointed to by a string, slice, dynarray or map, via delete(it). */
+
+/* You can put the string bytes on the heap via it := strings.clone("hi"), which gives you a string that points to allocated memory. */
+/* You can then free its bytes via delete(it). */
+/* If you don't explicitly do that, or allocate the bytes in some other way (such as via make([]byte, count)), then the bytes will not be allocated dynamically. */
+/* Since you can only free memory that was allocated, you simply should not (and cannot) free these bytes - such as with s := "hi".  */
+/* "Static" memory is memory which remains valid for entire lifetime of the program, but isn't allocated from an allocator. */
+/* Global variables are one example of this. */
+
 delete_decls :: proc (decls: [dynamic]ir.Container_Decl) {
     /* for d in decls { */
     /* 	switch typeid_of (type_of (d)) { */
