@@ -54,35 +54,64 @@ json2internal :: proc (container_xml : string) -> [dynamic]ir.Container_Decl {
     return decls
 }
 
-delete_decls :: proc ([dynamic]ir.Container_Decl) {
-    // TBD
+delete_decls :: proc (decls: [dynamic]ir.Container_Decl) {
+    /* for d in decls { */
+    /* 	switch typeid_of (type_of (d)) { */
+    /* 	case typeid_of (ir.Container_Decl): */
+    /* 	    reclaim_container_template (d) */
+    /* 	case typeid_of (ir.Elem_Reference): */
+    /* 	    reclaim_element_reference (d) */
+    /* 	} */
+    /* } */
+}
+
+reclaim_container_template :: proc (c: Container_Template) {
+    // TODO
+}
+
+reclaim_leaf_template :: proc (d: Leaf_Template) {
+    // TODO
+}
+
+reclaim_template :: proc (t : Template) {
+    switch templ in t {
+    case Leaf_Template:
+	reclaim_leaf_template (templ)
+    case Container_Template:
+	reclaim_container_template (templ)
+    case:
+    }
 }
 
 make_component_registry :: proc(leaves: []Leaf_Template, containers: [dynamic]ir.Container_Decl) -> ^Component_Registry {
-
     reg :=  new (Component_Registry)
 
     for leaf_template in leaves {
 	add_leaf (reg, leaf_template)
     }
-
     for decl in containers {
-        container_template := Container_Template {
-	    name=decl.name,
-            decl = decl,
-        }
-	fmt.assertf (!(decl.name in reg.templates), "component \"%v\" already declared", decl.name)
-        reg.templates[decl.name] = container_template
-	reg.stats.ncontainers += 1
+	add_container (reg, decl)
     }
-
     return reg
 }
 
+add_container :: proc (r : ^Component_Registry, decl: ir.Container_Decl) {
+    container_template := Container_Template { name=decl.name, decl = decl}
+    if decl.name in r.templates {
+	fmt.printf ("component \"%v\" superceded\n", decl.name)
+	reclaim_template (r.templates [decl.name])
+    }
+    r.templates[decl.name] = container_template
+    r.stats.ncontainers += 1
+}
+
 add_leaf :: proc (r : ^Component_Registry, leaf_template : Leaf_Template) {
-	fmt.assertf (!(leaf_template.name in r.templates), "Leaf \"%v\" already declared", leaf_template.name)
-        r.templates[leaf_template.name] = leaf_template
-	r.stats.nleaves += 1
+    if leaf_template.name in r.templates {
+	fmt.printf ("Leaf \"%v\" superceded\n", leaf_template.name)
+	reclaim_template (r.templates [leaf_template.name])
+    }
+    r.templates[leaf_template.name] = leaf_template
+    r.stats.nleaves += 1
 }
 
 get_component_instance :: proc(reg: ^Component_Registry, name: string, owner : ^Eh) -> (instance: ^Eh, ok: bool) {
