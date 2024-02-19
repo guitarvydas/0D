@@ -8,6 +8,7 @@ import "core:os"
 import "core:fmt"
 
 DatumData :: union {
+    int,
     string,
     bool,
     []byte,
@@ -187,3 +188,34 @@ raw_datum_handle :: proc (src: ^Datum) -> []byte {
     return []byte{}
 }
 
+//
+new_datum_int :: proc (i : int) -> ^Datum {
+    my_kind :: proc () -> string {
+	return "int"
+    }
+    p := new (Datum)
+    p.data = i
+    p.clone = clone_int
+    p.reclaim = reclaim_int
+    p.repr = repr_datum_v
+    p.raw = raw_datum_int
+    p.kind = my_kind
+    return p
+}
+
+clone_int :: proc (src: ^Datum) -> ^Datum {
+    p := new (Datum)
+    p = src
+    p.data = src.data.(int)
+    return p
+}
+
+reclaim_int :: proc (src: ^Datum) {
+    // TODO
+}
+
+raw_datum_int :: proc (src: ^Datum) -> []byte {
+    address := &src.data.(os.Int)
+    nbytes := size_of (os.Int)
+    fmt.assertf (false, "PANIC: raw_datum_int Not Implemented: address=%v nbytes=%v\n", address, nbytes) 
+    return []byte{}
