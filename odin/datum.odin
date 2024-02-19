@@ -215,7 +215,8 @@ reclaim_int :: proc (src: ^Datum) {
 }
 
 raw_datum_int :: proc (src: ^Datum) -> []byte {
-    address := &src.data.(os.Int)
-    nbytes := size_of (os.Int)
+    address := &src.data.(int)
+    nbytes := size_of (int)
     fmt.assertf (false, "PANIC: raw_datum_int Not Implemented: address=%v nbytes=%v\n", address, nbytes) 
     return []byte{}
+}
