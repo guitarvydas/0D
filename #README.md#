@@ -34,100 +34,41 @@ Optional:
 	- SWI Prolog https://www.swi-prolog.org
 
 # DPL Documentation
+https://github.com/guitarvydas/0dproto
 
-See Visual Syntax section, below.
+(scroll down README.md for pictures)
+
 # Discord: 
 https://discord.gg/4422wwXf5Q
 
 # Examples:
-https://github.com/guitarvydas/arith0d pdubroy's arith example built using this starter, emits code in 4 dialects: JS,Python,Wasm,CL 
-![](examples/arith0d-main.drawio.svg)
+simple language built using this sourdough starter: https://github.com/guitarvydas/abc0d
+pdubroy's arith example built using this starter, emits code in 4 dialects: JS,Python,Wasm,CL https://github.com/guitarvydas/arith0d
 
-
-https://github.com/guitarvydas/abc0d simple language built using this sourdough starter
-![](examples/abc0d-main.drawio.svg)
-
-
-https://github.com/guitarvydas/llm0d - very simple usage of an LLM
-
-![](examples/llm0d-main.drawio.svg)
-
-https://github.com/guitarvydas/vsh0d Visual Shell (beginnings of)
-![](examples/vsh0d-main.drawio.svg)
-
-https://github.com/guitarvydas/delay0d - handling probes and external code in 0D
-
-![](examples/delay0d-main.drawio.svg)
-
-https://github.com/guitarvydas/helloworld0d - trivial Hello World in 0D, in series and in parallel
-
-![](examples/helloworld0d-main.drawio.svg)
-
-
-
-# WIP Examples
-(these are being worked on, many of these projects use earlier versions of 0D and were laid aside due to "life gets in the way" issues ... anyone welcome to join in)
-
-## ASON Atoms
-https://github.com/guitarvydas/ason
-
-![](examples/ason-main.drawio.svg)
-
-
-## SRW - Stream ReWriter
-https://github.com/guitarvydas/srw
-
-![](examples/srw-main.drawio.svg)
-
-## Create a Prolog library for Javascript, from a Scheme program
-https://github.com/guitarvydas/scm2js0d
-
-![](examples/scm2js0d-main.drawio.svg)
-  based on grammar developed in https://guitarvydas.github.io/2020/12/09/OhmInSmallSteps.html
-
-
-## Markdown as a Programming Language
-
-![](examples/find-and-replace-screenshot.png)
-
-![](examples/find-and-replace-main.drawio.svg)
-
-https://guitarvydas.github.io/2023/09/24/Find-and-Replace-SCN.html
-https://github.com/guitarvydas/find-and-replace
-
-## PT Pascal Compiler 2024
-https://github.com/guitarvydas/ptpascal0d
-![](examples/ptpascal0d-main.drawio.svg)
-
-## Ceptre Dungeon Crawler
-I discussed my understanding of the Ceptre "Dungeon Crawler" example code in a presentation (Jan. 19, 2024, bumped from Jan. 17).  I found that I needed to draw diagrams of my understanding of what the code was doing and sketched them out in the following slides. I am building a 0D drawware version of the diagrams, but, as yet, it is unfinished. Part of the process drove me down a rabbit hole, using 0D to "compile" (generate) Odin code (Leaf components) from some of the diagrams. The code generator ("compiler") is mostly working (gen0D), but needs a very few manual edits before being included in the dc0d project and appeasing the Odin type checker (things like the package name, quoted quotes in a few places, etc.  - not worth spending more time automating, since my manual edits work fine, for now). As it stands, I use 14 simple layers of diagrams to reverse engineer the game.
-- presentation https://guitarvydas.github.io/2024/01/19/Ceptre-Dungeon-Crawler-Example-Walk-Through.html
-- https://github.com/guitarvydas/dc0d/tree/dev branch "dev"
-- ![](examples/dc0d-Game.drawio.svg)
-- https://github.com/guitarvydas/gen0d
-- ![](examples/gen0d-main.drawio.svg)
-
-## Kinopio to Markdown
-- convert Kinopio point form notes into markdown
-- uses SWI-Prolog to inference Kinopio connections and to arrange the markdown in an indented manner
-  - was working with an older version of 0D, needs to be update to newer 0D
-  - needs to tweaked to use `jq` in several places
-- https://github.com/guitarvydas/kinopio2md
-- ![](examples/top-main.drawio.svg)
-
-
-
-
-
-An earlier version of the 0D repo contains a few more manual examples:
+earlier version of 0D repo:
 https://github.com/guitarvydas/0dproto
 - includes:
+  - arith - @pdubroy's arith.ohm transpiling to WASM, Python, JS, CL
+  - LLM - Agency (Emil Valeev) as a single component
+  - VSH - Visual Shell
+  - abcjs - ridiculously simple language compiled to JS
   - basics - how to use this code w/o creating diagrams
   - drawio - how to compile drawio diagrams to running code
   
-# Of Interest:
+# WIP:
+- Scheme to Javascript transpiler
+  - WIP diary in https://guitarvydas.github.io/2020/12/09/OhmInSmallSteps.html
+- Kinopio to markdown converter to LLM
+  - WIP in https://github.com/guitarvydas/kinopio2md
+- markdown as a programming language syntax
+  - prototype https://guitarvydas.github.io/2023/09/24/Find-and-Replace-SCN.html
 - macros for non-lisp languages 
   - see https://guitarvydas.github.io/2024/01/05/Macros-for-Non-Lisp-Languages.html)
+- PT Pascal upgraded for 2024
+  - WIP in https://github.com/guitarvydas/ptpascal0d
+- Dungeon Crawler game inspired by Ceptre
+  - https://github.com/guitarvydas/ceptre/blob/jan17/presentation/Ceptre%20Walkthrough.pdf
+  - WIP in https://github.com/guitarvydas/ceptre/tree/jan17/dc0D (view with drawio) branch "jan17"
 
 ---
 
@@ -291,6 +232,38 @@ First, I list summaries for the various sections, then the details of each secti
 ![](doc/DPL%20syntax-active%20and%20idle.drawio.svg)
 ### notes
 ![](doc/DPL%20syntax-notes.drawio.svg)
+
+# Examples
+
+See https://github.com/guitarvydas/0dproto#Examples
+
+(0Dproto is an earlier version of the 0D repo and contains some basic examples)
+
+## Basics
+Demo of writing 0D components manually in code, not using a drawing editor.
+
+## Drawio
+This demo `demo_drawio/main.odin` is of drawings compiled to running code.
+
+## VSH
+
+Shows how to use 0D as a Visual SHell.
+
+## Dev0D
+
+This demo is basically the same as the above VSH demo, but the code `demo_dev0d/main.odin` uses and defines extra utility functions that can be used to debug this prototype code and demos.  These utility functions are mostly interesting to developers who still need to work in the text-only paradigm while debugging this Proof of Concept.  The utility functions are not needed by drawware programmers, as it is easier to debug programs using drawings instead of textual code.
+
+## Agency
+
+The demo `demo_agency/main.odin` uses VSH to run an LLM, using a hard-wired query via 'agency' engine (written in 'go').
+
+'Agency' is a wrapper for using the open-ai API.
+
+Runs the 'agency' LLM (open-ai api) with the command line `-model gpt-3.5-turbo -maxTokens 1000 -temp=1 -prompt "Translate to Russian" "I love winter"`.
+
+[agency](https://github.com/neurocult/agency/tree/main)
+
+N.B. openai's *ChatGPT-3.5* is free, but you need to park some $s to use the API for gpt-3.5-turbo.  You need to generate an API Key and export the key in the shell variable `OPENAI_API_KEY`.
 
 # Points of Interest
 
