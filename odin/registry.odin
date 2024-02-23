@@ -1,5 +1,6 @@
 package zd
 
+import "core:strings"
 import "core:fmt"
 import "core:os"
 import "core:log"
