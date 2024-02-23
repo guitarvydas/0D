@@ -125,10 +125,6 @@ https://github.com/guitarvydas/0dproto
   - basics - how to use this code w/o creating diagrams
   - drawio - how to compile drawio diagrams to running code
   
-# Of Interest:
-- macros for non-lisp languages 
-  - see https://guitarvydas.github.io/2024/01/05/Macros-for-Non-Lisp-Languages.html)
-
 ---
 
 # 0D - Zero Dependencies - and Drawware

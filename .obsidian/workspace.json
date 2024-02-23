@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "7fb1d9bc095586b3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "0D projects overview.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "0D projects overview.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "README.md",
+                "file": "0D projects overview.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "README.md"
+                "file": "0D projects overview.md"
               }
             }
           }
@@ -146,20 +159,21 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "6dc63a92f40f050a",
+  "active": "7fb1d9bc095586b3",
   "lastOpenFiles": [
+    "odin/#registry.odin#",
+    "README.md",
+    "0D projects overview.md",
     "examples/top-main.drawio.svg",
     "examples/dc0d-Game.drawio.svg",
     "examples/gen0d-main.drawio.svg",
     "examples/ptpascal0d-main.drawio.svg",
-    "README.md",
     "examples/find-and-replace-main.drawio.svg",
     "examples/find-and-replace-screenshot.png",
     "examples/Screenshot 2024-02-19 at 5.53.41 PM.png",
     "examples/zzz-find-and-replace-screenshot.png",
     "examples/find-and-replace Screenshot 2024-02-19 at 5.53.08 PM.png",
     "examples/scm2js0d-main.drawio.svg",
-    "examples/srw-main.drawio.svg",
     "examples/abc0d.drawio",
     "examples/arith0d.drawio",
     "examples",

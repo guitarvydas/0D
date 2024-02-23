@@ -67,12 +67,13 @@ make_component_registry :: proc(leaves: []Leaf_Template, containers: [dynamic]ir
     }
 
     for decl in containers {
+	name := parse_name (decl.name)
         container_template := Container_Template {
-	    name=decl.name,
+	    name=name,
             decl = decl,
         }
-	fmt.assertf (!(decl.name in reg.templates), "component \"%v\" already declared", decl.name)
-        reg.templates[decl.name] = container_template
+	fmt.assertf (!(name in reg.templates), "component \"%v\" already declared", name)
+        reg.templates[name] = container_template
 	reg.stats.ncontainers += 1
     }
 
@@ -85,7 +86,8 @@ add_leaf :: proc (r : ^Component_Registry, leaf_template : Leaf_Template) {
 	r.stats.nleaves += 1
 }
 
-get_component_instance :: proc(reg: ^Component_Registry, name: string, owner : ^Eh) -> (instance: ^Eh, ok: bool) {
+get_component_instance :: proc(reg: ^Component_Registry, full_name: string, owner : ^Eh) -> (instance: ^Eh, ok: bool) {
+    name := parse_name (full_name)
     descriptor: Template
     descriptor, ok = reg.templates[name]
     component_name := fmt.aprintf ("%s.%s", owner.name, name)
@@ -264,3 +266,11 @@ append_leaf :: proc (template_map: ^[dynamic]Leaf_Instantiator, template: Leaf_T
     append (template_map, template)
 }
 
+parse_name :: proc (s : string) -> string {
+    if strings.has_prefix (s, "λ") || strings.has_prefix (s, "ė") {
+	i := strings.index_any(s, " \n")
+	return (s [2:i])
+    } else {
+	return s
+    }
+}
