@@ -268,10 +268,6 @@ append_leaf :: proc (template_map: ^[dynamic]Leaf_Instantiator, template: Leaf_T
 }
 
 parse_name :: proc (s : string) -> string {
-    if strings.has_prefix (s, "λ") || strings.has_prefix (s, "ė") {
-	i := strings.index_any(s, " \n")
-	return (s [2:i])
-    } else {
-	return s
-    }
+    // trim name to remove code - deferred until later
+    return s
 }

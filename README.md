@@ -13,12 +13,12 @@ to create a new project:
 4. `mv dot-gitignore .gitignore`
 5. `npm install ohm-js yargs`
 6. install Odin compiler https://odin-lang.org
-7. modify the contents of files:
+7. modify the contents of files: (look for "___" and edit name/contents)
 	- Makefile
 	- main.odin
 	- project.drawio (using draw.io)
 	- README.md
-8. open (with draw.io) project.drawio
+8. rename ___.drawio to <projectname>.drawio, open it with draw.io
 9. close the General tab (click triangle) and open 0D tab for palette of builtin components
 
 
