@@ -214,14 +214,19 @@ sender_eq :: proc(s1, s2: Sender) -> bool {
 deposit :: proc(c: Connector, message: ^Message) {
     new_message := message_clone(message)
     new_message.port = c.receiver.port
-    fifo_push(c.receiver.queue, new_message)
+    push_message (c.receiver.queue, new_message)
 }
 
 force_tick :: proc (eh: ^Eh, causingMessage: ^Message) -> ^Message{
     tick_msg := make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
-    fifo_push (&eh.input, tick_msg)
+    push_message (&eh.input, tick_msg)
     return tick_msg
 }
+
+push_message :: proc (inq: ^ FIFO, m : ^Message) {
+    fifo_push(inq, m)
+}
+
 
 light_receivef :: proc(eh : ^Eh, fmt_str: string, args: ..any, location := #caller_location) {
     if (eh.trace && eh.depth <= debugging_depth) {
