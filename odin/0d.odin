@@ -203,6 +203,7 @@ Receiver :: struct {
     name: string,
     queue: ^FIFO,
     port:  Port_Type,
+    component: ^Eh,
 }
 
 // Checks if two senders match, by pointer equality and port name matching.
@@ -211,19 +212,19 @@ sender_eq :: proc(s1, s2: Sender) -> bool {
 }
 
 // Delivers the given message to the receiver of this connector.
-deposit :: proc(c: Connector, message: ^Message) {
+deposit :: proc(parent: ^Eh, c: Connector, message: ^Message) {
     new_message := message_clone(message)
     new_message.port = c.receiver.port
-    push_message (c.receiver.queue, new_message)
+    push_message (parent, c.receiver.component, c.receiver.queue, new_message)
 }
 
-force_tick :: proc (eh: ^Eh, causingMessage: ^Message) -> ^Message{
+force_tick :: proc (parent: ^Eh, eh: ^Eh, causingMessage: ^Message) -> ^Message{
     tick_msg := make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
-    push_message (&eh.input, tick_msg)
+    push_message (parent, eh, &eh.input, tick_msg)
     return tick_msg
 }
 
-push_message :: proc (inq: ^ FIFO, m : ^Message) {
+push_message :: proc (parent: ^Eh, receiver: ^Eh, inq: ^FIFO, m : ^Message) {
     fifo_push(inq, m)
 }
 
@@ -272,7 +273,7 @@ step_children :: proc(container: ^Eh, causingMessage: ^Message) {
 	case child.state != .idle:
 	    ok = true
 	    is_tick = true
-	    msg = force_tick (child, causingMessage)
+	    msg = force_tick (container, child, causingMessage)
         }
 
         if ok {
@@ -298,9 +299,9 @@ step_children :: proc(container: ^Eh, causingMessage: ^Message) {
     }
 }
 
-attempt_tick :: proc (eh: ^Eh, causingMessage: ^Message) {
+attempt_tick :: proc (parent: ^Eh, eh: ^Eh, causingMessage: ^Message) {
     if eh.state != .idle {
-	force_tick (eh, causingMessage) // ignore return value
+	force_tick (parent, eh, causingMessage) // ignore return value
     }
 }
 
@@ -315,7 +316,7 @@ route :: proc(container: ^Eh, from: ^Eh, message: ^Message) {
     was_sent := false // for checking that output went somewhere (at least during bootstrap)
     if is_tick (message) {
 	for child in container.children {
-	    attempt_tick (child, message)
+	    attempt_tick (container, child, message)
 	}
 	was_sent = true
     } else {
@@ -327,7 +328,7 @@ route :: proc(container: ^Eh, from: ^Eh, message: ^Message) {
 	
 	for connector in container.connections {
             if sender_eq(from_sender, connector.sender) {
-		deposit(connector, message)
+		deposit(container, connector, message)
 		was_sent = true
             }
 	}
