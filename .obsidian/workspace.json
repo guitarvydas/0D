@@ -30,9 +30,19 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "55709809fba13ea9",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.5.8"
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -159,7 +169,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7fb1d9bc095586b3",
+  "active": "55709809fba13ea9",
   "lastOpenFiles": [
     "odin/std/jsnormalize.rwr",
     "odin/std/prolognormalize.ohm",
