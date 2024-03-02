@@ -13,6 +13,7 @@ log_all :: 0
 log_full_handlers :: 4
 log_light_handlers :: 5
 
+debugging_depth := 1
 
 // Data for an asyncronous component - effectively, a function with input
 // and output queues of messages.
@@ -217,7 +218,7 @@ deposit :: proc(c: Connector, message: ^Message) {
 }
 
 light_receivef :: proc(eh : ^Eh, fmt_str: string, args: ..any, location := #caller_location) {
-    if (eh.trace) {
+    if (eh.trace && eh.depth <= debugging_depth) {
 	log.logf(cast(runtime.Logger_Level)log_light_handlers,   fmt_str, ..args, location=location)
     }
 }
@@ -240,7 +241,7 @@ outputf :: proc(eh : ^Eh, fmt_str: string, args: ..any, location := #caller_loca
 }
 
 format_debug_based_on_depth :: proc (depth : int, name : string, port: string) -> string {
-    if depth < 3 {
+    if depth <= debugging_depth {
 	return fmt.aprintf ("%s <- [%s]", name, port)
     } else {
 	return "..."
