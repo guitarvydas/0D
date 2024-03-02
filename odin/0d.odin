@@ -39,6 +39,7 @@ Eh :: struct {
     output:       FIFO,
     owner:        ^Eh,
     children:     []^Eh,
+    visit_ordering:     EhFIFO, // order in which children received messages
     connections:  []Connector,
     accepted:     Stack, // ordered list of messages received (most recent message is first)
     handler:      #type proc(eh: ^Eh, message: ^Message),
@@ -143,6 +144,7 @@ destroy_container :: proc(eh: ^Eh) {
 FIFO       :: queue.Queue(^Message)
 fifo_push  :: queue.push_back
 fifo_pop   :: queue.pop_front_safe
+EhFIFO       :: queue.Queue(^Eh)
 
 fifo_is_empty :: proc(fifo: FIFO) -> bool {
     return fifo.len == 0
@@ -203,6 +205,7 @@ Receiver :: struct {
     name: string,
     queue: ^FIFO,
     port:  Port_Type,
+    component: ^Eh,
 }
 
 // Checks if two senders match, by pointer equality and port name matching.
@@ -211,17 +214,23 @@ sender_eq :: proc(s1, s2: Sender) -> bool {
 }
 
 // Delivers the given message to the receiver of this connector.
-deposit :: proc(c: Connector, message: ^Message) {
+deposit :: proc(parent: ^Eh, c: Connector, message: ^Message) {
     new_message := message_clone(message)
     new_message.port = c.receiver.port
-    fifo_push(c.receiver.queue, new_message)
+    push_message (parent, c.receiver.component, c.receiver.queue, new_message)
 }
 
-force_tick :: proc (eh: ^Eh, causingMessage: ^Message) -> ^Message{
+force_tick :: proc (parent: ^Eh, eh: ^Eh, causingMessage: ^Message) -> ^Message{
     tick_msg := make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
-    fifo_push (&eh.input, tick_msg)
+    push_message (parent, eh, &eh.input, tick_msg)
     return tick_msg
 }
+
+push_message :: proc (parent: ^Eh, receiver: ^Eh, inq: ^FIFO, m : ^Message) {
+    fifo_push(inq, m)
+    fifo_push (&parent.visit_ordering, receiver)
+}
+
 
 light_receivef :: proc(eh : ^Eh, fmt_str: string, args: ..any, location := #caller_location) {
     if (eh.trace && eh.depth <= debugging_depth) {
@@ -256,46 +265,48 @@ format_debug_based_on_depth :: proc (depth : int, name : string, port: string) -
 
 step_children :: proc(container: ^Eh, causingMessage: ^Message) {
     container.state = .idle
-    for child in container.children {
-        msg: ^Message
-        ok: bool
-	is_tick := false
-
-        switch {
-        case child.input.len > 0:
-            msg, ok = fifo_pop(&child.input)
-	case child.state != .idle:
-	    ok = true
-	    is_tick = true
-	    msg = force_tick (child, causingMessage)
-        }
-
-        if ok {
-            light_receivef(child, ".%v.%v%s", child.depth, indent (child), format_debug_based_on_depth (child.depth, child.name, msg.port))
-            full_receivef(child, "HANDLE  0x%p %v%s <- %v (%v)", child, indent (child), child.name, msg, msg.datum.kind ())
-	    if !is_tick {
-		memo_accept (container, msg)
+    for child, ok := fifo_pop (&container.visit_ordering) ; ok ; child, ok = fifo_pop (&container.visit_ordering) {
+	if child != nil { // child == nil represents self, skip it
+            msg: ^Message
+            ok: bool
+	    is_tick := false
+	    
+            switch {
+            case child.input.len > 0:
+		msg, ok = fifo_pop(&child.input)
+	    case child.state != .idle:
+		ok = true
+		is_tick = true
+		msg = force_tick (container, child, causingMessage)
+            }
+	    
+            if ok {
+		light_receivef(child, ".%v.%v%s", child.depth, indent (child), format_debug_based_on_depth (child.depth, child.name, msg.port))
+		full_receivef(child, "HANDLE  0x%p %v%s <- %v (%v)", child, indent (child), child.name, msg, msg.datum.kind ())
+		if !is_tick {
+		    memo_accept (container, msg)
+		}
+		child.handler(child, msg)
+		destroy_message(msg)
+            }
+	    
+	    if child.state == .active {
+		container.state = .active
 	    }
-            child.handler(child, msg)
-            destroy_message(msg)
-        }
-
-	if child.state == .active {
-	    container.state = .active
+	    
+            for child.output.len > 0 {
+		msg, _ = fifo_pop(&child.output)
+		outputf(child, "OUTPUT 0x%p %v%s -> [%s]", child, indent (child), child.name, msg.port)
+		route(container, child, msg)
+		destroy_message(msg)
+            }
 	}
-
-        for child.output.len > 0 {
-            msg, _ = fifo_pop(&child.output)
-            outputf(child, "OUTPUT 0x%p %v%s -> [%s]", child, indent (child), child.name, msg.port)
-            route(container, child, msg)
-            destroy_message(msg)
-        }
     }
 }
 
-attempt_tick :: proc (eh: ^Eh, causingMessage: ^Message) {
+attempt_tick :: proc (parent: ^Eh, eh: ^Eh, causingMessage: ^Message) {
     if eh.state != .idle {
-	force_tick (eh, causingMessage) // ignore return value
+	force_tick (parent, eh, causingMessage) // ignore return value
     }
 }
 
@@ -310,7 +321,7 @@ route :: proc(container: ^Eh, from: ^Eh, message: ^Message) {
     was_sent := false // for checking that output went somewhere (at least during bootstrap)
     if is_tick (message) {
 	for child in container.children {
-	    attempt_tick (child, message)
+	    attempt_tick (container, child, message)
 	}
 	was_sent = true
     } else {
@@ -322,7 +333,7 @@ route :: proc(container: ^Eh, from: ^Eh, message: ^Message) {
 	
 	for connector in container.connections {
             if sender_eq(from_sender, connector.sender) {
-		deposit(connector, message)
+		deposit(container, connector, message)
 		was_sent = true
             }
 	}

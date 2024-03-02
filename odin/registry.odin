@@ -172,6 +172,7 @@ container_instantiator :: proc(reg: ^Component_Registry, owner : ^Eh, decl: ir.C
 		    target_component.name,
                     &target_component.input,
                     c.target_port,
+                    target_component,
                 }
             case .Across:
                 connector.direction = .Across
@@ -197,6 +198,7 @@ container_instantiator :: proc(reg: ^Component_Registry, owner : ^Eh, decl: ir.C
 		    target_component.name,
                     &target_component.input,
                     c.target_port,
+                    target_component,
                 }
             case .Up:
                 connector.direction = .Up
@@ -215,6 +217,7 @@ container_instantiator :: proc(reg: ^Component_Registry, owner : ^Eh, decl: ir.C
 		    "",
                     &container.output,
                     c.target_port,
+		    nil
                 }
                 target_ok = true
             case .Through:
@@ -230,6 +233,7 @@ container_instantiator :: proc(reg: ^Component_Registry, owner : ^Eh, decl: ir.C
 		    "",
                     &container.output,
                     c.target_port,
+		    nil
                 }
                 target_ok = true
             }
