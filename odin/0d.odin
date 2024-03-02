@@ -265,41 +265,42 @@ format_debug_based_on_depth :: proc (depth : int, name : string, port: string) -
 
 step_children :: proc(container: ^Eh, causingMessage: ^Message) {
     container.state = .idle
-//            msg, _ := fifo_pop(fifo)
-    for child in container.children {
-        msg: ^Message
-        ok: bool
-	is_tick := false
-
-        switch {
-        case child.input.len > 0:
-            msg, ok = fifo_pop(&child.input)
-	case child.state != .idle:
-	    ok = true
-	    is_tick = true
-	    msg = force_tick (container, child, causingMessage)
-        }
-
-        if ok {
-            light_receivef(child, ".%v.%v%s", child.depth, indent (child), format_debug_based_on_depth (child.depth, child.name, msg.port))
-            full_receivef(child, "HANDLE  0x%p %v%s <- %v (%v)", child, indent (child), child.name, msg, msg.datum.kind ())
-	    if !is_tick {
-		memo_accept (container, msg)
+    for child, ok := fifo_pop (&container.visit_ordering) ; ok ; child, ok = fifo_pop (&container.visit_ordering) {
+	if child != nil { // child == nil represents self, skip it
+            msg: ^Message
+            ok: bool
+	    is_tick := false
+	    
+            switch {
+            case child.input.len > 0:
+		msg, ok = fifo_pop(&child.input)
+	    case child.state != .idle:
+		ok = true
+		is_tick = true
+		msg = force_tick (container, child, causingMessage)
+            }
+	    
+            if ok {
+		light_receivef(child, ".%v.%v%s", child.depth, indent (child), format_debug_based_on_depth (child.depth, child.name, msg.port))
+		full_receivef(child, "HANDLE  0x%p %v%s <- %v (%v)", child, indent (child), child.name, msg, msg.datum.kind ())
+		if !is_tick {
+		    memo_accept (container, msg)
+		}
+		child.handler(child, msg)
+		destroy_message(msg)
+            }
+	    
+	    if child.state == .active {
+		container.state = .active
 	    }
-            child.handler(child, msg)
-            destroy_message(msg)
-        }
-
-	if child.state == .active {
-	    container.state = .active
+	    
+            for child.output.len > 0 {
+		msg, _ = fifo_pop(&child.output)
+		outputf(child, "OUTPUT 0x%p %v%s -> [%s]", child, indent (child), child.name, msg.port)
+		route(container, child, msg)
+		destroy_message(msg)
+            }
 	}
-
-        for child.output.len > 0 {
-            msg, _ = fifo_pop(&child.output)
-            outputf(child, "OUTPUT 0x%p %v%s -> [%s]", child, indent (child), child.name, msg.port)
-            route(container, child, msg)
-            destroy_message(msg)
-        }
     }
 }
 
