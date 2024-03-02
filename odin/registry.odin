@@ -269,7 +269,15 @@ append_leaf :: proc (template_map: ^[dynamic]Leaf_Instantiator, template: Leaf_T
 
 parse_name :: proc (s : string) -> string {
     // trim name to remove code - deferred until later
-    return encode0d (s)
+    if is_code_component (s) {
+	return encode0d (s)
+    } else {
+	return s
+    }
+}
+
+is_code_component :: proc (s : string) -> bool {
+    return false
 }
 
 encode0d :: proc (s : string) -> string {
