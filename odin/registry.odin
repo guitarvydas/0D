@@ -276,8 +276,3 @@ encode0d :: proc (s : string) -> string {
     r, _ := strings.replace_all(s, " ", "∘")
     return r
 }
-    
-parse_name :: proc (s : string) -> string {
-    // trim name to remove code - deferred until later
-    return s
-}
