@@ -217,6 +217,12 @@ deposit :: proc(c: Connector, message: ^Message) {
     fifo_push(c.receiver.queue, new_message)
 }
 
+force_tick :: proc (eh: ^Eh, causingMessage: ^Message) -> ^Message{
+    tick_msg := make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
+    fifo_push (&eh.input, tick_msg)
+    return tick_msg
+}
+
 light_receivef :: proc(eh : ^Eh, fmt_str: string, args: ..any, location := #caller_location) {
     if (eh.trace && eh.depth <= debugging_depth) {
 	log.logf(cast(runtime.Logger_Level)log_light_handlers,   fmt_str, ..args, location=location)
@@ -285,12 +291,6 @@ step_children :: proc(container: ^Eh, causingMessage: ^Message) {
             destroy_message(msg)
         }
     }
-}
-
-force_tick :: proc (eh: ^Eh, causingMessage: ^Message) -> ^Message{
-    tick_msg := make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
-    fifo_push (&eh.input, tick_msg)
-    return tick_msg
 }
 
 attempt_tick :: proc (eh: ^Eh, causingMessage: ^Message) {
