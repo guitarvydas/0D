@@ -39,6 +39,7 @@ Eh :: struct {
     output:       FIFO,
     owner:        ^Eh,
     children:     []^Eh,
+    visit_ordering:     EhFIFO, // order in which children received messages
     connections:  []Connector,
     accepted:     Stack, // ordered list of messages received (most recent message is first)
     handler:      #type proc(eh: ^Eh, message: ^Message),
@@ -143,6 +144,7 @@ destroy_container :: proc(eh: ^Eh) {
 FIFO       :: queue.Queue(^Message)
 fifo_push  :: queue.push_back
 fifo_pop   :: queue.pop_front_safe
+EhFIFO       :: queue.Queue(^Eh)
 
 fifo_is_empty :: proc(fifo: FIFO) -> bool {
     return fifo.len == 0
@@ -226,6 +228,7 @@ force_tick :: proc (parent: ^Eh, eh: ^Eh, causingMessage: ^Message) -> ^Message{
 
 push_message :: proc (parent: ^Eh, receiver: ^Eh, inq: ^FIFO, m : ^Message) {
     fifo_push(inq, m)
+    fifo_push (&parent.visit_ordering, receiver)
 }
 
 
@@ -262,6 +265,7 @@ format_debug_based_on_depth :: proc (depth : int, name : string, port: string) -
 
 step_children :: proc(container: ^Eh, causingMessage: ^Message) {
     container.state = .idle
+//            msg, _ := fifo_pop(fifo)
     for child in container.children {
         msg: ^Message
         ok: bool
