@@ -5,7 +5,7 @@ D2J=0d/das2json/das2json
 dev: clean run
 
 run: ___ transpile.drawio.json
-	./___ main ___testfilename___  ___.drawio $(LIBSRC)/transpile.drawio
+	./___ ! main ___.drawio $(LIBSRC)/transpile.drawio
 
 ___: ___.drawio.json
 	odin build . $(ODIN_FLAGS)

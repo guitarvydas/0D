@@ -15,7 +15,7 @@ run :: proc (r : ^zd.Component_Registry, arg: string, main_container_name : stri
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
     fmt.assertf(
         ok,
-        "Couldn't find main container with page name %s in file %s (check tab names, or disable compression?)\n",
+        "Couldn't find container with page name %s in files %s (check tab names, or disable compression?)\n",
         main_container_name,
         diagram_source_files,
     )
@@ -30,7 +30,7 @@ run_all_outputs :: proc (r : ^zd.Component_Registry, arg: string, main_container
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
     fmt.assertf(
         ok,
-        "Couldn't find main container with page name %s in file %s (check tab names, or disable compression?)\n",
+        "Couldn't find container with page name %s in files %s (check tab names, or disable compression?)\n",
         main_container_name,
         diagram_source_files,
     )
@@ -45,7 +45,7 @@ run_demo :: proc (r : ^zd.Component_Registry, arg, main_container_name : string,
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
     fmt.assertf(
         ok,
-        "Couldn't find main container with page name %s in file %s (check tab names, or disable compression?)\n",
+        "Couldn't find container with page name %s in files %s (check tab names, or disable compression?)\n",
         main_container_name,
         diagram_source_files,
     )
@@ -62,7 +62,7 @@ run_demo_debug :: proc (r : ^zd.Component_Registry, arg: string, main_container_
     main_container, ok := zd.get_component_instance(pregistry, main_container_name, owner=nil)
     fmt.assertf(
         ok,
-        "Couldn't find main container with page name %s in file %s (check tab names, or disable compression?)\n",
+        "Couldn't find main container with page name %s in files %s (check tab names, or disable compression?)\n",
         main_container_name,
         diagram_source_files,
     )
