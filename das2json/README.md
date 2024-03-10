@@ -147,5 +147,6 @@ The output `.json` file contains one JSON Object for each separate *tab* saved o
 	- "target" - the name of the receiving component ("" for the parent Container itself)
 	- "target_port" - the name of the gate/port belonging to the receiving component.
 
+Components that are referenced in the diagrams, but, not implemented on any *tab* are assumed to be *Leaf* components and must be defined in the underlying language using raw textual source code.
 ### Conventions
 - We usually use the name `main` as the tab-name for the top-most diagram in a multiple drawing edit (saved as a single `.drawio` file).
