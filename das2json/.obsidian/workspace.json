@@ -1,52 +1,39 @@
 {
   "main": {
-    "id": "dc2af68aa5e33f0f",
+    "id": "40560e72ea7b1f98",
     "type": "split",
     "children": [
       {
-        "id": "4a631445acca26ae",
+        "id": "bbcb0e8871299946",
         "type": "tabs",
         "children": [
           {
-            "id": "6dc63a92f40f050a",
+            "id": "91f9de888651544a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "7fb1d9bc095586b3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "0D projects overview.md",
+                "file": "README.md.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "ffe6b7819f5da383",
+    "id": "8e7bc837f926d386",
     "type": "split",
     "children": [
       {
-        "id": "8fade0be8abc3887",
+        "id": "641c5b60a6c27fee",
         "type": "tabs",
         "children": [
           {
-            "id": "efd6d4277be5e349",
+            "id": "c7c9bdfdbc37f677",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -56,7 +43,7 @@
             }
           },
           {
-            "id": "a43fab1e02c4e268",
+            "id": "21aa79d48a55dea1",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -71,7 +58,7 @@
             }
           },
           {
-            "id": "ec596ef8eef3089d",
+            "id": "8da1c6268137881c",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -85,20 +72,20 @@
     "width": 300
   },
   "right": {
-    "id": "d30ee6ffd79be8ac",
+    "id": "bd02c58d189e5794",
     "type": "split",
     "children": [
       {
-        "id": "67d61d4a98e2d5ce",
+        "id": "f0ae05e05caaad9a",
         "type": "tabs",
         "children": [
           {
-            "id": "64e72ed4f4e4da10",
+            "id": "f48e65813e3f6586",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "0D projects overview.md",
+                "file": "README.md.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,19 +97,19 @@
             }
           },
           {
-            "id": "4c77a3efecd8af5f",
+            "id": "adb814c7555a7f65",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "0D projects overview.md",
+                "file": "README.md.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "5f5a19e1c5688ed7",
+            "id": "ed2e4353cf74f27b",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -133,12 +120,12 @@
             }
           },
           {
-            "id": "a0b6b8b174009dd1",
+            "id": "897cc2053deb18b1",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "0D projects overview.md"
+                "file": "README.md.md"
               }
             }
           }
@@ -159,37 +146,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7fb1d9bc095586b3",
+  "active": "91f9de888651544a",
   "lastOpenFiles": [
-    "das2json/example.drawio.json~",
-    "das2json/examples/example screenshot.png",
-    "das2json/examples/Screenshot 2024-03-10 at 3.25.44 PM.png",
-    "das2json/example.drawio.json",
-    "das2json/examples/example.drawio",
-    "das2json/examples",
-    "das2json/README.md.md",
-    "das2json/Untitled.md",
-    "odin/std/jsnormalize.rwr",
-    "odin/std/prolognormalize.ohm",
-    "odin/std/normalize.ohm",
-    "odin/std/normalize.wr",
-    "odin/std/prolognormalize.rwr",
-    "odin/std/normalizesupport.js",
-    "odin/std/jsnormalize.ohm",
-    "README.md",
-    "0D projects overview.md",
-    "examples/top-main.drawio.svg",
-    "examples/dc0d-Game.drawio.svg",
-    "examples/gen0d-main.drawio.svg",
-    "examples/ptpascal0d-main.drawio.svg",
-    "examples/find-and-replace-main.drawio.svg",
-    "examples/find-and-replace-screenshot.png",
-    "examples/Screenshot 2024-02-19 at 5.53.41 PM.png",
-    "examples/zzz-find-and-replace-screenshot.png",
-    "doc/ExampleIncludeCode.md",
-    "doc/EXAMPLE.md",
-    "templates/EXAMPLE.md",
-    "TODO.md",
-    "templates/README.md"
+    "example.drawio.json~",
+    "examples/example screenshot.png",
+    "examples/Screenshot 2024-03-10 at 3.25.44 PM.png",
+    "example.drawio.json",
+    "examples/example.drawio",
+    "examples",
+    "README.md.md"
   ]
 }
