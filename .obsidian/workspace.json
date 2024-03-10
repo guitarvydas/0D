@@ -161,6 +161,7 @@
   },
   "active": "7fb1d9bc095586b3",
   "lastOpenFiles": [
+    "das2json/README.md",
     "das2json/example.drawio.json~",
     "das2json/examples/example screenshot.png",
     "das2json/examples/Screenshot 2024-03-10 at 3.25.44 PM.png",
@@ -175,7 +176,6 @@
     "odin/std/normalize.wr",
     "odin/std/prolognormalize.rwr",
     "odin/std/normalizesupport.js",
-    "odin/std/jsnormalize.ohm",
     "README.md",
     "0D projects overview.md",
     "examples/top-main.drawio.svg",
