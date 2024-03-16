@@ -347,10 +347,11 @@ route :: proc(container: ^Eh, from: ^Eh, message: ^Message) {
 }
 
 dump_possible_connections :: proc (container: ^Eh) {
-    if false {
+    if true {
 	fmt.printf ("\n*** possible connections:")
 	for connector in container.connections {
-	    fmt.printf ("\n\n%v", connector)
+	    fmt.printf ("\n%v ❲%v❳.❲%v❳ -> ❲%v❳", connector.direction, connector.sender.name, connector.sender.port, connector.receiver.name)
+	    //fmt.printf ("\n\n%v", connector)
 	}
     }
 }
