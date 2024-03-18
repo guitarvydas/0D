@@ -3,7 +3,7 @@ class Datum:
     self.data = none
     self.clone = none
     self.reclaim = none
-    self.repr = none
+    self.srepr = none
     self.kind = none
     self.raw = none
 
@@ -12,178 +12,143 @@ def new_datum_string (s):
     d.data = s
     d.clone = clone_datum_string
     d.reclaim = reclaim_datum_string    
-    d.repr = repr_datum_string    
+    d.srepr = srepr_datum_string    
     d.raw = raw_datum_string    
     d.kind = "string"
     return d
-}
 
 def clone_datum_string (src):
   d = Datum ()
   d = src
   return d
-}
 
 def reclaim_datum_string (src):
   pass
 
-def repr_datum_string (d):
-  return d.repr ()
+def srepr_datum_string (d):
+  return d.srepr ()
 
 def raw_datum_string (d):
   return d.data
 
 
 
-new_datum_bang :: proc () -> ^Datum {
-    my_kind :: proc () -> string {
-	return "bang"
-    }
-    p := new (Datum)
+def new_datum_bang ():
+    p = Datum ()
     p.data = true
     p.clone = clone_datum_bang
     p.reclaim = reclaim_datum_bang
-    p.repr = repr_datum_bang    
+    p.srepr = srepr_datum_bang    
     p.raw = raw_datum_bang    
-    p.kind = my_kind
+    p.kind = "bang"
     return p
-}
 
-clone_datum_bang :: proc (src: ^Datum) -> ^Datum {
+def clone_datum_bang (src):      
     return new_datum_bang ()
-}
 
-reclaim_datum_bang :: proc (src: ^Datum) {
-}
 
-repr_datum_bang :: proc (src : ^Datum) -> string {
+def reclaim_datum_bang (src):      
+    pass
+
+def srepr_datum_bang (src):      
     return "!"
-}
-raw_datum_bang :: proc (src : ^Datum) -> []byte {
-    return transmute([]byte)string("!")
-}
 
-///
+def raw_datum_bang (src):      
+    return "!"
 
-new_datum_tick :: proc () -> ^Datum {
-    my_kind :: proc () -> string {
-	return "tick"
-    }
-    my_clone :: proc (src: ^Datum) -> ^Datum {
-	return new_datum_tick ()
-    }
-    p := new_datum_bang ()
-    p.kind = my_kind
-    p.clone = my_clone
+
+
+def new_datum_tick ():      
+    p = new_datum_bang ()
+    p.kind = "tick"
+    p.clone = new_datum_tick
     p.raw = raw_datum_tick
     return p
-}
 
-repr_datum_tick :: proc (src : ^Datum) -> string {
+
+def srepr_datum_tick (src):      
     return "."
-}
 
-raw_datum_tick :: proc (src : ^Datum) -> []byte {
-    return transmute([]byte)string(".")
-}
 
-///
-new_datum_bytes :: proc (b : []byte) -> ^Datum {
-    my_kind :: proc () -> string {
-	return "bytes"
-    }
-    p := new (Datum)
-    p.data = bytes.clone (b)
+def raw_datum_tick (src):      
+    return "."
+
+
+def new_datum_bytes (b):      
+    p = Datum ()
+    p.data = b.clone ()
     p.clone = clone_datum_bytes
     p.reclaim = reclaim_datum_bytes
-    p.repr = repr_datum_v
+    p.srepr = srepr_datum_v
     p.raw = raw_datum_bytes
-    p.kind = my_kind
+    p.kind = "bytes"
     return p
-}
 
-clone_datum_bytes :: proc (src: ^Datum) -> ^Datum {
-    p := new (Datum)
+
+def clone_datum_bytes (src):      
+    p = Datum ()
     p = src
-    p.data = bytes.clone (src.data.([]byte))
+    p.data = src.clone ()
     return p
-}
-
-reclaim_datum_bytes :: proc (src: ^Datum) {
-    // TODO
-}
-
-repr_datum_v :: proc (src : ^Datum) -> string {
-    return fmt.aprintf ("%v", src.data)
-}
-
-raw_datum_bytes :: proc (src: ^Datum) -> []byte {
-    return src.data.([]byte)
-}
 
 
-//
-new_datum_handle :: proc (h : os.Handle) -> ^Datum {
-    my_kind :: proc () -> string {
-	return "handle"
-    }
-    p := new (Datum)
+def reclaim_datum_bytes (src):      
+    pass
+
+
+def srepr_datum_v (src):      
+    return src.asString ()
+
+
+def raw_datum_bytes (src):      
+    return src.data
+
+
+
+def new_datum_handle (h):
+    p = Datum ()
     p.data = h
     p.clone = clone_handle
     p.reclaim = reclaim_handle
-    p.repr = repr_datum_v
+    p.srepr = srepr_datum_v
     p.raw = raw_datum_handle
-    p.kind = my_kind
+    p.kind = "handle"
     return p
-}
 
-clone_handle :: proc (src: ^Datum) -> ^Datum {
-    p := new (Datum)
+def clone_handle (src):      
+    p = Datum ()
     p = src
-    p.data = src.data.(os.Handle)
     return p
-}
 
-reclaim_handle :: proc (src: ^Datum) {
-    // TODO
-}
 
-raw_datum_handle :: proc (src: ^Datum) -> []byte {
-    address := &src.data.(os.Handle)
-    nbytes := size_of (os.Handle)
-    fmt.assertf (false, "PANIC: raw_datum_handle Not Implemented: address=%v nbytes=%v\n", address, nbytes) 
-    return []byte{}
-}
+def reclaim_handle (src):      
+    pass
 
-//
-new_datum_int :: proc (i : int) -> ^Datum {
-    my_kind :: proc () -> string {
-	return "int"
-    }
-    p := new (Datum)
+
+def raw_datum_handle (src):      
+    return src
+
+def new_datum_int (i):      
+    p = Datum ()
     p.data = i
     p.clone = clone_int
     p.reclaim = reclaim_int
-    p.repr = repr_datum_v
+    p.srepr = srepr_datum_v
     p.raw = raw_datum_int
-    p.kind = my_kind
+    p.kind = "int"
     return p
-}
 
-clone_int :: proc (src: ^Datum) -> ^Datum {
-    p := new (Datum)
+
+def clone_int (src):      
+    p = Datum ()
     p = src
-    p.data = src.data.(int)
+    p.data = src.data
     return p
-}
 
-reclaim_int :: proc (src: ^Datum) {
-    // TODO
-}
 
-raw_datum_int :: proc (src: ^Datum) -> []byte {
-    address := &src.data.(int)
-    nbytes := size_of (int)
-    fmt.assertf (false, "PANIC: raw_datum_int Not Implemented: address=%v nbytes=%v\n", address, nbytes) 
-    return []byte{}
-}
+def reclaim_int (src):      
+    pass
+
+
+def raw_datum_int (src):      
+    return src.data
