@@ -1,7 +1,6 @@
 class Component_Registry:
     def _init_ (self):
         self.templates = {}
-        self.stats = Registry_Stats ()
 
 class Template:
     def _init_ (self):
