@@ -161,6 +161,7 @@
   },
   "active": "7fb1d9bc095586b3",
   "lastOpenFiles": [
+    "python/std/#run.py#",
     "python/std/#lib.py#",
     "python/std/run.py~",
     "python/std/run.py",
@@ -171,7 +172,6 @@
     "python/std/fakepipe.py~",
     "python/std/fakepipe.odin",
     "python/std/fakepipe.py",
-    "python/std/#fakepipe.odin#",
     "python/play/readjson.md",
     "python/README.md",
     "python/odin/README.md",
