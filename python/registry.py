@@ -3,10 +3,8 @@ class Component_Registry:
         self.templates = {}
 
 class Template:
-    def _init_ (self):
-        self.name = ""
-        self.template_data = none # like "class data" in OOP - same data for every instance of this kind ; none for Leaf, routing for Container
-        self.instantiator = none
+    def _init_ (self, name="", template_data=none, instantiator=none):
+        pass
         
 def read_and_convert_json_file (filename):
     try:
