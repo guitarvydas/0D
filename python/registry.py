@@ -3,7 +3,7 @@ class Component_Registry:
         self.templates = {}
 
 class Template:
-    def _init_ (self, name="", template_data=none, instantiator=none):
+    def _init_ (self, name="", template_data=None, instantiator=None):
         pass
         
 def read_and_convert_json_file (filename):
@@ -44,9 +44,9 @@ def register_multiple_components (reg, templates):
 def get_component_instance (reg, full_name, owner):
     template_name = parse_name (full_name)
     template = reg.templates[template_name]
-    if (template == none):
+    if (template == None):
         load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
-        return none
+        return None
     else:
         instance_name = f"{owner.name}.{template_name}"
         instance = template.instantiate (reg, owner, component_name, template.decl)
@@ -54,7 +54,7 @@ def get_component_instance (reg, full_name, owner):
         return instance
 
 def calculate_depth (eh):
-    if eh.owner == none:
+    if eh.owner == None:
         return 0
     else:
         return 1 + calculate_depth (eh.owner)
