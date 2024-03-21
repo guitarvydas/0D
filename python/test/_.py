@@ -868,7 +868,7 @@ def print_error_maybe (main_container):
     err = fetch_first_output (main_container, error_port)
     if found and (0 < len (trimws (err))):
         print ("--- !!! ERRORS !!! ---")
-        print_specific_output (main_container, error_port, false)
+        print_specific_output (main_container, error_port, False)
 
 
 # debugging helpers
@@ -897,8 +897,8 @@ def trimws (s):
 def clone_string (s):
     return s
 
-load_errors = false
-runtime_errors = false
+load_errors = False
+runtime_errors = False
 
 def load_error (s):
     global load_errors
@@ -925,25 +925,25 @@ def fakepipename_handler (eh, msg):
 # future: refactor this such that programmers can pick and choose which (lumps of) builtins are used in a specific project
 
 def initialize_stock_components (reg):
-    register_component (reg, Template ( name = "1then2", instantiate = deracer_instantiate)
-    register_component (reg, Template ( name = "?", instantiate = probe_instantiate)
-    register_component (reg, Template ( name = "?A", instantiate = probeA_instantiate)
-    register_component (reg, Template ( name = "?B", instantiate = probeB_instantiate)
-    register_component (reg, Template ( name = "?C", instantiate = probeC_instantiate)
-    register_component (reg, Template ( name = "trash", instantiate = trash_instantiate)
+    register_component (reg, Template ( name = "1then2", instantiate = deracer_instantiate))
+    register_component (reg, Template ( name = "?", instantiate = probe_instantiate))
+    register_component (reg, Template ( name = "?A", instantiate = probeA_instantiate))
+    register_component (reg, Template ( name = "?B", instantiate = probeB_instantiate))
+    register_component (reg, Template ( name = "?C", instantiate = probeC_instantiate))
+    register_component (reg, Template ( name = "trash", instantiate = trash_instantiate))
 
-    register_component (reg, Template ( name = "Low Level Read Text File", instantiate = low_level_read_text_file_instantiate)
-    register_component (reg, Template ( name = "Read Text From FD", instantiate = read_text_from_fd_instantiate)
-    register_component (reg, Template ( name = "Open Text File", instantiate = open_text_file_instantiate)
-    register_component (reg, Template ( name = "Ensure String Datum", instantiate = ensure_string_datum_instantiate)
+    register_component (reg, Template ( name = "Low Level Read Text File", instantiate = low_level_read_text_file_instantiate))
+    register_component (reg, Template ( name = "Read Text From FD", instantiate = read_text_from_fd_instantiate))
+    register_component (reg, Template ( name = "Open Text File", instantiate = open_text_file_instantiate))
+    register_component (reg, Template ( name = "Ensure String Datum", instantiate = ensure_string_datum_instantiate))
 
-    register_component (reg, Template ( name = "syncfilewrite", instantiate = syncfilewrite_instantiate)
-    register_component (reg, Template ( name = "Bang", instantiate = bang_instantiate)
-    register_component (reg, Template ( name = "stringconcat", instantiate = stringconcat_instantiate)
-    // for fakepipe
-    register_component (reg, Template ( name = "fakepipename", instantiate = fakepipename_instantiate)
-    // for transpiler (ohmjs)
-    register_component (reg, Template ( name = "OhmJS", instantiate = ohmjs_instantiate)
+    register_component (reg, Template ( name = "syncfilewrite", instantiate = syncfilewrite_instantiate))
+    register_component (reg, Template ( name = "Bang", instantiate = bang_instantiate))
+    register_component (reg, Template ( name = "stringconcat", instantiate = stringconcat_instantiate))
+    # for fakepipe
+    register_component (reg, Template ( name = "fakepipename", instantiate = fakepipename_instantiate))
+    # for transpiler (ohmjs)
+    register_component (reg, Template ( name = "OhmJS", instantiate = ohmjs_instantiate))
     register_component (reg, string_constant ("RWR"))
     register_component (reg, string_constant ("0d/odin/std/rwr.ohm"))
     register_component (reg, string_constant ("0d/odin/std/rwr.sem.js"))
@@ -986,7 +986,7 @@ def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, i
     print ("--- done ---")
 
 
-def main proc():
+def main ():
     arg_array = parse_command_line_args ()
     arg = arg_array [0]
     main_container_name = arg_array [1]
@@ -1001,7 +1001,7 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
-    register_component (reg, Template { name = "Echo", instantiate = echo })    
+    register_component (reg, Template (name = "Echo", instantiate = echo))
 
 
 def echo_handler (eh, msg):

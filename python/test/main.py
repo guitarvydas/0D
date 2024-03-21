@@ -1,6 +1,6 @@
 
 
-def main proc():
+def main ():
     arg_array = parse_command_line_args ()
     arg = arg_array [0]
     main_container_name = arg_array [1]
@@ -15,7 +15,7 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
-    register_component (reg, Template { name = "Echo", instantiate = echo })    
+    register_component (reg, Template (name = "Echo", instantiate = echo))
 
 
 def echo_handler (eh, msg):
