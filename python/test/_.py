@@ -924,7 +924,7 @@ def fakepipename_handler (eh, msg):
 # all of the the built-in leaves are listed here
 # future: refactor this such that programmers can pick and choose which (lumps of) builtins are used in a specific project
 
-def initialize_stock_components :: proc (reg):
+def initialize_stock_components (reg):
     register_component (reg, Template ( name = "1then2", instantiate = deracer_instantiate)
     register_component (reg, Template ( name = "?", instantiate = probe_instantiate)
     register_component (reg, Template ( name = "?A", instantiate = probeA_instantiate)

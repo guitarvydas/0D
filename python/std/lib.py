@@ -29,7 +29,7 @@ def print_error_maybe (main_container):
     err = fetch_first_output (main_container, error_port)
     if found and (0 < len (trimws (err))):
         print ("--- !!! ERRORS !!! ---")
-        print_specific_output (main_container, error_port, false)
+        print_specific_output (main_container, error_port, False)
 
 
 # debugging helpers
@@ -58,8 +58,8 @@ def trimws (s):
 def clone_string (s):
     return s
 
-load_errors = false
-runtime_errors = false
+load_errors = False
+runtime_errors = False
 
 def load_error (s):
     global load_errors
