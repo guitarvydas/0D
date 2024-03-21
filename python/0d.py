@@ -20,7 +20,7 @@ import sys
 # Eh_States :: enum { idle, active }
 
 class Eh:
-    def _init_ (self):
+    def __init__ (self):
         self.name
         self.input = queue.Queue ()
         self.output = queue.Queue ()
@@ -34,7 +34,7 @@ class Eh:
         self.state = "idle"
         # bootstrap debugging
         self.kind = none # enum { container, leaf, }
-        self.trace = false # set 'true' if logging is enabled and if this component should be traced, (false means silence, no tracing for this component)
+        self.trace = False # set 'True' if logging is enabled and if this component should be traced, (False means silence, no tracing for this component)
         self.depth = 0 # hierarchical depth of component, 0=top, 1=1st child of top, 2=1st child of 1st child of top, etc.
 
 # Creates a component that acts as a container. It is the same as a `Eh` instance
@@ -102,7 +102,7 @@ def fifo_is_empty (fifo):
 # no affect on the default message routing system - it is there for debugging
 # purposes, or for reading by other tools.
 class Connector:
-    def _init_ (self):
+    def __init__ (self):
         self.direction = none # down, across, up, through
         self.sender = none
         self.receiver = none
@@ -110,7 +110,7 @@ class Connector:
 # `Sender` is used to "pattern match" which `Receiver` a message should go to,
 # based on component ID (pointer) and port name.
 class Sender:
-    def _init_ (self, name, component, port):
+    def __init__ (self, name, component, port):
         self.name = name
         self.component = component # from
         self.port = port # from's port
@@ -118,7 +118,7 @@ class Sender:
 # `Receiver` is a handle to a destination queue, and a `port` name to assign
 # to incoming messages to this queue.
 class Receiver:
-    def _init_ (self, name, queue, port, component):
+    def __init__ (self, name, queue, port, component):
         self.name = name
         self.queue = queue # queue (input | output) of receiver
         self.port = port # destination port
@@ -180,11 +180,11 @@ def is_tick (msg):
 # Routes a single message to all matching destinations, according to
 # the container's connection network.
 def route (container, from_component, message):      
-    was_sent = false # for checking that output went somewhere (at least during bootstrap)
+    was_sent = False # for checking that output went somewhere (at least during bootstrap)
     if is_tick (message):
         for child in container.children:    
             attempt_tick (container, child, message)
-        was_sent = true
+        was_sent = True
     else:
         fromname = ""
         if from_component != none:
@@ -194,7 +194,7 @@ def route (container, from_component, message):
         for connector in container.connections:
             if sender_eq(from_sender, connector.sender):   
                 deposit(container, connector, message)
-                was_sent = true
+                was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {from_component.name} dropped on floor...")
@@ -209,7 +209,7 @@ def dump_possible_connections (container):
 def any_child_ready (container):
     for child in container.children:
         if child_is_ready(child):
-            return true
+            return True
 
 def child_is_ready (eh):      
     return (not (eh.output.empty ())) or (not (eh.input.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))

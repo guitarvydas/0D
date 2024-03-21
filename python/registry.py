@@ -1,9 +1,12 @@
+import os
+import json
+
 class Component_Registry:
-    def _init_ (self):
+    def __init__ (self):
         self.templates = {}
 
 class Template:
-    def _init_ (self, name="", template_data=None, instantiator=None):
+    def __init__ (self, name="", template_data=None, instantiator=None):
         pass
         
 def read_and_convert_json_file (filename):

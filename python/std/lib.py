@@ -18,7 +18,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
         collect_process_leaves (reg, diagram_source)
         all_containers_within_single_file = json2internal (diagram_source)
         for container in all_containers_within_single_file:
-            register_component (reg, Template (name=container.name , template_data=container, instantiator=container_instantiator))
+            register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
     project_specific_components (reg) # add user specified components (probably only leaves)
     return reg
@@ -64,11 +64,13 @@ runtime_errors = False
 def load_error (s):
     global load_errors
     print (s)
-    load_errors = true
+    quit ()
+    load_errors = True
 
 def runtime_error (s):
     global runtime_errors
     print (s)
-    runtime_errors = true
+    quit ()
+    runtime_errors = True
 
     

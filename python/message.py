@@ -3,13 +3,13 @@
 # `port` refers to the name of the incoming or outgoing port of this component.
 # `datum` is the data attached to this message.
 class Message:
-    def _init_ (self, port, datum, cause):
+    def __init__ (self, port, datum, cause):
         self.port = port
         self.datum = datum
         self.cause = cause
 
 class Cause:
-    def _init_ (self, who, message):
+    def __init__ (self, who, message):
         # trail to help trace message provenance
         # each message is tagged with a Cause that describes who sent the message and what message
         # was handled by "who" in causing this message to be sent (since, the cause is a message,

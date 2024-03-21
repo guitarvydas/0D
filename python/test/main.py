@@ -24,3 +24,5 @@ def echo_handler (eh, msg):
 def echo (name, owner):
     name_with_id = std.gensym ("Echo")
     return make_leaf (name_with_id, owner, nil, echo-handler)
+
+main ()

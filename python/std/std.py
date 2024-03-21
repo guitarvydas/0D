@@ -60,13 +60,13 @@ def literal_handler (eh, msg):
 ####
 
 class TwoMessages:
-    def _init_ (self, first=None, second=None):
+    def __init__ (self, first=None, second=None):
         pass
 
 # Deracer_States :: enum { idle, waitingForFirst, waitingForSecond }
 
 class Deracer_Instance_Data:
-    def _init_ (self, state="idle", buffer=[]):
+    def __init__ (self, state="idle", buffer=[]):
         pass
 
 def reclaim_Buffers_from_heap (inst):      
@@ -162,7 +162,7 @@ def ensure_string_datum_handler (eh, msg):
 ####
 
 class Syncfilewrite_Data:
-    def _init_ (self):
+    def __init__ (self):
         filename = ""
 
 # temp copy for bootstrap, sends "done" (error during bootstrap if not wired)
@@ -189,7 +189,7 @@ def syncfilewrite_handler (eh, msg):
 ####
 
 class StringConcat_Instance_Data:
-    def _init_ (self):
+    def __init__ (self):
         buffer1 = None
         buffer2 = None
         count = 0

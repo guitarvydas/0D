@@ -161,6 +161,8 @@
   },
   "active": "7fb1d9bc095586b3",
   "lastOpenFiles": [
+    "python/process.py",
+    "python/#process.py#",
     "python/test/f",
     "python/test/_.py",
     "python/test/#main.py#",
@@ -170,8 +172,6 @@
     "python/std/transpiler.py",
     "python/std/transpile.drawio",
     "python/std/stock.py~",
-    "python/std/stock.py",
-    "python/std/std_vsh.niy",
     "python/play/readjson.md",
     "python/README.md",
     "python/odin/README.md",

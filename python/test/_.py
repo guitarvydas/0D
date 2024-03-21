@@ -165,13 +165,13 @@ def raw_datum_int (src):
 # `port` refers to the name of the incoming or outgoing port of this component.
 # `datum` is the data attached to this message.
 class Message:
-    def _init_ (self, port, datum, cause):
+    def __init__ (self, port, datum, cause):
         self.port = port
         self.datum = datum
         self.cause = cause
 
 class Cause:
-    def _init_ (self, who, message):
+    def __init__ (self, who, message):
         # trail to help trace message provenance
         # each message is tagged with a Cause that describes who sent the message and what message
         # was handled by "who" in causing this message to be sent (since, the cause is a message,
@@ -275,12 +275,15 @@ def container_instantiator (reg, owner, container_name, decl):
             connectors.append (connector)
         container.connections = connectors
         return container
+import os
+import json
+
 class Component_Registry:
-    def _init_ (self):
+    def __init__ (self):
         self.templates = {}
 
 class Template:
-    def _init_ (self, name="", template_data=none, instantiator=none):
+    def __init__ (self, name="", template_data=None, instantiator=None):
         pass
         
 def read_and_convert_json_file (filename):
@@ -321,9 +324,9 @@ def register_multiple_components (reg, templates):
 def get_component_instance (reg, full_name, owner):
     template_name = parse_name (full_name)
     template = reg.templates[template_name]
-    if (template == none):
+    if (template == None):
         load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
-        return none
+        return None
     else:
         instance_name = f"{owner.name}.{template_name}"
         instance = template.instantiate (reg, owner, component_name, template.decl)
@@ -331,7 +334,7 @@ def get_component_instance (reg, full_name, owner):
         return instance
 
 def calculate_depth (eh):
-    if eh.owner == none:
+    if eh.owner == None:
         return 0
     else:
         return 1 + calculate_depth (eh.owner)
@@ -351,6 +354,8 @@ def mangle_name (s):
     # trim name to remove code from Container component names - deferred until later (or never)
     return s
 
+def collect_process_leaves (reg, diagram_sourc):
+    print ("NIY in alpha bootstrap: collect_process_leaves")
 # Data for an asyncronous component - effectively, a function with input
 # and output queues of messages.
 #
@@ -373,7 +378,7 @@ import sys
 # Eh_States :: enum { idle, active }
 
 class Eh:
-    def _init_ (self):
+    def __init__ (self):
         self.name
         self.input = queue.Queue ()
         self.output = queue.Queue ()
@@ -387,7 +392,7 @@ class Eh:
         self.state = "idle"
         # bootstrap debugging
         self.kind = none # enum { container, leaf, }
-        self.trace = false # set 'true' if logging is enabled and if this component should be traced, (false means silence, no tracing for this component)
+        self.trace = False # set 'True' if logging is enabled and if this component should be traced, (False means silence, no tracing for this component)
         self.depth = 0 # hierarchical depth of component, 0=top, 1=1st child of top, 2=1st child of 1st child of top, etc.
 
 # Creates a component that acts as a container. It is the same as a `Eh` instance
@@ -455,7 +460,7 @@ def fifo_is_empty (fifo):
 # no affect on the default message routing system - it is there for debugging
 # purposes, or for reading by other tools.
 class Connector:
-    def _init_ (self):
+    def __init__ (self):
         self.direction = none # down, across, up, through
         self.sender = none
         self.receiver = none
@@ -463,7 +468,7 @@ class Connector:
 # `Sender` is used to "pattern match" which `Receiver` a message should go to,
 # based on component ID (pointer) and port name.
 class Sender:
-    def _init_ (self, name, component, port):
+    def __init__ (self, name, component, port):
         self.name = name
         self.component = component # from
         self.port = port # from's port
@@ -471,7 +476,7 @@ class Sender:
 # `Receiver` is a handle to a destination queue, and a `port` name to assign
 # to incoming messages to this queue.
 class Receiver:
-    def _init_ (self, name, queue, port, component):
+    def __init__ (self, name, queue, port, component):
         self.name = name
         self.queue = queue # queue (input | output) of receiver
         self.port = port # destination port
@@ -533,11 +538,11 @@ def is_tick (msg):
 # Routes a single message to all matching destinations, according to
 # the container's connection network.
 def route (container, from_component, message):      
-    was_sent = false # for checking that output went somewhere (at least during bootstrap)
+    was_sent = False # for checking that output went somewhere (at least during bootstrap)
     if is_tick (message):
         for child in container.children:    
             attempt_tick (container, child, message)
-        was_sent = true
+        was_sent = True
     else:
         fromname = ""
         if from_component != none:
@@ -547,7 +552,7 @@ def route (container, from_component, message):
         for connector in container.connections:
             if sender_eq(from_sender, connector.sender):   
                 deposit(container, connector, message)
-                was_sent = true
+                was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {from_component.name} dropped on floor...")
@@ -562,7 +567,7 @@ def dump_possible_connections (container):
 def any_child_ready (container):
     for child in container.children:
         if child_is_ready(child):
-            return true
+            return True
 
 def child_is_ready (eh):      
     return (not (eh.output.empty ())) or (not (eh.input.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
@@ -659,13 +664,13 @@ def literal_handler (eh, msg):
 ####
 
 class TwoMessages:
-    def _init_ (self, first=None, second=None):
+    def __init__ (self, first=None, second=None):
         pass
 
 # Deracer_States :: enum { idle, waitingForFirst, waitingForSecond }
 
 class Deracer_Instance_Data:
-    def _init_ (self, state="idle", buffer=[]):
+    def __init__ (self, state="idle", buffer=[]):
         pass
 
 def reclaim_Buffers_from_heap (inst):      
@@ -761,7 +766,7 @@ def ensure_string_datum_handler (eh, msg):
 ####
 
 class Syncfilewrite_Data:
-    def _init_ (self):
+    def __init__ (self):
         filename = ""
 
 # temp copy for bootstrap, sends "done" (error during bootstrap if not wired)
@@ -788,7 +793,7 @@ def syncfilewrite_handler (eh, msg):
 ####
 
 class StringConcat_Instance_Data:
-    def _init_ (self):
+    def __init__ (self):
         buffer1 = None
         buffer2 = None
         count = 0
@@ -857,7 +862,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
         collect_process_leaves (reg, diagram_source)
         all_containers_within_single_file = json2internal (diagram_source)
         for container in all_containers_within_single_file:
-            register_component (reg, Template (name=container.name , template_data=container, instantiator=container_instantiator))
+            register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
     project_specific_components (reg) # add user specified components (probably only leaves)
     return reg
@@ -903,12 +908,14 @@ runtime_errors = False
 def load_error (s):
     global load_errors
     print (s)
-    load_errors = true
+    quit ()
+    load_errors = True
 
 def runtime_error (s):
     global runtime_errors
     print (s)
-    runtime_errors = true
+    quit ()
+    runtime_errors = True
 
     
 def fakepipename_instantiate (name, owner):
@@ -953,7 +960,8 @@ def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     main_container = get_component_instance(pregistry, main_container_name, owner=nil)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
-    injectfn (arg, main_container)
+    if not load_errors:
+        injectfn (arg, main_container)
     print_error_maybe (main_container)
     print_output (main_container)
 
@@ -962,7 +970,8 @@ def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, 
     main_container = get_component_instance(pregistry, main_container_name, owner=nil)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
-    injectfn (arg, main_container)
+    if not load_errors:
+        injectfn (arg, main_container)
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
@@ -971,7 +980,8 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     main_container = get_component_instance(pregistry, main_container_name, owner=nil)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
-    injectfn (arg, main_container)
+    if not load_errors:
+        injectfn (arg, main_container)
     dump_outputs (main_container)
     print ("--- done ---")
 
@@ -981,7 +991,8 @@ def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, i
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     dump_hierarchy (main_controller)
-    injectfn (arg, main_container)
+    if not load_errors:
+        injectfn (arg, main_container)
     dump_outputs (main_container)
     print ("--- done ---")
 
@@ -1010,3 +1021,5 @@ def echo_handler (eh, msg):
 def echo (name, owner):
     name_with_id = std.gensym ("Echo")
     return make_leaf (name_with_id, owner, nil, echo-handler)
+
+main ()
