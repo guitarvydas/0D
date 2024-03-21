@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 
 class Component_Registry:
     def __init__ (self):
@@ -7,7 +8,9 @@ class Component_Registry:
 
 class Template:
     def __init__ (self, name="", template_data=None, instantiator=None):
-        pass
+        self.name = name
+        self.template_data = template_data
+        self.instantiator = instantiator
         
 def read_and_convert_json_file (filename):
     try:
@@ -34,6 +37,8 @@ def make_component_registry ():
     return Component_Registry ()
 
 def register_component (reg, template):
+    print (template, file=sys.stderr)
+    sys.stderr.flush ()
     name = mangle_name (template.name)
     if name in reg.templates:
         load_error (f"Component {template.name} already declared")
@@ -45,14 +50,17 @@ def register_multiple_components (reg, templates):
         register_component (reg, template)
 
 def get_component_instance (reg, full_name, owner):
-    template_name = parse_name (full_name)
+    template_name = mangle_name (full_name)
     template = reg.templates[template_name]
     if (template == None):
         load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
         return None
     else:
-        instance_name = f"{owner.name}.{template_name}"
-        instance = template.instantiate (reg, owner, component_name, template.decl)
+        owner_name = ""
+        if None != owner:
+            owner_name = owner.name
+        instance_name = f"{owner_name}.{template_name}"
+        instance = template.instantiator (reg, owner, instance_name, template.template_data)
         instance.depth = calculate_depth (instance)
         return instance
 

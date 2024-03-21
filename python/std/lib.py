@@ -20,7 +20,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
-    project_specific_components (reg) # add user specified components (probably only leaves)
+    project_specific_components_subroutine (reg) # add user specified components (probably only leaves)
     return reg
 
 

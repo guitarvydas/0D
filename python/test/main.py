@@ -15,7 +15,7 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
-    register_component (reg, Template (name = "Echo", instantiate = echo))
+    register_component (reg, Template (name = "Echo", instantiator = echo))
 
 
 def echo_handler (eh, msg):

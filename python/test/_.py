@@ -8,12 +8,12 @@ def gensym (s):
 
 class Datum:
   def __init__(self):
-    self.data = none
-    self.clone = none
-    self.reclaim = none
-    self.srepr = none
-    self.kind = none
-    self.raw = none
+    self.data = None
+    self.clone = None
+    self.reclaim = None
+    self.srepr = None
+    self.kind = None
+    self.raw = None
 
 def new_datum_string (s):
     d = Datum ()
@@ -232,15 +232,15 @@ def container_instantiator (reg, owner, container_name, decl):
 
     connectors = []
     for proto_conn in decl.connections:
-        source_component = none
-        target_component = none
+        source_component = None
+        target_component = None
         connector = Connector ()
         if proto_conn.dir == "down":
             # JSON: {'dir': 0, 'source': {'name': '', 'id': 0}, 'source_port': '', 'target': {'name': 'Echo', 'id': 12}, 'target_port': ''},
             connector.direction = "down"
             connector.sender = Sender ("", nil, proto_conn.port)
             target_component = children_by_id [proto_conn.target.id]
-            if (target_component == none):
+            if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn.target}")
             else:
                 connector.receiver = Receiver (target_component.name, target_component.input, c.target_port, target_component)
@@ -248,18 +248,18 @@ def container_instantiator (reg, owner, container_name, decl):
             connector.direction = "across"
             source_component = child_id_map [proto_conn.source.id]
             target_component = child_id_map [proto_conn.target.id]
-            if source_component == none:
+            if source_component == None:
                 load_error (f"internal error: .Across connection source not ok {proto_conn.source}")
             else:
                 connector.sender = Sender (source_component.name, source_component, c.source_port)
-                if target_component == none:
+                if target_component == None:
                     load_error (f"internal error: .Across connection target not ok {proto_conn.target}")
                 else:
                     connector.receiver = Receiver (target_component.name, target_component.input, c.target_port, target_component)
         elif proto_conn.dir == "up":
             connector.direction = "up"
             source_component = child_id_map[c.source.id]
-            if source_component == none:
+            if source_component == None:
                 print (f"internal error: .Up connection source not ok {proto_conn.source}")
             else:
                 connector.sender = Sender (source_component.name, source_component, c.source_port)
@@ -271,12 +271,13 @@ def container_instantiator (reg, owner, container_name, decl):
             source_component = container
             target_component = container
             
-        if (source_component != none) and (target_component != none):
+        if (source_component != None) and (target_component != None):
             connectors.append (connector)
         container.connections = connectors
         return container
 import os
 import json
+import sys
 
 class Component_Registry:
     def __init__ (self):
@@ -284,7 +285,9 @@ class Component_Registry:
 
 class Template:
     def __init__ (self, name="", template_data=None, instantiator=None):
-        pass
+        self.name = name
+        self.template_data = template_data
+        self.instantiator = instantiator
         
 def read_and_convert_json_file (filename):
     try:
@@ -311,6 +314,8 @@ def make_component_registry ():
     return Component_Registry ()
 
 def register_component (reg, template):
+    print (template, file=sys.stderr)
+    sys.stderr.flush ()
     name = mangle_name (template.name)
     if name in reg.templates:
         load_error (f"Component {template.name} already declared")
@@ -322,14 +327,17 @@ def register_multiple_components (reg, templates):
         register_component (reg, template)
 
 def get_component_instance (reg, full_name, owner):
-    template_name = parse_name (full_name)
+    template_name = mangle_name (full_name)
     template = reg.templates[template_name]
     if (template == None):
         load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
         return None
     else:
-        instance_name = f"{owner.name}.{template_name}"
-        instance = template.instantiate (reg, owner, component_name, template.decl)
+        owner_name = ""
+        if None != owner:
+            owner_name = owner.name
+        instance_name = f"{owner_name}.{template_name}"
+        instance = template.instantiator (reg, owner, instance_name, template.template_data)
         instance.depth = calculate_depth (instance)
         return instance
 
@@ -379,19 +387,19 @@ import sys
 
 class Eh:
     def __init__ (self):
-        self.name
-        self.input = queue.Queue ()
-        self.output = queue.Queue ()
-        self.owner = none
+        self.name = ""
+        self.inq = queue.Queue ()
+        self.outq = queue.Queue ()
+        self.owner = None
         self.children = []
         self.visit_ordering = queue.Queue ()
         self.connections = []
         self.accepted = queue.LifoQueue ()  # ordered list of messages received (most recent message is first)
-        self.handler = none
-        self.instance_data = none
+        self.handler = None
+        self.instance_data = None
         self.state = "idle"
         # bootstrap debugging
-        self.kind = none # enum { container, leaf, }
+        self.kind = None # enum { container, leaf, }
         self.trace = False # set 'True' if logging is enabled and if this component should be traced, (False means silence, no tracing for this component)
         self.depth = 0 # hierarchical depth of component, 0=top, 1=1st child of top, 2=1st child of 1st child of top, etc.
 
@@ -424,24 +432,24 @@ def make_leaf (name, owner, instance_data, handler):
 def send (eh,port,datum,causingMessage):      
     cause = make_cause (eh, causingMessage)
     msg = make_message(port, datum, cause)
-    eh.output.put (msg)
+    eh.outq.put (msg)
 
 
 def send_string (eh,port,s,causingMessage):      
     cause = make_cause (eh, causingMessage)
     datum = new_datum_string (s)
     msg = make_message(port, datum, cause)
-    eh.output.put (msg)
+    eh.outq.put (msg)
 
 
 def forward (eh,port,msg):      
     fwdmsg = make_message(port, msg.datum, make_cause (eh, msg))
-    eh.output.put (fwdmsg)
+    eh.outq.put (fwdmsg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
 def output_list (eh):
-    return eh.output
+    return eh.outq
 
 # The default handler for container components.
 def container_handler (eh,message):      
@@ -461,9 +469,9 @@ def fifo_is_empty (fifo):
 # purposes, or for reading by other tools.
 class Connector:
     def __init__ (self):
-        self.direction = none # down, across, up, through
-        self.sender = none
-        self.receiver = none
+        self.direction = None # down, across, up, through
+        self.sender = None
+        self.receiver = None
 
 # `Sender` is used to "pattern match" which `Receiver` a message should go to,
 # based on component ID (pointer) and port name.
@@ -495,7 +503,7 @@ def deposit (parent, c, message):
 
 def force_tick (parent, eh, causingMessage):      
     tick_msg = make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
-    push_message (parent, eh, eh.input, tick_msg)
+    push_message (parent, eh, eh.inq, tick_msg)
     return tick_msg
 
 
@@ -507,10 +515,10 @@ def push_message (parent, receiver, inq, m):
 def step_children (container, causingMessage):      
     container.state = "idle"
     for child in container.visit_ordering:
-        # child == none represents self, skip it
-        if (child != none): 
-            if (not (child.input.empty ())):
-                msg = child.input.get ()
+        # child == None represents self, skip it
+        if (child != None): 
+            if (not (child.inq.empty ())):
+                msg = child.inq.get ()
             else:
                 if (child.state != "idle"):
                     msg = force_tick (container, child, causingMessage)
@@ -523,8 +531,8 @@ def step_children (container, causingMessage):
                 # if child remains active, then the container must remain active and must propagate "ticks" to child
                 container.state = "active"
             
-            while (not (child.output.empty ())):
-                msg = child.output.get ()
+            while (not (child.outq.empty ())):
+                msg = child.outq.get ()
                 route(container, child, msg)
                 destroy_message(msg)
 
@@ -545,7 +553,7 @@ def route (container, from_component, message):
         was_sent = True
     else:
         fromname = ""
-        if from_component != none:
+        if from_component != None:
             fname = from_component.name
         from_sender = Sender (fname, from_component, message.port)
         
@@ -570,12 +578,12 @@ def any_child_ready (container):
             return True
 
 def child_is_ready (eh):      
-    return (not (eh.output.empty ())) or (not (eh.input.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
+    return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
 
 
 # Utility for printing an array of messages.
 def print_output_list (eh):
-    print (eh.output)
+    print (eh.outq)
 
 def set_active (eh):      
     eh.state = "active"
@@ -585,14 +593,14 @@ def set_idle (eh):
 
 # Utility for printing a specific output message.
 def fetch_first_output (eh, port):
-    for msg in eh.output:
+    for msg in eh.outq:
         if (msg.port == port):
             return msg.datum
-    return none
+    return None
 
 def print_specific_output (eh, port, stderr):
     datum = fetch_first_output (eh, port)
-    if datum != none:
+    if datum != None:
         if stderr:              # I don't remember why I found it useful to print to stderr during bootstrapping, so I've left it in...
             f = sys.stderr
         else:
@@ -864,7 +872,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
-    project_specific_components (reg) # add user specified components (probably only leaves)
+    project_specific_components_subroutine (reg) # add user specified components (probably only leaves)
     return reg
 
 
@@ -928,36 +936,80 @@ def fakepipename_handler (eh, msg):
     rand += 1 # not very random, but good enough - 'rand' must be unique within a single run
     send_string (eh, "", f"/tmp/fakepipe{rand}", msg)
 
+class OhmJS_Instance_Data:
+    def _init_ (self):
+        self.grammarname = None
+        self.grammarfilename = None
+        self.semanticsfilename = None
+        self.s = None
+
+def ohmjs_instantiate (name, owner):
+    instance_name = gensym ("OhmJS")
+    inst = OhmJS_Instance_Data () # all fields have zero value before any messages are received
+    return make_leaf (instance_name, owner, inst, ohmjs_handle)
+
+def ohmjs_maybe (eh, inst, causingMsg):
+    if None != inst.grammarname and None != inst.grammarfilename and None != inst.semanticsfilename and None != inst.s:
+        cmd = "0d/python/std/ohmjs.js {inst.grammarname} {inst.grammarfilename} {inst.semanticsfilename}"
+        captured_output = run_command (cmd, inst.s)
+
+        errstring = trimws (err)
+        if len (errstring) == 0:
+            zd.send_string (eh, "", strings.trimws (captured_output), causingMsg)
+        else:
+            zd.send_string (eh, "✗", errstring, causingMsg)
+        inst.grammarName = None
+        inst.grammarfilename = None
+        inst.semanticsfilename = None
+        self.s = None
+
+def ohmjs_handle (eh, msg):
+    inst = eh.instance_data
+    if msg.port == "grammar name":
+        inst.grammarname = clone_string (msg.datum.srepr ())
+        ohmjs_maybe (eh, inst, msg)
+    elif msg.port == "grammar":
+        inst.grammarfilename = clone_string (msg.datum.repr ())
+        ohmjs_maybe (eh, inst, msg)
+    elif msg.port == "semantics":
+        inst.semanticsfilename = clone_string (msg.datum.repr ())
+        ohmjs_maybe (eh, inst, msg)
+    elif msg.port == "input":
+        inst.s = clone_string (msg.datum.repr ())
+        ohmjs_maybe (eh, inst, msg)
+    else:
+        emsg = f"!!! ERROR: OhmJS got an illegal message port {msg.port}"
+        send_string (eh, "✗", emsg, msg)
+
+
+
 # all of the the built-in leaves are listed here
 # future: refactor this such that programmers can pick and choose which (lumps of) builtins are used in a specific project
 
 def initialize_stock_components (reg):
-    register_component (reg, Template ( name = "1then2", instantiate = deracer_instantiate))
-    register_component (reg, Template ( name = "?", instantiate = probe_instantiate))
-    register_component (reg, Template ( name = "?A", instantiate = probeA_instantiate))
-    register_component (reg, Template ( name = "?B", instantiate = probeB_instantiate))
-    register_component (reg, Template ( name = "?C", instantiate = probeC_instantiate))
-    register_component (reg, Template ( name = "trash", instantiate = trash_instantiate))
+    register_component (reg, Template ( name = "1then2", instantiator = deracer_instantiate))
+    register_component (reg, Template ( name = "?", instantiator = probe_instantiate))
+    register_component (reg, Template ( name = "?A", instantiator = probeA_instantiate))
+    register_component (reg, Template ( name = "?B", instantiator = probeB_instantiate))
+    register_component (reg, Template ( name = "?C", instantiator = probeC_instantiate))
+    register_component (reg, Template ( name = "trash", instantiator = trash_instantiate))
 
-    register_component (reg, Template ( name = "Low Level Read Text File", instantiate = low_level_read_text_file_instantiate))
-    register_component (reg, Template ( name = "Read Text From FD", instantiate = read_text_from_fd_instantiate))
-    register_component (reg, Template ( name = "Open Text File", instantiate = open_text_file_instantiate))
-    register_component (reg, Template ( name = "Ensure String Datum", instantiate = ensure_string_datum_instantiate))
+    register_component (reg, Template ( name = "Low Level Read Text File", instantiator = low_level_read_text_file_instantiate))
+    register_component (reg, Template ( name = "Ensure String Datum", instantiator = ensure_string_datum_instantiate))
 
-    register_component (reg, Template ( name = "syncfilewrite", instantiate = syncfilewrite_instantiate))
-    register_component (reg, Template ( name = "Bang", instantiate = bang_instantiate))
-    register_component (reg, Template ( name = "stringconcat", instantiate = stringconcat_instantiate))
+    register_component (reg, Template ( name = "syncfilewrite", instantiator = syncfilewrite_instantiate))
+    register_component (reg, Template ( name = "stringconcat", instantiator = stringconcat_instantiate))
     # for fakepipe
-    register_component (reg, Template ( name = "fakepipename", instantiate = fakepipename_instantiate))
+    register_component (reg, Template ( name = "fakepipename", instantiator = fakepipename_instantiate))
     # for transpiler (ohmjs)
-    register_component (reg, Template ( name = "OhmJS", instantiate = ohmjs_instantiate))
+    register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
     register_component (reg, string_constant ("RWR"))
     register_component (reg, string_constant ("0d/odin/std/rwr.ohm"))
     register_component (reg, string_constant ("0d/odin/std/rwr.sem.js"))
 # run prints only the output on port "output", whereas run_demo prints all outputs
 def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     # get entrypoint container
-    main_container = get_component_instance(pregistry, main_container_name, owner=nil)
+    main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
@@ -967,7 +1019,7 @@ def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
 
 def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     # get entrypoint container
-    main_container = get_component_instance(pregistry, main_container_name, owner=nil)
+    main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
@@ -977,7 +1029,7 @@ def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, 
 
 def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     # get entrypoint container
-    main_container = get_component_instance(pregistry, main_container_name, owner=nil)
+    main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
@@ -987,7 +1039,7 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
 
 def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     # get entrypoint container
-    main_container = get_component_instance(pregistry, main_container_name, owner=nil)
+    main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     dump_hierarchy (main_controller)
@@ -1012,7 +1064,7 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
-    register_component (reg, Template (name = "Echo", instantiate = echo))
+    register_component (reg, Template (name = "Echo", instantiator = echo))
 
 
 def echo_handler (eh, msg):

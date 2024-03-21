@@ -12,7 +12,7 @@ STD = ../std
     ${STD}/std.py \
     ${STD}/lib.py \
     ${STD}/fakepipe.py \
-    ${STD}/transpiler.py \
+    ${STD}/transpilero.py \
     ${STD}/stock.py \
     ${STD}/run.py \
 

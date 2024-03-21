@@ -1,11 +1,11 @@
 class Datum:
   def __init__(self):
-    self.data = none
-    self.clone = none
-    self.reclaim = none
-    self.srepr = none
-    self.kind = none
-    self.raw = none
+    self.data = None
+    self.clone = None
+    self.reclaim = None
+    self.srepr = None
+    self.kind = None
+    self.raw = None
 
 def new_datum_string (s):
     d = Datum ()
