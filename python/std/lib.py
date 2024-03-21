@@ -54,3 +54,21 @@ def build_hierarchy (c):
 def trimws (s):
     # remove whitespace from front and back of string
     return s.strip ()
+
+def clone_string (s):
+    return s
+
+load_errors = false
+runtime_errors = false
+
+def load_error (s):
+    global load_errors
+    print (s)
+    load_errors = true
+
+def runtime_error (s):
+    global runtime_errors
+    print (s)
+    runtime_errors = true
+
+    

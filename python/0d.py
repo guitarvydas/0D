@@ -16,6 +16,7 @@
 import queue
 import sys
 
+
 # Eh_States :: enum { idle, active }
 
 class Eh:
