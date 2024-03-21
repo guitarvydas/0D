@@ -1,16 +1,16 @@
 
-def container_instantiator (reg, owner, container_name, decl):
+def container_instantiator (reg, owner, container_name, desc):
     container = make_container (container_name, owner)
     children = []
     children_by_id = {} # not strictly necessary, but, we can remove 1 runtime lookup by "compiling it out" here
     # collect children
-    for child_decl in decl.children:
-        child_instance = get_component_instance (reg, child_decl.name, container)
+    for child_desc in desc ["children"]:
+        child_instance = get_component_instance (reg, child_desc ["name"], container)
         children.append (child_instance)
-        children_by_id [child_decl.id] = child_instance
+        children_by_id [child_desc ["id"]] = child_instance
 
     connectors = []
-    for proto_conn in decl.connections:
+    for proto_conn in desc ["connections"]:
         source_component = None
         target_component = None
         connector = Connector ()
