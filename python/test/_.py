@@ -374,7 +374,7 @@ def route (container, from_component, message):
 def dump_possible_connections (container):      
     print ("*** possible connections:")
     for connector in container.connections:
-        print ("{connector.direction} ❲connector.sender.name❳.❲connector.sender.port❳ -> ❲connector.receiver.name❳")
+        print (f"{connector.direction} ❲{connector.sender.name}❳.❲{connector.sender.port}❳ -> ❲{connector.receiver.name}❳")
 
 def any_child_ready (container):
     for child in container.children:
@@ -407,10 +407,10 @@ def read_and_convert_json_file (filename):
             routings = json.loads(json_data)
             return routings
     except FileNotFoundError:
-        print("File not found:", filename)
+        print (f"File not found: {filename}")
         return None
     except json.JSONDecodeError as e:
-        print("Error decoding JSON in file:", e)
+        print (f"Error decoding JSON in file: {e}")
         return None
 
 def json2internal (container_xml):

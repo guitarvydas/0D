@@ -180,7 +180,7 @@ def route (container, from_component, message):
 def dump_possible_connections (container):      
     print ("*** possible connections:")
     for connector in container.connections:
-        print (f"{connector.direction} ❲connector.sender.name❳.❲connector.sender.port❳ -> ❲connector.receiver.name❳")
+        print (f"{connector.direction} ❲{connector.sender.name}❳.❲{connector.sender.port}❳ -> ❲{connector.receiver.name}❳")
 
 def any_child_ready (container):
     for child in container.children:
