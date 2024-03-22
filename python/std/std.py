@@ -225,7 +225,12 @@ def maybe_stringconcat (eh, inst, msg):
         inst.buffer2 = None
         inst.count = 0
 
+####
 
+def shell_out_instantate (name, owner):
+    print (f"shell_out niy, $ {name} ignored")
+
+####
 
 def string_make_persistent (s):
     return s

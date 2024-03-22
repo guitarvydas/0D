@@ -498,10 +498,29 @@ def mangle_name (s):
     # trim name to remove code from Container component names - deferred until later (or never)
     return s
 
-def collect_process_leaves (reg, diagram_source):
-    print ("NIY in alpha bootstrap: collect_process_leaves")
+def generate_shell_components (reg, container_list):
+    # [
+    #     {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
+    #     {'file': 'simple0d.drawio', 'name': '...', 'children': [], 'connections': []}
+    # ]
+    for diagram in container_list:
+        # loop through every component in the diagram and look for names that start with "$"
+        # {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
+        for child_descriptor in diagram ['children']:
+            if first_char_is (child_descriptor ["name"], "$"):
+                name_without_dollar = component_map ["name"] [1:]
+                generated_leaf = Template (name=name_without_dollar, instantiator=shell_out_instantiate)
+                register_component (reg, generated_leaf)
+
 def run_command (cmd, s):
-    print ("NIY in alpha bootstrap: run_command")
+    print (f"NIY in alpha bootstrap: run_command({cmd},{s})")
+
+def first_char (s):
+    return s[0]
+
+def first_char_is (s, c):
+    return c == first_char (s)
+    
 # Data for an asyncronous component - effectively, a function with input
 # and output queues of messages.
 #
@@ -847,7 +866,12 @@ def maybe_stringconcat (eh, inst, msg):
         inst.buffer2 = None
         inst.count = 0
 
+####
 
+def shell_out_instantate (name, owner):
+    print (f"shell_out niy, $ {name} ignored")
+
+####
 
 def string_make_persistent (s):
     return s
@@ -870,8 +894,8 @@ def parse_command_line_args ():
 def initialize_component_palette (diagram_source_files, project_specific_components_subroutine):
     reg = make_component_registry ()
     for diagram_source in diagram_source_files:
-        collect_process_leaves (reg, diagram_source)
         all_containers_within_single_file = json2internal (diagram_source)
+        generate_shell_components (reg, all_containers_within_single_file)
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)

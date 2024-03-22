@@ -16,8 +16,15 @@ STD = ../std
     ${STD}/stock.py \
     ${STD}/run.py \
 
+dev: jsons
+	cat ${0D} ./main.py > _.py
+	python3 _.py "pt was here" main helloworld0d.drawio.json
+
 all:
-	./makedas2json.bash ${das2jsondir}
-	${das2jsondir}/das2json simple0d.drawio
 	cat ${0D} ./main.py > _.py
 	python3 _.py "Hello World from 0D" main simple0d.drawio.json
+
+jsons: simple0d.drawio helloworld0d.drawio
+	./makedas2json.bash ${das2jsondir}
+	${das2jsondir}/das2json simple0d.drawio
+	${das2jsondir}/das2json helloworld0d.drawio
