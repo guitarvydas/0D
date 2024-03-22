@@ -31,13 +31,13 @@ def ohmjs_handle (eh, msg):
         inst.grammarname = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "grammar":
-        inst.grammarfilename = clone_string (msg.datum.repr ())
+        inst.grammarfilename = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "semantics":
-        inst.semanticsfilename = clone_string (msg.datum.repr ())
+        inst.semanticsfilename = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "input":
-        inst.s = clone_string (msg.datum.repr ())
+        inst.s = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     else:
         emsg = f"!!! ERROR: OhmJS got an illegal message port {msg.port}"

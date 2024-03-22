@@ -19,7 +19,7 @@ def components_to_include_in_project (reg):
 
 
 def echo_handler (eh, msg):
-	send_string (eh, "", msg.datum.repr (msg.datum), msg)
+	send_string (eh, "", msg.datum.srepr (msg.datum), msg)
 
 def echo (reg, owner, name, template_data):
     name_with_id = gensym ("Echo")
