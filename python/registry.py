@@ -55,9 +55,10 @@ def get_component_instance (reg, full_name, owner):
         return None
     else:
         owner_name = ""
+        instance_name = f"{template_name}"
         if None != owner:
             owner_name = owner.name
-        instance_name = f"{owner_name}.{template_name}"
+            instance_name = f"{owner_name}.{template_name}"
         instance = template.instantiator (reg, owner, instance_name, template.template_data)
         instance.depth = calculate_depth (instance)
         return instance

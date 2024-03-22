@@ -11,21 +11,21 @@ def subscripted_digit (n):
         return "₀"
     elif n == 1:
         return "₁"
-    elif n == 1:
+    elif n == 2:
         return "₂"
-    elif n == 1:
+    elif n == 3:
         return "₃"
-    elif n == 1:
+    elif n == 4:
         return "₄"
-    elif n == 1:
+    elif n == 5:
         return "₅"
-    elif n == 1:
+    elif n == 6:
         return "₆"
-    elif n == 1:
+    elif n == 7:
         return "₇"
-    elif n == 1:
+    elif n == 8:
         return "₈"
-    elif n == 1:
+    elif n == 9:
         return "₉"
     else:
         return f"₊{n}"

@@ -102,7 +102,7 @@ class Receiver:
 
 # Checks if two senders match, by pointer equality and port name matching.
 def sender_eq (s1, s2):
-    return (s1.component == s2.component) and (s1.port == s2.port)
+    return (s1.name == s2.name) and (s1.port == s2.port)
 
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, c, message):      
@@ -168,8 +168,8 @@ def route (container, from_component, message):
         from_sender = Sender (fromname, from_component, message.port)
         
         for connector in container.connections:
-            if sender_eq(from_sender, connector.sender):   
-                deposit(container, connector, message)
+            if sender_eq (from_sender, connector.sender):   
+                deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")

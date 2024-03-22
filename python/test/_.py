@@ -11,21 +11,21 @@ def subscripted_digit (n):
         return "₀"
     elif n == 1:
         return "₁"
-    elif n == 1:
+    elif n == 2:
         return "₂"
-    elif n == 1:
+    elif n == 3:
         return "₃"
-    elif n == 1:
+    elif n == 4:
         return "₄"
-    elif n == 1:
+    elif n == 5:
         return "₅"
-    elif n == 1:
+    elif n == 6:
         return "₆"
-    elif n == 1:
+    elif n == 7:
         return "₇"
-    elif n == 1:
+    elif n == 8:
         return "₈"
-    elif n == 1:
+    elif n == 9:
         return "₉"
     else:
         return f"₊{n}"
@@ -320,7 +320,7 @@ class Receiver:
 
 # Checks if two senders match, by pointer equality and port name matching.
 def sender_eq (s1, s2):
-    return (s1.component == s2.component) and (s1.port == s2.port)
+    return (s1.name == s2.name) and (s1.port == s2.port)
 
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, c, message):      
@@ -386,8 +386,8 @@ def route (container, from_component, message):
         from_sender = Sender (fromname, from_component, message.port)
         
         for connector in container.connections:
-            if sender_eq(from_sender, connector.sender):   
-                deposit(container, connector, message)
+            if sender_eq (from_sender, connector.sender):   
+                deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
@@ -467,9 +467,10 @@ def get_component_instance (reg, full_name, owner):
         return None
     else:
         owner_name = ""
+        instance_name = f"{template_name}"
         if None != owner:
             owner_name = owner.name
-        instance_name = f"{owner_name}.{template_name}"
+            instance_name = f"{owner_name}.{template_name}"
         instance = template.instantiator (reg, owner, instance_name, template.template_data)
         instance.depth = calculate_depth (instance)
         return instance
