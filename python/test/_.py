@@ -276,8 +276,8 @@ def container_instantiator (reg, owner, container_name, desc):
             connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
             connectors.append (connector)
             
-        container.connections = connectors
-        return container
+    container.connections = connectors
+    return container
 
 # The default handler for container components.
 def container_handler (eh,message):      
@@ -320,7 +320,9 @@ class Receiver:
 
 # Checks if two senders match, by pointer equality and port name matching.
 def sender_eq (s1, s2):
-    return (s1.name == s2.name) and (s1.port == s2.port)
+    same_components = (s1.component == s2.component)
+    same_ports = (s1.port == s2.port)
+    return same_components and same_ports
 
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, c, message):      
