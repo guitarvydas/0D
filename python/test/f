@@ -1,0 +1,2 @@
+#/bin/bash
+grep -H $1 ../*.py ../std/*.py

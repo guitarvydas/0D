@@ -16,10 +16,10 @@ Connect_Decl :: struct {
 }
 
 Direction :: enum {
-    Down,
-    Across,
-    Up,
-    Through,
+    Down, // 0 (guaranteed by Odin language)
+    Across, // 1
+    Up, // 2
+    Through, // 3
 }
 
 Elem_Reference :: struct {
