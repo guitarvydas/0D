@@ -163,8 +163,8 @@ def route (container, from_component, message):
     else:
         fromname = ""
         if from_component != None:
-            fname = from_component.name
-        from_sender = Sender (fname, from_component, message.port)
+            fromname = from_component.name
+        from_sender = Sender (fromname, from_component, message.port)
         
         for connector in container.connections:
             if sender_eq(from_sender, connector.sender):   
