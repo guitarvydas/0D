@@ -14,7 +14,7 @@ def new_datum_string (s):
     d.reclaim = lambda : reclaim_datum_string (d)    
     d.srepr = lambda : srepr_datum_string (d)
     d.raw = lambda : raw_datum_string (d)    
-    d.kind = "string"
+    d.kind = lambda : "string"
     return d
 
 def clone_datum_string (d):
@@ -39,7 +39,7 @@ def new_datum_bang ():
     p.reclaim = lambda : reclaim_datum_bang (d)
     p.srepr = lambda : srepr_datum_bang ()
     p.raw = lambda : raw_datum_bang ()    
-    p.kind = "bang"
+    p.kind = lambda : "bang"
     return p
 
 def clone_datum_bang (d):
@@ -59,7 +59,7 @@ def raw_datum_bang ():
 
 def new_datum_tick ():      
     p = new_datum_bang ()
-    p.kind = "tick"
+    p.kind = lambda : "tick"
     p.clone = lambda : new_datum_tick ()
     p.srepr = lambda : srepr_datum_tick ()
     p.raw = lambda : raw_datum_tick ()
@@ -81,7 +81,7 @@ def new_datum_bytes (b):
     p.reclaim = lambda : reclaim_datum_bytes (p)
     p.srepr = lambda : srepr_datum_bytes (b)
     p.raw = lambda : raw_datum_bytes (b)
-    p.kind = "bytes"
+    p.kind = lambda : "bytes"
     return p
 
 
@@ -115,7 +115,7 @@ def new_datum_int (i):
     p.reclaim = lambda : reclaim_int (i)
     p.srepr = lambda: srepr_datum_int (i)
     p.raw = lambda : raw_datum_int (i)
-    p.kind = "int"
+    p.kind = lambda : "int"
     return p
 
 
