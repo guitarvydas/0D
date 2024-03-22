@@ -13,7 +13,8 @@ def container_instantiator (reg, owner, container_name, desc):
         child_instance = get_component_instance (reg, child_desc ["name"], container)
         children.append (child_instance)
         children_by_id [child_desc ["id"]] = child_instance
-
+    container.children = children
+    
     connectors = []
     for proto_conn in desc ["connections"]:
         source_component = None
@@ -64,7 +65,7 @@ def container_instantiator (reg, owner, container_name, desc):
 def container_handler (eh,message):      
     route (eh, None, message)
     if any_child_ready (eh):
-        eh.step_children (message)
+        step_children (eh, message)
 
 # Frees the given container and associated data.
 def destroy_container (eh):      
@@ -123,7 +124,7 @@ def push_message (parent, receiver, inq, m):
 
 def step_children (container, causingMessage):      
     container.state = "idle"
-    for child in container.visit_ordering:
+    for child in list (container.visit_ordering.queue):
         # child == None represents self, skip it
         if (child != None): 
             if (not (child.inq.empty ())):
@@ -179,7 +180,7 @@ def route (container, from_component, message):
 def dump_possible_connections (container):      
     print ("*** possible connections:")
     for connector in container.connections:
-        print ("{connector.direction} ❲connector.sender.name❳.❲connector.sender.port❳ -> ❲connector.receiver.name❳")
+        print (f"{connector.direction} ❲connector.sender.name❳.❲connector.sender.port❳ -> ❲connector.receiver.name❳")
 
 def any_child_ready (container):
     for child in container.children:
