@@ -10,77 +10,77 @@ class Datum:
 def new_datum_string (s):
     d = Datum ()
     d.data = s
-    d.clone = clone_datum_string
-    d.reclaim = reclaim_datum_string    
-    d.srepr = srepr_datum_string    
-    d.raw = raw_datum_string    
+    d.clone = lambda : clone_datum_string (d)
+    d.reclaim = lambda : reclaim_datum_string (d)    
+    d.srepr = lambda : srepr_datum_string (d)
+    d.raw = lambda : raw_datum_string (d)    
     d.kind = "string"
     return d
 
-def clone_datum_string (src):
-  d = Datum ()
-  d = src
+def clone_datum_string (d):
+  d = new_datum_string (d.data)
   return d
 
 def reclaim_datum_string (src):
   pass
 
 def srepr_datum_string (d):
-  return d.srepr ()
+  return d.data
 
 def raw_datum_string (d):
-  return d.data
+  return bytearray (d.data,'UTF-8')
 
 
 
 def new_datum_bang ():
     p = Datum ()
     p.data = true
-    p.clone = clone_datum_bang
-    p.reclaim = reclaim_datum_bang
-    p.srepr = srepr_datum_bang    
-    p.raw = raw_datum_bang    
+    p.clone = lambda : clone_datum_bang (d)
+    p.reclaim = lambda : reclaim_datum_bang (d)
+    p.srepr = lambda : srepr_datum_bang ()
+    p.raw = lambda : raw_datum_bang ()    
     p.kind = "bang"
     return p
 
-def clone_datum_bang (src):      
+def clone_datum_bang (d):
     return new_datum_bang ()
 
 
-def reclaim_datum_bang (src):      
+def reclaim_datum_bang (d):
     pass
 
-def srepr_datum_bang (src):      
+def srepr_datum_bang ():      
     return "!"
 
-def raw_datum_bang (src):      
-    return "!"
+def raw_datum_bang ():
+    return []
 
 
 
 def new_datum_tick ():      
     p = new_datum_bang ()
     p.kind = "tick"
-    p.clone = new_datum_tick
-    p.raw = raw_datum_tick
+    p.clone = lambda : new_datum_tick ()
+    p.srepr = lambda : srepr_datum_tick ()
+    p.raw = lambda : raw_datum_tick ()
     return p
 
 
-def srepr_datum_tick (src):      
+def srepr_datum_tick ():
     return "."
 
 
-def raw_datum_tick (src):      
-    return "."
+def raw_datum_tick ():      
+    return []
 
 
 def new_datum_bytes (b):      
     p = Datum ()
-    p.data = b.clone ()
+    p.data = b[:]
     p.clone = clone_datum_bytes
-    p.reclaim = reclaim_datum_bytes
-    p.srepr = srepr_datum_v
-    p.raw = raw_datum_bytes
+    p.reclaim = lambda : reclaim_datum_bytes (p)
+    p.srepr = lambda : srepr_datum_bytes (b)
+    p.raw = lambda : raw_datum_bytes (b)
     p.kind = "bytes"
     return p
 
@@ -96,59 +96,40 @@ def reclaim_datum_bytes (src):
     pass
 
 
-def srepr_datum_v (src):      
-    return src.asString ()
+def srepr_datum_b (b):      
+    return byte_string.decode ('utf-8')
 
 
-def raw_datum_bytes (src):      
-    return src.data
+def raw_datum_bytes (b):      
+    return b
 
 
 
 def new_datum_handle (h):
-    p = Datum ()
-    p.data = h
-    p.clone = clone_handle
-    p.reclaim = reclaim_handle
-    p.srepr = srepr_datum_v
-    p.raw = raw_datum_handle
-    p.kind = "handle"
-    return p
-
-def clone_handle (src):      
-    p = Datum ()
-    p = src
-    return p
-
-
-def reclaim_handle (src):      
-    pass
-
-
-def raw_datum_handle (src):      
-    return src
+    return new_datum_int (h)
 
 def new_datum_int (i):      
     p = Datum ()
     p.data = i
-    p.clone = clone_int
-    p.reclaim = reclaim_int
-    p.srepr = srepr_datum_v
-    p.raw = raw_datum_int
+    p.clone = lambda : clone_int (i)
+    p.reclaim = lambda : reclaim_int (i)
+    p.srepr = lambda: srepr_datum_int (i)
+    p.raw = lambda : raw_datum_int (i)
     p.kind = "int"
     return p
 
 
-def clone_int (src):      
+def clone_int (i):      
     p = Datum ()
-    p = src
-    p.data = src.data
+    p = new_datum_int (i)
     return p
 
 
 def reclaim_int (src):      
     pass
 
+def srepr_datum_int (i):
+  return str (i)
 
-def raw_datum_int (src):      
-    return src.data
+def raw_datum_int (i):      
+    return i

@@ -10,7 +10,7 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("", arg, make_cause (main_container, nil) )
+    msg = make_message("", arg, make_cause (main_container, None) )
     main_container.handler(main_container, msg)
 
 
@@ -21,8 +21,8 @@ def components_to_include_in_project (reg):
 def echo_handler (eh, msg):
 	send_string (eh, "", msg.datum.repr (msg.datum), msg)
 
-def echo (name, owner):
-    name_with_id = std.gensym ("Echo")
-    return make_leaf (name_with_id, owner, nil, echo-handler)
+def echo (reg, owner, name, template_data):
+    name_with_id = gensym ("Echo")
+    return make_leaf (name_with_id, owner, None, echo_handler)
 
 main ()

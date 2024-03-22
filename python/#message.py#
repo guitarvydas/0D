@@ -27,12 +27,18 @@ def clone_port (s):
 
 def make_message (port, datum, cause):
     p = clone_string (port)
-    m = Message (port=p, datum=datum.clone (), cause=cause)
+    m = Message (port=p, datum=da)
+    m.port  = p
+    m.datum = datum.clone ()
+    m.cause = cause
     return m
 
 # Clones a message. Primarily used internally for "fanning out" a message to multiple destinations.
 def message_clone (message):
-    m = Message (port=clone_port (port), datum=message.datum.clone (), cause=message.cause)
+    m = Message ()
+    m.port = clone_string (port)
+    m.datum = message.datum.clone ()
+    m.cause = message.cause
     return m
 
 # Frees a message.
