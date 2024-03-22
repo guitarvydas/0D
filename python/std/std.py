@@ -1,14 +1,6 @@
 import sys
 import re
 
-counter = 0
-def gensym (s):      
-    global counter
-    counter += 1
-    name_with_id = f"{s}◦{counter}"
-    return name_with_id
-
-
 def string_constant (str):      
     quoted_name = f"'{str}'"
     return Template (name = quoted_name, instantiator = literal_instantiate)

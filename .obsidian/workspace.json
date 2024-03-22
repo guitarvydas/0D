@@ -161,6 +161,7 @@
   },
   "active": "7fb1d9bc095586b3",
   "lastOpenFiles": [
+    "python/#gensym.py#",
     "python/#container.py#",
     "python/process.py~",
     "python/#datum.py#",
@@ -171,7 +172,6 @@
     "python/#process.py#",
     "python/test/f",
     "python/test/_.py",
-    "python/test/#main.py#",
     "python/play/readjson.md",
     "python/README.md",
     "python/odin/README.md",
