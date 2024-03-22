@@ -1,4 +1,4 @@
-
+das2jsondir=../../das2json/
 0Dsrc = ../
 STD = ../std
 
@@ -17,5 +17,7 @@ STD = ../std
     ${STD}/run.py \
 
 all:
+	./makedas2json.bash ${das2jsondir}
+	${das2jsondir}/das2json simple0d.drawio
 	cat ${0D} ./main.py > _.py
 	python3 _.py "Hello World from 0D" main simple0d.drawio.json
