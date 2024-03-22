@@ -18,8 +18,6 @@ def container_instantiator (reg, owner, container_name, desc):
     for proto_conn in desc ["connections"]:
         source_component = None
         target_component = None
-        source_ok = False
-        target_ok = False
         connector = Connector ()
         if proto_conn ['dir'] == enumDown:
             # JSON: {'dir': 0, 'source': {'name': '', 'id': 0}, 'source_port': '', 'target': {'name': 'Echo', 'id': 12}, 'target_port': ''},
@@ -29,9 +27,8 @@ def container_instantiator (reg, owner, container_name, desc):
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
             else:
-                source_ok = True
-                target_ok = True
                 connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['source_port'], target_component)
+                connectors.append (connector)
         elif proto_conn ["dir"] == enumAcross:
             connector.direction = "across"
             source_component = children_by_id [proto_conn ['source']['id']]
@@ -43,30 +40,23 @@ def container_instantiator (reg, owner, container_name, desc):
                 if target_component == None:
                     load_error (f"internal error: .Across connection target not ok {proto_conn.target}")
                 else:
-                    source_ok = True
-                    target_ok = True
                     connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['target_port'], target_component)
+                    connectors.append (connector)
         elif proto_conn ['dir'] == enumUp:
             connector.direction = "up"
             source_component = children_by_id [proto_conn ['source']['id']]
             if source_component == None:
                 print (f"internal error: .Up connection source not ok {proto_conn ['source']}")
             else:
-                source_ok = True
-                target_ok = True
                 connector.sender = Sender (source_component.name, source_component, proto_conn ['source_port'])
                 connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
+                connectors.append (connector)
         elif proto_conn ['dir'] == enumThrough:
             connector.direction = "through"
             connector.sender = Sender ("", None, proto_conn ['source_port'])
             connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
-            source_ok = True
-            target_ok = True
-            source_component = container
-            target_component = container
-            
-        if source_ok and target_ok:
             connectors.append (connector)
+            
         container.connections = connectors
         return container
 
@@ -195,6 +185,7 @@ def any_child_ready (container):
     for child in container.children:
         if child_is_ready(child):
             return True
+    return False
 
 def child_is_ready (eh):      
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
