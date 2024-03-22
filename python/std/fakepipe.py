@@ -1,6 +1,6 @@
 def fakepipename_instantiate (name, owner):
     instance_name = gensym ("fakepipe")
-    return make_leaf (instance_name, owner, nil, fakepipename_handler)
+    return make_leaf (instance_name, owner, None, fakepipename_handler)
 
 rand = 0
 def fakepipename_handler (eh, msg):

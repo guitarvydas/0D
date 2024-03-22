@@ -1,4 +1,5 @@
 import sys
+import re
 
 counter = 0
 def gensym (s):      
@@ -17,19 +18,19 @@ def string_constant (str):
 
 def probe_instantiate (name, owner):      
     name_with_id = gensym ("?")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probeA_instantiate (name, owner):      
     name_with_id = gensym ("?A")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probeB_instantiate (name, owner):      
     name_with_id = gensym("?B")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probeC_instantiate (name, owner):      
     name_with_id = gensym("?C")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probe_handler (eh, msg):
     s = msg.datum.srepr ()
@@ -38,7 +39,7 @@ def probe_handler (eh, msg):
     
 def trash_instantiate (name, owner):      
     name_with_id = gensym ("trash")
-    return zd.make_leaf (name=name_with_id, ownder=owner, instance_data=nil, handle=trash_handler)
+    return make_leaf (name=name_with_id, ownder=owner, instance_data=None, handle=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
@@ -50,7 +51,7 @@ def literal_instantiate (instance_name, owner):
     quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
     name_with_id = gensym (quoted)
     pstr = string_make_persistent (quoted)
-    return zmake_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
 
 
 def literal_handler (eh, msg):      
@@ -114,7 +115,7 @@ def deracer_handler (eh, msg):
             runtime_error (f"bad msg.port (case C) for deracer {msg.port}")
         
     else:
-        fmt.assertf (false, "bad state for deracer %v\n", eh.state)
+        runtime_error ("bad state for deracer {eh.state}")
     
 
 
@@ -123,7 +124,7 @@ def deracer_handler (eh, msg):
 
 def low_level_read_text_file_instantiate (name, owner):      
     name_with_id = gensym("Low Level Read Text File")
-    return make_leaf (name_with_id, owner, nil, low_level_read_text_file_handler)
+    return make_leaf (name_with_id, owner, None, low_level_read_text_file_handler)
 
 
 def low_level_read_text_file_handler (eh, msg):      
@@ -147,7 +148,7 @@ def low_level_read_text_file_handler (eh, msg):
 ####
 def ensure_string_datum_instantiate (name, owner):      
     name_with_id = gensym("Ensure String Datum")
-    return make_leaf (name_with_id, owner, nil, ensure_string_datum_handler)
+    return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
 
 def ensure_string_datum_handler (eh, msg):      

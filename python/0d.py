@@ -88,7 +88,8 @@ def output_list (eh):
 
 # Utility for printing an array of messages.
 def print_output_list (eh):
-    print (eh.outq)
+    for m in list (eh.outq.queue):
+        print (m)
 
 def set_active (eh):      
     eh.state = "active"

@@ -32,7 +32,7 @@ def make_message (port, datum, cause):
 
 # Clones a message. Primarily used internally for "fanning out" a message to multiple destinations.
 def message_clone (message):
-    m = Message (port=clone_port (port), datum=message.datum.clone (), cause=message.cause)
+    m = Message (port=clone_port (message.port), datum=message.datum.clone (), cause=message.cause)
     return m
 
 # Frees a message.

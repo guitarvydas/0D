@@ -34,9 +34,9 @@ def raw_datum_string (d):
 
 def new_datum_bang ():
     p = Datum ()
-    p.data = true
-    p.clone = lambda : clone_datum_bang (d)
-    p.reclaim = lambda : reclaim_datum_bang (d)
+    p.data = True
+    p.clone = lambda : clone_datum_bang (p)
+    p.reclaim = lambda : reclaim_datum_bang (p)
     p.srepr = lambda : srepr_datum_bang ()
     p.raw = lambda : raw_datum_bang ()    
     p.kind = lambda : "bang"
@@ -96,12 +96,12 @@ def reclaim_datum_bytes (src):
     pass
 
 
-def srepr_datum_b (b):      
-    return byte_string.decode ('utf-8')
+def srepr_datum_bytes (d):
+    return d.data.decode ('utf-8')
 
 
-def raw_datum_bytes (b):      
-    return b
+def raw_datum_bytes (d):
+    return d.data
 
 
 

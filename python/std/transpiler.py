@@ -13,17 +13,17 @@ def ohmjs_instantiate (name, owner):
 def ohmjs_maybe (eh, inst, causingMsg):
     if None != inst.grammarname and None != inst.grammarfilename and None != inst.semanticsfilename and None != inst.s:
         cmd = "0d/python/std/ohmjs.js {inst.grammarname} {inst.grammarfilename} {inst.semanticsfilename}"
-        captured_output = run_command (cmd, inst.s)
+        [captured_output, err] = run_command (cmd, inst.s)
 
         errstring = trimws (err)
         if len (errstring) == 0:
-            zd.send_string (eh, "", strings.trimws (captured_output), causingMsg)
+            send_string (eh, "", trimws (captured_output), causingMsg)
         else:
-            zd.send_string (eh, "✗", errstring, causingMsg)
+            send_string (eh, "✗", errstring, causingMsg)
         inst.grammarName = None
         inst.grammarfilename = None
         inst.semanticsfilename = None
-        self.s = None
+        inst.s = None
 
 def ohmjs_handle (eh, msg):
     inst = eh.instance_data

@@ -21,15 +21,15 @@ def container_instantiator (reg, owner, container_name, desc):
         connector = Connector ()
         if proto_conn ['dir'] == enumDown:
             # JSON: {'dir': 0, 'source': {'name': '', 'id': 0}, 'source_port': '', 'target': {'name': 'Echo', 'id': 12}, 'target_port': ''},
-            connector.directionection = "down"
+            connector.direction = "down"
             connector.sender = Sender ("", None, proto_conn ['source_port'])
             target_component = children_by_id [proto_conn ['target'] ['id']]
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
             else:
                 connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['source_port'], target_component)
-        elif proto_conn ["dir"] == enumAacross:
-            connector.directionection = "across"
+        elif proto_conn ["dir"] == enumAcross:
+            connector.direction = "across"
             source_component = children_by_id [proto_conn ['source']['id']]
             target_component = children_by_id [proto_conn ['target'] ['id']]
             if source_component == None:
@@ -41,7 +41,7 @@ def container_instantiator (reg, owner, container_name, desc):
                 else:
                     connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['target_port'], target_component)
         elif proto_conn ['dir'] == enumUp:
-            connector.directionection = "up"
+            connector.direction = "up"
             source_component = children_by_id [proto_conn ['source']['id']]
             if source_component == None:
                 print (f"internal error: .Up connection source not ok {proto_conn ['source']}")
@@ -49,7 +49,7 @@ def container_instantiator (reg, owner, container_name, desc):
                 connector.sender = Sender (source_component.name, source_component, proto_conn ['source_port'])
                 connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
         elif proto_conn ['dir'] == enumThrough:
-            connector.directionection = "through"
+            connector.direction = "through"
             connector.sender = Sender ("", None, proto_conn ['source_port'])
             connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
             source_component = container
@@ -172,7 +172,7 @@ def route (container, from_component, message):
                 was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
-        print (f"{container.name}: message '{message.port}' from {from_component.name} dropped on floor...")
+        print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
         dump_possible_connections (container)
         print ("***")
     

@@ -37,8 +37,6 @@ def make_component_registry ():
     return Component_Registry ()
 
 def register_component (reg, template):
-    print (template, file=sys.stderr)
-    sys.stderr.flush ()
     name = mangle_name (template.name)
     if name in reg.templates:
         load_error (f"Component {template.name} already declared")

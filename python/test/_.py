@@ -42,9 +42,9 @@ def raw_datum_string (d):
 
 def new_datum_bang ():
     p = Datum ()
-    p.data = true
-    p.clone = lambda : clone_datum_bang (d)
-    p.reclaim = lambda : reclaim_datum_bang (d)
+    p.data = True
+    p.clone = lambda : clone_datum_bang (p)
+    p.reclaim = lambda : reclaim_datum_bang (p)
     p.srepr = lambda : srepr_datum_bang ()
     p.raw = lambda : raw_datum_bang ()    
     p.kind = lambda : "bang"
@@ -104,12 +104,12 @@ def reclaim_datum_bytes (src):
     pass
 
 
-def srepr_datum_b (b):      
-    return byte_string.decode ('utf-8')
+def srepr_datum_bytes (d):
+    return d.data.decode ('utf-8')
 
 
-def raw_datum_bytes (b):      
-    return b
+def raw_datum_bytes (d):
+    return d.data
 
 
 
@@ -175,7 +175,7 @@ def make_message (port, datum, cause):
 
 # Clones a message. Primarily used internally for "fanning out" a message to multiple destinations.
 def message_clone (message):
-    m = Message (port=clone_port (port), datum=message.datum.clone (), cause=message.cause)
+    m = Message (port=clone_port (message.port), datum=message.datum.clone (), cause=message.cause)
     return m
 
 # Frees a message.
@@ -222,7 +222,7 @@ def container_instantiator (reg, owner, container_name, desc):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
             else:
                 connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['source_port'], target_component)
-        elif proto_conn ["dir"] == enumAacross:
+        elif proto_conn ["dir"] == enumAcross:
             connector.directionection = "across"
             source_component = children_by_id [proto_conn ['source']['id']]
             target_component = children_by_id [proto_conn ['target'] ['id']]
@@ -366,7 +366,7 @@ def route (container, from_component, message):
                 was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
-        print (f"{container.name}: message '{message.port}' from {from_component.name} dropped on floor...")
+        print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
         dump_possible_connections (container)
         print ("***")
     
@@ -423,8 +423,6 @@ def make_component_registry ():
     return Component_Registry ()
 
 def register_component (reg, template):
-    print (template, file=sys.stderr)
-    sys.stderr.flush ()
     name = mangle_name (template.name)
     if name in reg.templates:
         load_error (f"Component {template.name} already declared")
@@ -471,8 +469,10 @@ def mangle_name (s):
     # trim name to remove code from Container component names - deferred until later (or never)
     return s
 
-def collect_process_leaves (reg, diagram_sourc):
+def collect_process_leaves (reg, diagram_source):
     print ("NIY in alpha bootstrap: collect_process_leaves")
+def run_command (cmd, s):
+    print ("NIY in alpha bootstrap: run_command")
 # Data for an asyncronous component - effectively, a function with input
 # and output queues of messages.
 #
@@ -563,7 +563,8 @@ def output_list (eh):
 
 # Utility for printing an array of messages.
 def print_output_list (eh):
-    print (eh.outq)
+    for m in list (eh.outq.queue):
+        print (m)
 
 def set_active (eh):      
     eh.state = "active"
@@ -591,6 +592,7 @@ def memo_accept (eh, msg):
     # PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
     eh.accepted.put (msg)
 import sys
+import re
 
 counter = 0
 def gensym (s):      
@@ -609,19 +611,19 @@ def string_constant (str):
 
 def probe_instantiate (name, owner):      
     name_with_id = gensym ("?")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probeA_instantiate (name, owner):      
     name_with_id = gensym ("?A")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probeB_instantiate (name, owner):      
     name_with_id = gensym("?B")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probeC_instantiate (name, owner):      
     name_with_id = gensym("?C")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=nil, handler=probe_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
 def probe_handler (eh, msg):
     s = msg.datum.srepr ()
@@ -630,7 +632,7 @@ def probe_handler (eh, msg):
     
 def trash_instantiate (name, owner):      
     name_with_id = gensym ("trash")
-    return zd.make_leaf (name=name_with_id, ownder=owner, instance_data=nil, handle=trash_handler)
+    return make_leaf (name=name_with_id, ownder=owner, instance_data=None, handle=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
@@ -642,7 +644,7 @@ def literal_instantiate (instance_name, owner):
     quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
     name_with_id = gensym (quoted)
     pstr = string_make_persistent (quoted)
-    return zmake_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
 
 
 def literal_handler (eh, msg):      
@@ -706,7 +708,7 @@ def deracer_handler (eh, msg):
             runtime_error (f"bad msg.port (case C) for deracer {msg.port}")
         
     else:
-        fmt.assertf (false, "bad state for deracer %v\n", eh.state)
+        runtime_error ("bad state for deracer {eh.state}")
     
 
 
@@ -715,7 +717,7 @@ def deracer_handler (eh, msg):
 
 def low_level_read_text_file_instantiate (name, owner):      
     name_with_id = gensym("Low Level Read Text File")
-    return make_leaf (name_with_id, owner, nil, low_level_read_text_file_handler)
+    return make_leaf (name_with_id, owner, None, low_level_read_text_file_handler)
 
 
 def low_level_read_text_file_handler (eh, msg):      
@@ -739,7 +741,7 @@ def low_level_read_text_file_handler (eh, msg):
 ####
 def ensure_string_datum_instantiate (name, owner):      
     name_with_id = gensym("Ensure String Datum")
-    return make_leaf (name_with_id, owner, nil, ensure_string_datum_handler)
+    return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
 
 def ensure_string_datum_handler (eh, msg):      
@@ -859,7 +861,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
 def print_error_maybe (main_container):
     error_port = "✗"
     err = fetch_first_output (main_container, error_port)
-    if found and (0 < len (trimws (err))):
+    if (err != None) and (0 < len (trimws (err))):
         print ("--- !!! ERRORS !!! ---")
         print_specific_output (main_container, error_port, False)
 
@@ -908,7 +910,7 @@ def runtime_error (s):
     
 def fakepipename_instantiate (name, owner):
     instance_name = gensym ("fakepipe")
-    return make_leaf (instance_name, owner, nil, fakepipename_handler)
+    return make_leaf (instance_name, owner, None, fakepipename_handler)
 
 rand = 0
 def fakepipename_handler (eh, msg):
@@ -931,17 +933,17 @@ def ohmjs_instantiate (name, owner):
 def ohmjs_maybe (eh, inst, causingMsg):
     if None != inst.grammarname and None != inst.grammarfilename and None != inst.semanticsfilename and None != inst.s:
         cmd = "0d/python/std/ohmjs.js {inst.grammarname} {inst.grammarfilename} {inst.semanticsfilename}"
-        captured_output = run_command (cmd, inst.s)
+        [captured_output, err] = run_command (cmd, inst.s)
 
         errstring = trimws (err)
         if len (errstring) == 0:
-            zd.send_string (eh, "", strings.trimws (captured_output), causingMsg)
+            send_string (eh, "", trimws (captured_output), causingMsg)
         else:
-            zd.send_string (eh, "✗", errstring, causingMsg)
+            send_string (eh, "✗", errstring, causingMsg)
         inst.grammarName = None
         inst.grammarfilename = None
         inst.semanticsfilename = None
-        self.s = None
+        inst.s = None
 
 def ohmjs_handle (eh, msg):
     inst = eh.instance_data
@@ -995,7 +997,7 @@ def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     if not load_errors:
         injectfn (arg, main_container)
     print_error_maybe (main_container)
-    print_output (main_container)
+    dump_outputs (main_container)
 
 def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     # get entrypoint container
@@ -1022,7 +1024,7 @@ def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, i
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
-    dump_hierarchy (main_controller)
+    dump_hierarchy (main_container)
     if not load_errors:
         injectfn (arg, main_container)
     dump_outputs (main_container)
