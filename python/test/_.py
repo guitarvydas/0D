@@ -282,7 +282,7 @@ def container_instantiator (reg, owner, container_name, desc):
 # The default handler for container components.
 def container_handler (eh,message):      
     route (eh, None, message)
-    if any_child_ready (eh):
+    while any_child_ready (eh):
         step_children (eh, message)
 
 # Frees the given container and associated data.

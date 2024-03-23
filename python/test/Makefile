@@ -16,7 +16,7 @@ STD = ../std
     ${STD}/stock.py \
     ${STD}/run.py \
 
-dev: jsons
+dev:
 	cat ${0D} ./main.py > _.py
 	python3 _.py "pt was here" main simple0d2.drawio.json
 
