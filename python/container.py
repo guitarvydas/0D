@@ -131,13 +131,14 @@ def step_children (container, causingMessage):
         if (child != None): 
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
+                memo_accept (container, msg)
+                child.handler(child, msg)
+                destroy_message(msg)
             else:
                 if (child.state != "idle"):
                     msg = force_tick (container, child, causingMessage)
-                    memo_accept (container, msg)
-            
-            child.handler(child, msg)
-            destroy_message(msg)
+                    child.handler(child, msg)
+                    destroy_message(msg)
             
             if (child.state == "active"):
                 # if child remains active, then the container must remain active and must propagate "ticks" to child

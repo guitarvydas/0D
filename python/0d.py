@@ -89,7 +89,7 @@ def output_list (eh):
 # Utility for printing an array of messages.
 def print_output_list (eh):
     for m in list (eh.outq.queue):
-        print (f"⟪{m.port}≣{m.datum.srepr ()}⟫")
+        print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
 
 def set_active (eh):      
     eh.state = "active"

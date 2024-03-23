@@ -349,13 +349,14 @@ def step_children (container, causingMessage):
         if (child != None): 
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
+                memo_accept (container, msg)
+                child.handler(child, msg)
+                destroy_message(msg)
             else:
                 if (child.state != "idle"):
                     msg = force_tick (container, child, causingMessage)
-                    memo_accept (container, msg)
-            
-            child.handler(child, msg)
-            destroy_message(msg)
+                    child.handler(child, msg)
+                    destroy_message(msg)
             
             if (child.state == "active"):
                 # if child remains active, then the container must remain active and must propagate "ticks" to child
@@ -503,14 +504,15 @@ def generate_shell_components (reg, container_list):
     #     {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
     #     {'file': 'simple0d.drawio', 'name': '...', 'children': [], 'connections': []}
     # ]
-    for diagram in container_list:
-        # loop through every component in the diagram and look for names that start with "$"
-        # {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
-        for child_descriptor in diagram ['children']:
-            if first_char_is (child_descriptor ["name"], "$"):
-                name_without_dollar = component_map ["name"] [1:]
-                generated_leaf = Template (name=name_without_dollar, instantiator=shell_out_instantiate)
-                register_component (reg, generated_leaf)
+    if None != container_list:
+        for diagram in container_list:
+            # loop through every component in the diagram and look for names that start with "$"
+            # {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
+            for child_descriptor in diagram ['children']:
+                if first_char_is (child_descriptor ["name"], "$"):
+                    name_without_dollar = component_map ["name"] [1:]
+                    generated_leaf = Template (name=name_without_dollar, instantiator=shell_out_instantiate)
+                    register_component (reg, generated_leaf)
 
 def run_command (cmd, s):
     print (f"NIY in alpha bootstrap: run_command({cmd},{s})")
@@ -612,7 +614,7 @@ def output_list (eh):
 # Utility for printing an array of messages.
 def print_output_list (eh):
     for m in list (eh.outq.queue):
-        print (f"⟪{m.port}≣{m.datum.srepr ()}⟫")
+        print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
 
 def set_active (eh):      
     eh.state = "active"
