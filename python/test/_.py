@@ -649,19 +649,19 @@ def string_constant (str):
 
 ####
 
-def probe_instantiate (name, owner):      
+def probe_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("?")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
-def probeA_instantiate (name, owner):      
+def probeA_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("?A")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
-def probeB_instantiate (name, owner):      
+def probeB_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("?B")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
-def probeC_instantiate (name, owner):      
+def probeC_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("?C")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
@@ -670,9 +670,9 @@ def probe_handler (eh, msg):
     print (f"... probe {eh.name}: {s}", file=sys.stderr)
 
     
-def trash_instantiate (name, owner):      
+def trash_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("trash")
-    return make_leaf (name=name_with_id, ownder=owner, instance_data=None, handle=trash_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handle=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
@@ -706,7 +706,7 @@ class Deracer_Instance_Data:
 def reclaim_Buffers_from_heap (inst):      
     pass
 
-def deracer_instantiate (name, owner):      
+def deracer_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("deracer")
     inst = Deracer_Instance_Data ()
     inst.state = "idle"
@@ -755,7 +755,7 @@ def deracer_handler (eh, msg):
 
 ####
 
-def low_level_read_text_file_instantiate (name, owner):      
+def low_level_read_text_file_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("Low Level Read Text File")
     return make_leaf (name_with_id, owner, None, low_level_read_text_file_handler)
 
@@ -779,7 +779,7 @@ def low_level_read_text_file_handler (eh, msg):
 
 
 ####
-def ensure_string_datum_instantiate (name, owner):      
+def ensure_string_datum_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("Ensure String Datum")
     return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
@@ -801,7 +801,7 @@ class Syncfilewrite_Data:
 
 # temp copy for bootstrap, sends "done" (error during bootstrap if not wired)
 
-def syncfilewrite_instantiate (name, owner):      
+def syncfilewrite_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("syncfilewrite")
     inst = Syncfilewrite_Data ()
     return make_leaf (name_with_id, owner, inst, syncfilewrite_handler)
@@ -828,7 +828,7 @@ class StringConcat_Instance_Data:
         buffer2 = None
         count = 0
 
-def stringconcat_instantiate (name, owner):      
+def stringconcat_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("stringconcat")
     instp = StringConcat_Instance_Data ()
     return make_leaf (name_with_id, owner, instp, stringconcat_handler)
@@ -868,7 +868,7 @@ def maybe_stringconcat (eh, inst, msg):
 
 ####
 
-def shell_out_instantate (name, owner):
+def shell_out_instantate (reg, owner, name, template_data):
     print (f"shell_out niy, $ {name} ignored")
 
 ####

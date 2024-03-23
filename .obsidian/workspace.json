@@ -163,6 +163,8 @@
   "lastOpenFiles": [
     "das2json/das2json",
     "das2json/das2json.o",
+    "python/test/transpile.drawio.json",
+    "python/test/transpile.drawio",
     "python/test/helloworld0d.drawio",
     "python/test/helloworld0d.drawio.json",
     "python/#process.py#",
@@ -170,8 +172,6 @@
     "python/test/makedas2json.bash~",
     "python/test/makedas2json.bash",
     "python/test/simple0d.drawio",
-    "python/#gensym.py#",
-    "python/#container.py#",
     "python/play/readjson.md",
     "python/README.md",
     "python/odin/README.md",
