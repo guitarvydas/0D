@@ -44,6 +44,19 @@
                 "target_port": ""
             },
             {
+                "dir": 1,
+                "source": {
+                    "name": "$ ps",
+                    "id": 9
+                },
+                "source_port": "",
+                "target": {
+                    "name": "$ wc -l",
+                    "id": 15
+                },
+                "target_port": ""
+            },
+            {
                 "dir": 2,
                 "source": {
                     "name": "$ wc -l",
