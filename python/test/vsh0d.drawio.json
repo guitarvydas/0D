@@ -1,0 +1,136 @@
+[
+    {
+        "file": "vsh0d.drawio",
+        "name": "main",
+        "children": [
+            {
+                "name": "$ ps",
+                "id": 9
+            },
+            {
+                "name": "$ grep -v sh",
+                "id": 11
+            },
+            {
+                "name": "$ wc -l",
+                "id": 15
+            }
+        ],
+        "connections": [
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "",
+                "target": {
+                    "name": "$ ps",
+                    "id": 9
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 1,
+                "source": {
+                    "name": "$ ps",
+                    "id": 9
+                },
+                "source_port": "",
+                "target": {
+                    "name": "$ grep -v sh",
+                    "id": 11
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ wc -l",
+                    "id": 15
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "processes"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ grep -v sh",
+                    "id": 11
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "ps"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ ps",
+                    "id": 9
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ wc -l",
+                    "id": 15
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ grep -v sh",
+                    "id": 11
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ ps",
+                    "id": 9
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            }
+        ]
+    },
+    {
+        "file": "vsh0d.drawio",
+        "name": "...",
+        "children": [
+
+        ],
+        "connections": [
+
+        ]
+    }
+]
