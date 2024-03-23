@@ -5,15 +5,15 @@
         "children": [
             {
                 "name": "$ ps",
-                "id": 9
+                "id": 8
             },
             {
                 "name": "$ grep -v sh",
-                "id": 11
+                "id": 10
             },
             {
                 "name": "$ wc -l",
-                "id": 15
+                "id": 14
             }
         ],
         "connections": [
@@ -26,7 +26,7 @@
                 "source_port": "",
                 "target": {
                     "name": "$ ps",
-                    "id": 9
+                    "id": 8
                 },
                 "target_port": ""
             },
@@ -34,12 +34,12 @@
                 "dir": 1,
                 "source": {
                     "name": "$ ps",
-                    "id": 9
+                    "id": 8
                 },
                 "source_port": "",
                 "target": {
                     "name": "$ grep -v sh",
-                    "id": 11
+                    "id": 10
                 },
                 "target_port": ""
             },
@@ -47,33 +47,72 @@
                 "dir": 1,
                 "source": {
                     "name": "$ ps",
-                    "id": 9
+                    "id": 8
                 },
                 "source_port": "",
                 "target": {
                     "name": "$ wc -l",
-                    "id": 15
+                    "id": 14
                 },
                 "target_port": ""
             },
             {
                 "dir": 2,
                 "source": {
-                    "name": "$ wc -l",
-                    "id": 15
+                    "name": "$ grep -v sh",
+                    "id": 10
                 },
                 "source_port": "",
                 "target": {
                     "name": "",
                     "id": 0
                 },
-                "target_port": "processes"
+                "target_port": "grep"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ wc -l",
+                    "id": 14
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
             },
             {
                 "dir": 2,
                 "source": {
                     "name": "$ grep -v sh",
-                    "id": 11
+                    "id": 10
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ ps",
+                    "id": 8
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ ps",
+                    "id": 8
                 },
                 "source_port": "",
                 "target": {
@@ -85,54 +124,15 @@
             {
                 "dir": 2,
                 "source": {
-                    "name": "$ ps",
-                    "id": 9
+                    "name": "$ wc -l",
+                    "id": 14
                 },
                 "source_port": "",
                 "target": {
                     "name": "",
                     "id": 0
                 },
-                "target_port": ""
-            },
-            {
-                "dir": 2,
-                "source": {
-                    "name": "$ wc -l",
-                    "id": 15
-                },
-                "source_port": "\u2717",
-                "target": {
-                    "name": "",
-                    "id": 0
-                },
-                "target_port": "\u2717"
-            },
-            {
-                "dir": 2,
-                "source": {
-                    "name": "$ grep -v sh",
-                    "id": 11
-                },
-                "source_port": "\u2717",
-                "target": {
-                    "name": "",
-                    "id": 0
-                },
-                "target_port": "\u2717"
-            },
-            {
-                "dir": 2,
-                "source": {
-                    "name": "$ ps",
-                    "id": 9
-                },
-                "source_port": "\u2717",
-                "target": {
-                    "name": "",
-                    "id": 0
-                },
-                "target_port": "\u2717"
+                "target_port": "wc"
             }
         ]
     },
