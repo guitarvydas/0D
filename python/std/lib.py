@@ -15,8 +15,8 @@ def parse_command_line_args ():
 def initialize_component_palette (diagram_source_files, project_specific_components_subroutine):
     reg = make_component_registry ()
     for diagram_source in diagram_source_files:
-        collect_process_leaves (reg, diagram_source)
         all_containers_within_single_file = json2internal (diagram_source)
+        generate_shell_components (reg, all_containers_within_single_file)
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)

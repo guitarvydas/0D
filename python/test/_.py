@@ -282,7 +282,7 @@ def container_instantiator (reg, owner, container_name, desc):
 # The default handler for container components.
 def container_handler (eh,message):      
     route (eh, None, message)
-    if any_child_ready (eh):
+    while any_child_ready (eh):
         step_children (eh, message)
 
 # Frees the given container and associated data.
@@ -349,13 +349,14 @@ def step_children (container, causingMessage):
         if (child != None): 
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
+                memo_accept (container, msg)
+                child.handler(child, msg)
+                destroy_message(msg)
             else:
                 if (child.state != "idle"):
                     msg = force_tick (container, child, causingMessage)
-                    memo_accept (container, msg)
-            
-            child.handler(child, msg)
-            destroy_message(msg)
+                    child.handler(child, msg)
+                    destroy_message(msg)
             
             if (child.state == "active"):
                 # if child remains active, then the container must remain active and must propagate "ticks" to child
@@ -498,10 +499,30 @@ def mangle_name (s):
     # trim name to remove code from Container component names - deferred until later (or never)
     return s
 
-def collect_process_leaves (reg, diagram_source):
-    print ("NIY in alpha bootstrap: collect_process_leaves")
+def generate_shell_components (reg, container_list):
+    # [
+    #     {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
+    #     {'file': 'simple0d.drawio', 'name': '...', 'children': [], 'connections': []}
+    # ]
+    if None != container_list:
+        for diagram in container_list:
+            # loop through every component in the diagram and look for names that start with "$"
+            # {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
+            for child_descriptor in diagram ['children']:
+                if first_char_is (child_descriptor ["name"], "$"):
+                    name_without_dollar = component_map ["name"] [1:]
+                    generated_leaf = Template (name=name_without_dollar, instantiator=shell_out_instantiate)
+                    register_component (reg, generated_leaf)
+
 def run_command (cmd, s):
-    print ("NIY in alpha bootstrap: run_command")
+    print (f"NIY in alpha bootstrap: run_command({cmd},{s})")
+
+def first_char (s):
+    return s[0]
+
+def first_char_is (s, c):
+    return c == first_char (s)
+    
 # Data for an asyncronous component - effectively, a function with input
 # and output queues of messages.
 #
@@ -593,7 +614,7 @@ def output_list (eh):
 # Utility for printing an array of messages.
 def print_output_list (eh):
     for m in list (eh.outq.queue):
-        print (f"⟪{m.port}≣{m.datum.srepr ()}⟫")
+        print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
 
 def set_active (eh):      
     eh.state = "active"
@@ -630,19 +651,19 @@ def string_constant (str):
 
 ####
 
-def probe_instantiate (name, owner):      
+def probe_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("?")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
-def probeA_instantiate (name, owner):      
+def probeA_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("?A")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
-def probeB_instantiate (name, owner):      
+def probeB_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("?B")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
-def probeC_instantiate (name, owner):      
+def probeC_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("?C")
     return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=probe_handler)
 
@@ -651,9 +672,9 @@ def probe_handler (eh, msg):
     print (f"... probe {eh.name}: {s}", file=sys.stderr)
 
     
-def trash_instantiate (name, owner):      
+def trash_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("trash")
-    return make_leaf (name=name_with_id, ownder=owner, instance_data=None, handle=trash_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handle=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
@@ -687,7 +708,7 @@ class Deracer_Instance_Data:
 def reclaim_Buffers_from_heap (inst):      
     pass
 
-def deracer_instantiate (name, owner):      
+def deracer_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("deracer")
     inst = Deracer_Instance_Data ()
     inst.state = "idle"
@@ -736,7 +757,7 @@ def deracer_handler (eh, msg):
 
 ####
 
-def low_level_read_text_file_instantiate (name, owner):      
+def low_level_read_text_file_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("Low Level Read Text File")
     return make_leaf (name_with_id, owner, None, low_level_read_text_file_handler)
 
@@ -760,7 +781,7 @@ def low_level_read_text_file_handler (eh, msg):
 
 
 ####
-def ensure_string_datum_instantiate (name, owner):      
+def ensure_string_datum_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym("Ensure String Datum")
     return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
@@ -782,7 +803,7 @@ class Syncfilewrite_Data:
 
 # temp copy for bootstrap, sends "done" (error during bootstrap if not wired)
 
-def syncfilewrite_instantiate (name, owner):      
+def syncfilewrite_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("syncfilewrite")
     inst = Syncfilewrite_Data ()
     return make_leaf (name_with_id, owner, inst, syncfilewrite_handler)
@@ -809,7 +830,7 @@ class StringConcat_Instance_Data:
         buffer2 = None
         count = 0
 
-def stringconcat_instantiate (name, owner):      
+def stringconcat_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("stringconcat")
     instp = StringConcat_Instance_Data ()
     return make_leaf (name_with_id, owner, instp, stringconcat_handler)
@@ -847,7 +868,12 @@ def maybe_stringconcat (eh, inst, msg):
         inst.buffer2 = None
         inst.count = 0
 
+####
 
+def shell_out_instantate (reg, owner, name, template_data):
+    print (f"shell_out niy, $ {name} ignored")
+
+####
 
 def string_make_persistent (s):
     return s
@@ -870,8 +896,8 @@ def parse_command_line_args ():
 def initialize_component_palette (diagram_source_files, project_specific_components_subroutine):
     reg = make_component_registry ()
     for diagram_source in diagram_source_files:
-        collect_process_leaves (reg, diagram_source)
         all_containers_within_single_file = json2internal (diagram_source)
+        generate_shell_components (reg, all_containers_within_single_file)
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
