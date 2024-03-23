@@ -1,5 +1,6 @@
 import sys
 import re
+import subprocess
 
 def string_constant (str):      
     quoted_name = f"'{str}'"
@@ -193,7 +194,7 @@ def stringconcat_instantiate (reg, owner, name, template_data):
     return make_leaf (name_with_id, owner, instp, stringconcat_handler)
 
 
-def stringconcat_handler (eh, msg):      
+def stringconcat_handler (eh, msg):
     inst = eh.instance_data
     if "1" == msg.port:
         inst.buffer1 = clone_string (msg.datum.srepr ())
@@ -227,8 +228,22 @@ def maybe_stringconcat (eh, inst, msg):
 
 ####
 
-def shell_out_instantate (reg, owner, name, template_data):
-    print (f"shell_out niy, $ {name} ignored")
+def shell_out_instantiate (reg, owner, name, template_data):
+    name_with_id = gensym ("shell_out")
+    cmd = template_data.split ()
+    return make_leaf (name_with_id, owner, cmd, shell_out_handler)
+
+def shell_out_handler (eh, msg):
+    cmd = eh.instance_data
+    s = msg.datum.srepr ()
+    ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
+    if not (ret.returncode == 0):
+        if ret.stderr != None:
+            send_string (eh, "✗", ret.stderr, msg)
+        else:
+            send_string (eh, "✗", "error in shell_out {ret.returncode}", msg)
+    else:
+        send_string (eh, "", ret.stdout, msg)
 
 ####
 

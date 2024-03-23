@@ -161,6 +161,8 @@
   },
   "active": "7fb1d9bc095586b3",
   "lastOpenFiles": [
+    "python/test/vsh0d.drawio.json",
+    "python/test/vsh0d.drawio",
     "das2json/das2json",
     "das2json/das2json.o",
     "python/#container.py#",
@@ -170,8 +172,6 @@
     "python/test/transpile.drawio.json",
     "python/test/transpile.drawio",
     "python/test/helloworld0d.drawio",
-    "python/test/helloworld0d.drawio.json",
-    "python/#process.py#",
     "python/play/readjson.md",
     "python/README.md",
     "python/odin/README.md",
