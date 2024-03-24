@@ -49,19 +49,23 @@ def register_multiple_components (reg, templates):
 
 def get_component_instance (reg, full_name, owner):
     template_name = mangle_name (full_name)
-    template = reg.templates[template_name]
-    if (template == None):
-        load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
-        return None
-    else:
-        owner_name = ""
-        instance_name = f"{template_name}"
-        if None != owner:
-            owner_name = owner.name
+    if template_name in reg.templates:
+        template = reg.templates[template_name]
+        if (template == None):
+            load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
+            return None
+        else:
+            owner_name = ""
+            instance_name = f"{template_name}"
+            if None != owner:
+                owner_name = owner.name
             instance_name = f"{owner_name}.{template_name}"
-        instance = template.instantiator (reg, owner, instance_name, template.template_data)
-        instance.depth = calculate_depth (instance)
-        return instance
+            instance = template.instantiator (reg, owner, instance_name, template.template_data)
+            instance.depth = calculate_depth (instance)
+            return instance
+    else:
+            load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
+            return None
 
 def calculate_depth (eh):
     if eh.owner == None:

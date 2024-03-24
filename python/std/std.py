@@ -247,6 +247,17 @@ def shell_out_handler (eh, msg):
 
 ####
 
+def string_constant_instantiate (reg, owner, name, template_data):
+    name_with_id = gensym ("shell_out")
+    cmd = template_data.split ()
+    return make_leaf (name_with_id, owner, cmd, string_constant_handler)
+
+def string_constant_handler (eh, msg):
+    s = eh.instance_data
+    send_string (eh, "", s, msg)
+
+####
+
 def string_make_persistent (s):
     return s
 def string_clone (s):

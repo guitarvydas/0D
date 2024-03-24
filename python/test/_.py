@@ -464,19 +464,23 @@ def register_multiple_components (reg, templates):
 
 def get_component_instance (reg, full_name, owner):
     template_name = mangle_name (full_name)
-    template = reg.templates[template_name]
-    if (template == None):
-        load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
-        return None
-    else:
-        owner_name = ""
-        instance_name = f"{template_name}"
-        if None != owner:
-            owner_name = owner.name
+    if template_name in reg.templates:
+        template = reg.templates[template_name]
+        if (template == None):
+            load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
+            return None
+        else:
+            owner_name = ""
+            instance_name = f"{template_name}"
+            if None != owner:
+                owner_name = owner.name
             instance_name = f"{owner_name}.{template_name}"
-        instance = template.instantiator (reg, owner, instance_name, template.template_data)
-        instance.depth = calculate_depth (instance)
-        return instance
+            instance = template.instantiator (reg, owner, instance_name, template.template_data)
+            instance.depth = calculate_depth (instance)
+            return instance
+    else:
+            load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
+            return None
 
 def calculate_depth (eh):
     if eh.owner == None:
@@ -514,9 +518,11 @@ def generate_shell_components (reg, container_list):
                     cmd = name [1:].strip ()
                     generated_leaf = Template (name=name, instantiator=shell_out_instantiate, template_data=cmd)
                     register_component (reg, generated_leaf)
-
-def run_command (cmd, s):
-    print (f"NIY in alpha bootstrap: run_command({cmd},{s})")
+                elif first_char_is (child_descriptor ["name"], "'"):
+                    name = child_descriptor ["name"]
+                    s = name [1:]
+                    generated_leaf = Template (name=name, instantiator=string_constant_instantiate, template_data=s)
+                    register_component (reg, generated_leaf)
 
 def first_char (s):
     return s[0]
@@ -891,6 +897,17 @@ def shell_out_handler (eh, msg):
 
 ####
 
+def string_constant_instantiate (reg, owner, name, template_data):
+    name_with_id = gensym ("shell_out")
+    cmd = template_data.split ()
+    return make_leaf (name_with_id, owner, cmd, string_constant_handler)
+
+def string_constant_handler (eh, msg):
+    s = eh.instance_data
+    send_string (eh, "", s, msg)
+
+####
+
 def string_make_persistent (s):
     return s
 def string_clone (s):
@@ -1047,10 +1064,10 @@ def initialize_stock_components (reg):
     # for fakepipe
     register_component (reg, Template ( name = "fakepipename", instantiator = fakepipename_instantiate))
     # for transpiler (ohmjs)
-    register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
-    register_component (reg, string_constant ("RWR"))
-    register_component (reg, string_constant ("0d/odin/std/rwr.ohm"))
-    register_component (reg, string_constant ("0d/odin/std/rwr.sem.js"))
+    # register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
+    # register_component (reg, string_constant ("RWR"))
+    # register_component (reg, string_constant ("0d/python/std/rwr.ohm"))
+    # register_component (reg, string_constant ("0d/python/std/rwr.sem.js"))
 # run prints only the output on port "output", whereas run_demo prints all outputs
 def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     # get entrypoint container

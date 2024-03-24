@@ -16,24 +16,30 @@ STD = ../std
     ${STD}/stock.py \
     ${STD}/run.py \
 
-all : dev3
+all : dev4
 
 main: jsons
 	cat ${0D} ./main.py > _.py
 	python3 _.py "0D was here" main helloworld0d.drawio.json transpile.drawio.json
 
-jsons: simple0d.drawio simple0d2.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio
+jsons: simple0d.drawio simple0d2.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio arith0d.drawio
 	${das2jsondir}/das2json simple0d.drawio
 	${das2jsondir}/das2json simple0d2.drawio
 	${das2jsondir}/das2json helloworld0d.drawio
 	${das2jsondir}/das2json transpile.drawio
 	${das2jsondir}/das2json vsh0d.drawio
+	${das2jsondir}/das2json arith0d.drawio
+	${das2jsondir}/das2json ../std/transpile.drawio
 
 install:
 	./makedas2json.bash ${das2jsondir}
 
 
 # dev helpers
+
+dev4: jsons
+	cat ${0D} ./main.py > _.py
+	python3 _.py "pt was here" main arith0d.drawio.json transpile.drawio.json
 
 dev3: jsons
 	cat ${0D} ./main.py > _.py

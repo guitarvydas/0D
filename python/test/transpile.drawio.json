@@ -1,6 +1,6 @@
 [
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "Transpile",
         "children": [
             {
@@ -343,7 +343,7 @@
         ]
     },
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "Ohm (using file names)",
         "children": [
             {
@@ -489,7 +489,7 @@
         ]
     },
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "All Before 4",
         "children": [
             {
@@ -639,7 +639,7 @@
         ]
     },
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "Read Text File",
         "children": [
             {
@@ -720,7 +720,7 @@
         ]
     },
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "Ohm",
         "children": [
             {
@@ -926,7 +926,7 @@
         ]
     },
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "fake pipe",
         "children": [
             {
@@ -1084,7 +1084,7 @@
         ]
     },
     {
-        "file": "transpile.drawio",
+        "file": "../std/transpile.drawio",
         "name": "String Concatenate",
         "children": [
             {
