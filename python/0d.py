@@ -91,6 +91,22 @@ def print_output_list (eh):
     for m in list (eh.outq.queue):
         print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
 
+def print_output_trace_list (eh):
+    for m in list (eh.outq.queue):
+        print (message_tracer (eh, m))
+
+def message_tracer (sender, m):
+    if m == None:
+        return "<>"
+    elif m.cause == None:
+        return "no cause!"
+    elif m.cause.message == None:
+        return "<top>"
+    else:
+        cause = m.cause
+        trace = message_tracer (cause.who, cause.message)
+        return f'{trace}\n{sender.depth}: "message ⟪{m.port}₋«{m.datum.srepr ()}»⟫ sent by {sender.name} caused by input message ⟪{m.cause.message.port}₋«...»⟫{m.cause.message.port}" from {m.cause.who.name}'
+
 def set_active (eh):      
     eh.state = "active"
 

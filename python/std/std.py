@@ -32,7 +32,7 @@ def probe_handler (eh, msg):
     
 def trash_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("trash")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handle=trash_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
@@ -44,7 +44,7 @@ def literal_instantiate (instance_name, owner):
     quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
     name_with_id = gensym (quoted)
     pstr = string_make_persistent (quoted)
-    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handler=literal_handler)
 
 
 def literal_handler (eh, msg):      
@@ -122,7 +122,10 @@ def low_level_read_text_file_instantiate (reg, owner, name, template_data):
 
 def low_level_read_text_file_handler (eh, msg):      
     fname = msg.datum.srepr ()
-    f = open (fname)
+    try:
+        f = open (fname)
+    except Exception as e:
+        f = None
     if f != None:
         data = f.read ()
         if data!= None:
@@ -132,7 +135,7 @@ def low_level_read_text_file_handler (eh, msg):
             send_string (eh, "✗", emsg, msg)
         f.close ()
     else:
-        emsg = f"open error on file {f}"
+        emsg = f"open error on file {fname}"
         send_string (eh, "✗", emsg, msg)
     
 
@@ -144,8 +147,8 @@ def ensure_string_datum_instantiate (reg, owner, name, template_data):
     return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
 
-def ensure_string_datum_handler (eh, msg):      
-    if isinstance (msg.datum, str):
+def ensure_string_datum_handler (eh, msg):
+    if "string" == msg.datum.kind ():
         forward (eh, "", msg)
     else:
         emsg = f"*** ensure: type error (expected a string datum) but got {msg.datum}"

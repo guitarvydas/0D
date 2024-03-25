@@ -5,7 +5,7 @@ class OhmJS_Instance_Data:
         self.semanticsfilename = None
         self.s = None
 
-def ohmjs_instantiate (name, owner):
+def ohmjs_instantiate (reg, owner, name, template_data):
     instance_name = gensym ("OhmJS")
     inst = OhmJS_Instance_Data () # all fields have zero value before any messages are received
     return make_leaf (instance_name, owner, inst, ohmjs_handle)

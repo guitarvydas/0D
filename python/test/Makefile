@@ -39,7 +39,7 @@ install:
 
 dev4: jsons
 	cat ${0D} ./main.py > _.py
-	python3 _.py "pt was here" main arith0d.drawio.json transpile.drawio.json
+	python3 _.py ex1.math main arith0d.drawio.json transpile.drawio.json
 
 dev3: jsons
 	cat ${0D} ./main.py > _.py

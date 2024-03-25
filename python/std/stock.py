@@ -17,7 +17,7 @@ def initialize_stock_components (reg):
     # for fakepipe
     register_component (reg, Template ( name = "fakepipename", instantiator = fakepipename_instantiate))
     # for transpiler (ohmjs)
-    # register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
+    register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
     # register_component (reg, string_constant ("RWR"))
     # register_component (reg, string_constant ("0d/python/std/rwr.ohm"))
     # register_component (reg, string_constant ("0d/python/std/rwr.sem.js"))

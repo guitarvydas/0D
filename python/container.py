@@ -177,11 +177,12 @@ def route (container, from_component, message):
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
+        message_tracer (message)
         dump_possible_connections (container)
         print ("***")
-    
+
 def dump_possible_connections (container):      
-    print ("*** possible connections:")
+    print (f"*** possible connections for {container.name}:")
     for connector in container.connections:
         print (f"{connector.direction} ❲{connector.sender.name}❳.❲{connector.sender.port}❳ -> ❲{connector.receiver.name}❳")
 

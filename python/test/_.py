@@ -395,11 +395,12 @@ def route (container, from_component, message):
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
+        message_tracer (message)
         dump_possible_connections (container)
         print ("***")
-    
+
 def dump_possible_connections (container):      
-    print ("*** possible connections:")
+    print (f"*** possible connections for {container.name}:")
     for connector in container.connections:
         print (f"{connector.direction} ❲{connector.sender.name}❳.❲{connector.sender.port}❳ -> ❲{connector.receiver.name}❳")
 
@@ -474,7 +475,9 @@ def get_component_instance (reg, full_name, owner):
             instance_name = f"{template_name}"
             if None != owner:
                 owner_name = owner.name
-            instance_name = f"{owner_name}.{template_name}"
+                instance_name = f"{owner_name}.{template_name}"
+            else:
+                instance_name = f"{template_name}"
             instance = template.instantiator (reg, owner, instance_name, template.template_data)
             instance.depth = calculate_depth (instance)
             return instance
@@ -623,6 +626,22 @@ def print_output_list (eh):
     for m in list (eh.outq.queue):
         print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
 
+def print_output_trace_list (eh):
+    for m in list (eh.outq.queue):
+        print (message_tracer (eh, m))
+
+def message_tracer (sender, m):
+    if m == None:
+        return "<>"
+    elif m.cause == None:
+        return "no cause!"
+    elif m.cause.message == None:
+        return "<top>"
+    else:
+        cause = m.cause
+        trace = message_tracer (cause.who, cause.message)
+        return f'{trace}\n{sender.depth}: "message ⟪{m.port}₋«{m.datum.srepr ()}»⟫ sent by {sender.name} caused by input message ⟪{m.cause.message.port}₋«...»⟫{m.cause.message.port}" from {m.cause.who.name}'
+
 def set_active (eh):      
     eh.state = "active"
 
@@ -682,7 +701,7 @@ def probe_handler (eh, msg):
     
 def trash_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("trash")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handle=trash_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
@@ -694,7 +713,7 @@ def literal_instantiate (instance_name, owner):
     quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
     name_with_id = gensym (quoted)
     pstr = string_make_persistent (quoted)
-    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handler=literal_handler)
 
 
 def literal_handler (eh, msg):      
@@ -772,7 +791,10 @@ def low_level_read_text_file_instantiate (reg, owner, name, template_data):
 
 def low_level_read_text_file_handler (eh, msg):      
     fname = msg.datum.srepr ()
-    f = open (fname)
+    try:
+        f = open (fname)
+    except Exception as e:
+        f = None
     if f != None:
         data = f.read ()
         if data!= None:
@@ -782,7 +804,7 @@ def low_level_read_text_file_handler (eh, msg):
             send_string (eh, "✗", emsg, msg)
         f.close ()
     else:
-        emsg = f"open error on file {f}"
+        emsg = f"open error on file {fname}"
         send_string (eh, "✗", emsg, msg)
     
 
@@ -794,8 +816,8 @@ def ensure_string_datum_instantiate (reg, owner, name, template_data):
     return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
 
-def ensure_string_datum_handler (eh, msg):      
-    if isinstance (msg.datum, str):
+def ensure_string_datum_handler (eh, msg):
+    if "string" == msg.datum.kind ():
         forward (eh, "", msg)
     else:
         emsg = f"*** ensure: type error (expected a string datum) but got {msg.datum}"
@@ -953,16 +975,23 @@ def dump_outputs (main_container):
     print ("--- Outputs ---")
     print_output_list (main_container)
 
+def trace_outputs (main_container):
+    print ()
+    print ("--- Message Traces ---")
+    print_output_trace_list (main_container)
+
 def dump_hierarchy (main_container):
     print ()
-    print ("--- Hierarchy ---")
-    print (build_hierarchy (main_container))
+    print (f"--- Hierarchy ---{(build_hierarchy (main_container))}")
 
 def build_hierarchy (c):
     s = ""
     for child in c.children:
         s = f"{s}{build_hierarchy (child)}"
-    return f"\n({c.name}{s})"
+    indent = ""
+    for i in range (c.depth):
+        indent = indent + "  "
+    return f"\n{indent}({c.name}{s})"
 
 #
 def trimws (s):
@@ -988,7 +1017,7 @@ def runtime_error (s):
     runtime_errors = True
 
     
-def fakepipename_instantiate (name, owner):
+def fakepipename_instantiate (reg, owner, name, template_data):
     instance_name = gensym ("fakepipe")
     return make_leaf (instance_name, owner, None, fakepipename_handler)
 
@@ -1005,7 +1034,7 @@ class OhmJS_Instance_Data:
         self.semanticsfilename = None
         self.s = None
 
-def ohmjs_instantiate (name, owner):
+def ohmjs_instantiate (reg, owner, name, template_data):
     instance_name = gensym ("OhmJS")
     inst = OhmJS_Instance_Data () # all fields have zero value before any messages are received
     return make_leaf (instance_name, owner, inst, ohmjs_handle)
@@ -1064,7 +1093,7 @@ def initialize_stock_components (reg):
     # for fakepipe
     register_component (reg, Template ( name = "fakepipename", instantiator = fakepipename_instantiate))
     # for transpiler (ohmjs)
-    # register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
+    register_component (reg, Template ( name = "OhmJS", instantiator = ohmjs_instantiate))
     # register_component (reg, string_constant ("RWR"))
     # register_component (reg, string_constant ("0d/python/std/rwr.ohm"))
     # register_component (reg, string_constant ("0d/python/std/rwr.sem.js"))
@@ -1096,7 +1125,9 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
         injectfn (arg, main_container)
+    dump_hierarchy (main_container)
     dump_outputs (main_container)
+    trace_outputs (main_container)
     print ("--- done ---")
 
 def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):

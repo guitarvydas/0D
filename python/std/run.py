@@ -26,7 +26,9 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
         injectfn (arg, main_container)
+    dump_hierarchy (main_container)
     dump_outputs (main_container)
+    trace_outputs (main_container)
     print ("--- done ---")
 
 def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):

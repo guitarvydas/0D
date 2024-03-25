@@ -1,4 +1,4 @@
-def fakepipename_instantiate (name, owner):
+def fakepipename_instantiate (reg, owner, name, template_data):
     instance_name = gensym ("fakepipe")
     return make_leaf (instance_name, owner, None, fakepipename_handler)
 

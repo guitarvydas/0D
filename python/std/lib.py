@@ -39,16 +39,23 @@ def dump_outputs (main_container):
     print ("--- Outputs ---")
     print_output_list (main_container)
 
+def trace_outputs (main_container):
+    print ()
+    print ("--- Message Traces ---")
+    print_output_trace_list (main_container)
+
 def dump_hierarchy (main_container):
     print ()
-    print ("--- Hierarchy ---")
-    print (build_hierarchy (main_container))
+    print (f"--- Hierarchy ---{(build_hierarchy (main_container))}")
 
 def build_hierarchy (c):
     s = ""
     for child in c.children:
         s = f"{s}{build_hierarchy (child)}"
-    return f"\n({c.name}{s})"
+    indent = ""
+    for i in range (c.depth):
+        indent = indent + "  "
+    return f"\n{indent}({c.name}{s})"
 
 #
 def trimws (s):
