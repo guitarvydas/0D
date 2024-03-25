@@ -7,6 +7,7 @@ class Message:
         self.port = port
         self.datum = datum
         self.cause = cause
+        self.direction = None
 
 class Cause:
     def __init__ (self, who, message):

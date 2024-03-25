@@ -16,44 +16,60 @@ STD = ../std
     ${STD}/stock.py \
     ${STD}/run.py \
 
-all : dev4
+all :
+	clear
+	make dev1a
 
 main: jsons
-	cat ${0D} ./main.py > _.py
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
 	python3 _.py "0D was here" main helloworld0d.drawio.json transpile.drawio.json
 
-jsons: simple0d.drawio simple0d2.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio arith0d.drawio
-	${das2jsondir}/das2json simple0d.drawio
-	${das2jsondir}/das2json simple0d2.drawio
-	${das2jsondir}/das2json helloworld0d.drawio
-	${das2jsondir}/das2json transpile.drawio
-	${das2jsondir}/das2json vsh0d.drawio
-	${das2jsondir}/das2json arith0d.drawio
-	${das2jsondir}/das2json ../std/transpile.drawio
+jsons: simple0d.drawio simple0d2.drawio simple0d3.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio arith0d.drawio
+	# *** building jsons
+	@${das2jsondir}/das2json simple0d.drawio
+	@${das2jsondir}/das2json simple0d2.drawio
+	@${das2jsondir}/das2json simple0d3.drawio
+	@${das2jsondir}/das2json helloworld0d.drawio
+	@${das2jsondir}/das2json transpile.drawio
+	@${das2jsondir}/das2json vsh0d.drawio
+	@${das2jsondir}/das2json arith0d.drawio
+	@${das2jsondir}/das2json ../std/transpile.drawio
 
 install:
 	./makedas2json.bash ${das2jsondir}
 
 
+
 # dev helpers
 
 dev4: jsons
-	cat ${0D} ./main.py > _.py
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
 	python3 _.py ex1.math main arith0d.drawio.json transpile.drawio.json
 
 dev3: jsons
-	cat ${0D} ./main.py > _.py
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
 	python3 _.py "pt was here" main vsh0d.drawio.json transpile.drawio.json
 
 dev2: jsons
-	cat ${0D} ./main.py > _.py
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
 	python3 _.py "pt was here" main helloworld0d.drawio.json transpile.drawio.json
 
+dev1a: jsons
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
+	python3 _.py "pt was here" main simple0d3.drawio.json
+
 dev1: jsons
-	cat ${0D} ./main.py > _.py
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
 	python3 _.py "pt was here" main simple0d2.drawio.json
 
 dev0: jsons
-	cat ${0D} ./main.py > _.py
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
 	python3 _.py "pt was here" main simple0d.drawio.json
 

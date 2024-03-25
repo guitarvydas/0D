@@ -174,6 +174,7 @@ class Message:
         self.port = port
         self.datum = datum
         self.cause = cause
+        self.direction = None
 
 class Cause:
     def __init__ (self, who, message):
@@ -328,6 +329,7 @@ def sender_eq (s1, s2):
 def deposit (parent, c, message):      
     new_message = message_clone(message)
     new_message.port = c.receiver.port
+    new_message.direction = c.direction
     push_message (parent, c.receiver.component, c.receiver.queue, new_message)
 
 
@@ -630,17 +632,45 @@ def print_output_trace_list (eh):
     for m in list (eh.outq.queue):
         print (message_tracer (eh, m))
 
-def message_tracer (sender, m):
-    if m == None:
-        return "<>"
-    elif m.cause == None:
-        return "no cause!"
-    elif m.cause.message == None:
-        return "<top>"
+def message_tracer (eh, msg):
+    m = format_message (msg)
+    I = f'{eh.name}'
+    if msg.cause == None:
+        return f'\n{m} was injected into {I}'
     else:
-        cause = m.cause
-        trace = message_tracer (cause.who, cause.message)
-        return f'{trace}\n{sender.depth}: "message ⟪{m.port}₋«{m.datum.srepr ()}»⟫ sent by {sender.name} caused by input message ⟪{m.cause.message.port}₋«...»⟫{m.cause.message.port}" from {m.cause.who.name}'
+        who = msg.cause.who
+        sender = who.name
+        str_causing_msg = format_message (msg.cause.message)
+        cause_msg = msg.cause.message
+        if msg.direction == "down":
+            return f"\n‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg)}"
+        elif msg.direction == "up":
+            return f"\n‛{I}‘ output {m} because ‛{sender}‘ output {str_causing_msg}{message_tracer (who, cause_msg)}"
+        elif msg.direction == "across":
+            return f"\n‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg)}"
+        elif msg.direction == "through":
+            return f"\n‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg)}"
+        else:
+            return f'\n{I} ??? {m}'
+
+def old_message_tracer (eh, m):
+    if m.cause == None:
+        return f"\n{format_message (m)}->{eh.name}"
+    else:
+        return f'\n{eh.name}->{format_message (m)} due to {m.cause.who.name}->{format_message (m.cause.message)}{message_tracer (m.cause.who, m.cause.message)}'
+
+
+def format_message (m):
+    if m == None:
+        return "None"
+    else:
+        return f'⟪{m.port}₋«{m.datum.srepr ()}»⟫'
+
+def spaces (n):
+    s = ""
+    for i in range (n):
+        s = s + " "
+    return s
 
 def set_active (eh):      
     eh.state = "active"
@@ -1152,19 +1182,35 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("", arg, make_cause (main_container, None) )
+    msg = make_message("TOPin", arg, None )
     main_container.handler(main_container, msg)
 
 
 def components_to_include_in_project (reg):
-    register_component (reg, Template (name = "Echo", instantiator = echo))
+    register_component (reg, Template (name = "A", instantiator = A))
+    register_component (reg, Template (name = "B", instantiator = B))
+    register_component (reg, Template (name = "C", instantiator = C))
 
 
-def echo_handler (eh, msg):
-    send_string (eh, "", msg.datum.srepr (), msg)
+def A_handler (eh, msg):
+    send_string (eh, "Aout", msg.datum.srepr (), msg)
 
-def echo (reg, owner, name, template_data):
-    name_with_id = gensym ("Echo")
-    return make_leaf (name_with_id, owner, None, echo_handler)
+def A (reg, owner, name, template_data):
+    name_with_id = gensym ("A")
+    return make_leaf (name_with_id, owner, None, A_handler)
+
+def B_handler (eh, msg):
+    send_string (eh, "Bout", msg.datum.srepr (), msg)
+
+def B (reg, owner, name, template_data):
+    name_with_id = gensym ("B")
+    return make_leaf (name_with_id, owner, None, B_handler)
+
+def C_handler (eh, msg):
+    send_string (eh, "Cout", msg.datum.srepr (), msg)
+
+def C (reg, owner, name, template_data):
+    name_with_id = gensym ("C")
+    return make_leaf (name_with_id, owner, None, C_handler)
 
 main ()

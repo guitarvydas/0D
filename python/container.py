@@ -110,6 +110,7 @@ def sender_eq (s1, s2):
 def deposit (parent, c, message):      
     new_message = message_clone(message)
     new_message.port = c.receiver.port
+    new_message.direction = c.direction
     push_message (parent, c.receiver.component, c.receiver.queue, new_message)
 
 

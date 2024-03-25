@@ -95,17 +95,45 @@ def print_output_trace_list (eh):
     for m in list (eh.outq.queue):
         print (message_tracer (eh, m))
 
-def message_tracer (sender, m):
-    if m == None:
-        return "<>"
-    elif m.cause == None:
-        return "no cause!"
-    elif m.cause.message == None:
-        return "<top>"
+def message_tracer (eh, msg):
+    m = format_message (msg)
+    I = f'{eh.name}'
+    if msg.cause == None:
+        return f'\n{m} was injected into {I}'
     else:
-        cause = m.cause
-        trace = message_tracer (cause.who, cause.message)
-        return f'{trace}\n{sender.depth}: "message ⟪{m.port}₋«{m.datum.srepr ()}»⟫ sent by {sender.name} caused by input message ⟪{m.cause.message.port}₋«...»⟫{m.cause.message.port}" from {m.cause.who.name}'
+        who = msg.cause.who
+        sender = who.name
+        str_causing_msg = format_message (msg.cause.message)
+        cause_msg = msg.cause.message
+        if msg.direction == "down":
+            return f"\n‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg)}"
+        elif msg.direction == "up":
+            return f"\n‛{I}‘ output {m} because ‛{sender}‘ output {str_causing_msg}{message_tracer (who, cause_msg)}"
+        elif msg.direction == "across":
+            return f"\n‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg)}"
+        elif msg.direction == "through":
+            return f"\n‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg)}"
+        else:
+            return f'\n{I} ??? {m}'
+
+def old_message_tracer (eh, m):
+    if m.cause == None:
+        return f"\n{format_message (m)}->{eh.name}"
+    else:
+        return f'\n{eh.name}->{format_message (m)} due to {m.cause.who.name}->{format_message (m.cause.message)}{message_tracer (m.cause.who, m.cause.message)}'
+
+
+def format_message (m):
+    if m == None:
+        return "None"
+    else:
+        return f'⟪{m.port}₋«{m.datum.srepr ()}»⟫'
+
+def spaces (n):
+    s = ""
+    for i in range (n):
+        s = s + " "
+    return s
 
 def set_active (eh):      
     eh.state = "active"
