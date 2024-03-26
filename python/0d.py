@@ -70,11 +70,9 @@ def send (eh,port,datum,causingMessage):
 
 
 def send_string (eh,port,s,causingMessage):      
-    print (f'send_string {eh.name} {port} "{s}" "{format_message (causingMessage)}"')
     cause = make_cause (eh, causingMessage)
     datum = new_datum_string (s)
     msg = make_message(port=port, datum=datum, cause=cause)
-    print (f'send_string {eh.name} putting {format_message (msg)}')
     eh.outq.put (msg)
 
 

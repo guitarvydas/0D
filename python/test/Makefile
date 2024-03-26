@@ -52,30 +52,30 @@ dev4: jsons
 dev3: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "pt was here" main vsh0d.drawio.json transpile.drawio.json
+	python3 _.py "@3" main vsh0d.drawio.json transpile.drawio.json
 
 dev2: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "pt was here" main helloworld0d.drawio.json transpile.drawio.json
+	python3 _.py "@2" main helloworld0d.drawio.json transpile.drawio.json
 
 dev1a: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "pt was here" main simple0d3.drawio.json
+	python3 _.py "@1a" main simple0d3.drawio.json
 
 dev1: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "pt was here" main simple0d2.drawio.json
+	python3 _.py "@1" main simple0d2.drawio.json
 
 dev0: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "@" main simple0d.drawio.json
+	python3 _.py "@0" main simple0d.drawio.json
 
 dev0d4: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "@" main simple0d4.drawio.json
+	python3 _.py "@0d4" main simple0d4.drawio.json
 

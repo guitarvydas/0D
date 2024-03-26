@@ -145,8 +145,6 @@ def step_children (container, causingMessage):
                 container.state = "active"
             
             while (not (child.outq.empty ())):
-                print (f"step_children while 0 {child.name}")
-                dump_outputs (child)
                 msg = child.outq.get ()
                 route(container, child, msg)
                 destroy_message(msg)
