@@ -76,31 +76,24 @@ def full_format_message (m):
 
 
 def message_tracer (eh, msg, indent):
-    print (f'message_tracer {eh}, {msg}, /{indent}/')
     m = format_message (msg)
-    I = '[external injector]'
-    X = I
-    if None != eh:
-        I = f'{eh.name}'
-    if msg.cause == None:
-        return f'\n{indent}{I} injected {m}'
-    else:
-        who = msg.cause.who
-        str_causing_msg = format_message (msg.cause.message)
-        cause_msg = msg.cause.message
-        if who == None:
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from {X}{message_tracer (who, cause_msg, indent + '  ')}"
-        else:
-            sender = who.name
-            if msg.direction == "down":
-                return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-            elif msg.direction == "up":
-                return f"\n{indent}‛{I}‘ output {m} because ‛{sender}‘ output {str_causing_msg}{message_tracer (who, cause_msg, indent + '  ')}"
-            elif msg.direction == "across":
-                return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-            elif msg.direction == "through":
-                return f"\n{indent}‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-            else:
-                return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
 
+    if msg.cause == None:
+        return f'\n{indent}[external injector] injected {m}'
+    else:
+        me = f'{eh.name}'
+        sender = msg.cause.who.name
+        fcause = format_message (msg.cause.message)
+        cause_msg = msg.cause.message
+        rec = message_tracer (msg.cause.who, cause_msg, indent + '  ')
+        if msg.direction == "down":
+            return f"\n{indent}‛{sender}‘ received {fcause} which was routed down as {m} to ‛{me}‘{rec}"
+        elif msg.direction == "up":
+            return f"\n{indent}‛{me}‘ created {m} because {fcause} was routed up from ‛{sender}‘{rec}"
+        elif msg.direction == "across":
+            return f"\n{indent}‛{me}‘ created {m} because {fcause} was routed across from ‛{sender}‘{rec}"
+        elif msg.direction == "through":
+            return f"\n{indent}‛{me}‘ output-through {m} because {me} received {str+causing_msg} from '{sender}‘{rec}"
+        else:
+            return f"\n{indent}‛{me}‘ created {m} because it received {fcause} from ‛{sender}‘{rec}"
         
