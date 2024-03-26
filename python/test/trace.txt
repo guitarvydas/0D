@@ -1,0 +1,21 @@
+--- Message Traces ---
+
+‛main‘ output ⟪“”₋“@”₋…⟫ because ‛main.Echo Envelope‘ output ⟪“”₋“@”₋…⟫
+  ‛main.Echo Envelope‘ output ⟪“”₋“@”₋…⟫ because ‛main.Echo Envelope.Echo₀‘ output ⟪“”₋“@”₋…⟫
+    ‛main.Echo Envelope.Echo₀‘ sent ⟪“”₋“@”₋…⟫ because it received ⟪“b”₋“@”₋…⟫ from ‛main.Echo Envelope.Echo₀‘
+      ‛main.Echo Envelope.Echo₀‘ sent ⟪“b”₋“@”₋…⟫ because it received ⟪“k”₋“@”₋…⟫ from None 
+        ‛[top]‘ sent ⟪“k”₋“@”₋…⟫ because it received ⟪“a”₋“@”₋⊥⟫ from None 
+          ⟪“a”₋“@”₋⊥⟫ was injected into ‛[top]‘
+--- done ---
+
+SHOULD BE:
+...
+    ‛main.Echo Envelope.Echo₀‘ sent ⟪“”₋“@”₋…⟫ because it received ⟪“b”₋“@”₋…⟫ from ‛main.Echo Envelope‘
+      ‛main.Echo Envelope‘ sent ⟪“b”₋“@”₋…⟫ because it received ⟪“k”₋“@”₋…⟫ from ‛main‘
+        ‛main‘ sent ⟪“k”₋“@”₋…⟫ because it received ⟪“a”₋“@”₋⊥⟫ from [external injector]
+          ⟪“a”₋“@”₋⊥⟫ was injected into ‛main‘
+
+--- simplify, look only at simple0d (one Container, one Leaf)
+
+‛main‘ output ⟪“”₋“@”₋…⟫ because ‛main.Echo‘ output ⟪“”₋“@”₋…⟫
+

@@ -14,6 +14,7 @@ def container_instantiator (reg, owner, container_name, desc):
         children.append (child_instance)
         children_by_id [child_desc ["id"]] = child_instance
     container.children = children
+    self = container
     
     connectors = []
     for proto_conn in desc ["connections"]:
@@ -23,7 +24,7 @@ def container_instantiator (reg, owner, container_name, desc):
         if proto_conn ['dir'] == enumDown:
             # JSON: {'dir': 0, 'source': {'name': '', 'id': 0}, 'source_port': '', 'target': {'name': 'Echo', 'id': 12}, 'target_port': ''},
             connector.direction = "down"
-            connector.sender = Sender ("", None, proto_conn ['source_port'])
+            connector.sender = Sender ("", self, proto_conn ['source_port'])
             target_component = children_by_id [proto_conn ['target'] ['id']]
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
@@ -50,12 +51,12 @@ def container_instantiator (reg, owner, container_name, desc):
                 print (f"internal error: .Up connection source not ok {proto_conn ['source']}")
             else:
                 connector.sender = Sender (source_component.name, source_component, proto_conn ['source_port'])
-                connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
+                connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], self)
                 connectors.append (connector)
         elif proto_conn ['dir'] == enumThrough:
             connector.direction = "through"
             connector.sender = Sender ("", None, proto_conn ['source_port'])
-            connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
+            connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], self)
             connectors.append (connector)
             
     container.connections = connectors
@@ -102,7 +103,7 @@ class Receiver:
 
 # Checks if two senders match, by pointer equality and port name matching.
 def sender_eq (s1, s2):
-    same_components = (s1.component == s2.component)
+    same_components = (s1.component == None) or (s2.component == None) or (s1.component == s2.component)
     same_ports = (s1.port == s2.port)
     return same_components and same_ports
 

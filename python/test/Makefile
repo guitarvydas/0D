@@ -18,7 +18,7 @@ STD = ../std
 
 all :
 	clear
-	make dev0d4
+	make dev0
 
 main: jsons
 	# *** building _.py

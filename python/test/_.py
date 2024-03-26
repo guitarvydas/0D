@@ -243,18 +243,20 @@ def full_format_message (m):
 
 
 def message_tracer (eh, msg, indent):
+    print (f'message_tracer {eh}, {msg}, /{indent}/')
     m = format_message (msg)
-    I = '[top]'
+    I = '[external injector]'
+    X = I
     if None != eh:
         I = f'{eh.name}'
     if msg.cause == None:
-        return f'\n{indent}{m} was injected into ‛{I}‘'
+        return f'\n{indent}{I} injected {m}'
     else:
         who = msg.cause.who
         str_causing_msg = format_message (msg.cause.message)
         cause_msg = msg.cause.message
         if who == None:
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from None {message_tracer (who, cause_msg, indent + '  ')}"
+            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from {X}{message_tracer (who, cause_msg, indent + '  ')}"
         else:
             sender = who.name
             if msg.direction == "down":
@@ -285,6 +287,7 @@ def container_instantiator (reg, owner, container_name, desc):
         children.append (child_instance)
         children_by_id [child_desc ["id"]] = child_instance
     container.children = children
+    self = container
     
     connectors = []
     for proto_conn in desc ["connections"]:
@@ -294,7 +297,7 @@ def container_instantiator (reg, owner, container_name, desc):
         if proto_conn ['dir'] == enumDown:
             # JSON: {'dir': 0, 'source': {'name': '', 'id': 0}, 'source_port': '', 'target': {'name': 'Echo', 'id': 12}, 'target_port': ''},
             connector.direction = "down"
-            connector.sender = Sender ("", None, proto_conn ['source_port'])
+            connector.sender = Sender ("", self, proto_conn ['source_port'])
             target_component = children_by_id [proto_conn ['target'] ['id']]
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
@@ -321,12 +324,12 @@ def container_instantiator (reg, owner, container_name, desc):
                 print (f"internal error: .Up connection source not ok {proto_conn ['source']}")
             else:
                 connector.sender = Sender (source_component.name, source_component, proto_conn ['source_port'])
-                connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
+                connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], self)
                 connectors.append (connector)
         elif proto_conn ['dir'] == enumThrough:
             connector.direction = "through"
             connector.sender = Sender ("", None, proto_conn ['source_port'])
-            connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], None)
+            connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], self)
             connectors.append (connector)
             
     container.connections = connectors
@@ -373,7 +376,7 @@ class Receiver:
 
 # Checks if two senders match, by pointer equality and port name matching.
 def sender_eq (s1, s2):
-    same_components = (s1.component == s2.component)
+    same_components = (s1.component == None) or (s2.component == None) or (s1.component == s2.component)
     same_ports = (s1.port == s2.port)
     return same_components and same_ports
 
@@ -1211,7 +1214,7 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("a", arg, None )
+    msg = make_message("Min", arg, None )
     main_container.handler(main_container, msg)
 
 

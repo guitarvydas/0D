@@ -4,7 +4,7 @@
         "name": "main",
         "children": [
             {
-                "name": "Echo",
+                "name": "A",
                 "id": 5
             }
         ],
@@ -15,30 +15,30 @@
                     "name": "",
                     "id": 0
                 },
-                "source_port": "a",
+                "source_port": "Min",
                 "target": {
-                    "name": "Echo",
+                    "name": "A",
                     "id": 5
                 },
-                "target_port": "b"
+                "target_port": "Ain"
             },
             {
                 "dir": 2,
                 "source": {
-                    "name": "Echo",
+                    "name": "A",
                     "id": 5
                 },
-                "source_port": "",
+                "source_port": "Aout",
                 "target": {
                     "name": "",
                     "id": 0
                 },
-                "target_port": ""
+                "target_port": "Mout"
             },
             {
                 "dir": 2,
                 "source": {
-                    "name": "Echo",
+                    "name": "A",
                     "id": 5
                 },
                 "source_port": "\u2717",

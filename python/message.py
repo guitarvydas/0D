@@ -76,18 +76,20 @@ def full_format_message (m):
 
 
 def message_tracer (eh, msg, indent):
+    print (f'message_tracer {eh}, {msg}, /{indent}/')
     m = format_message (msg)
-    I = '[top]'
+    I = '[external injector]'
+    X = I
     if None != eh:
         I = f'{eh.name}'
     if msg.cause == None:
-        return f'\n{indent}{m} was injected into ‛{I}‘'
+        return f'\n{indent}{I} injected {m}'
     else:
         who = msg.cause.who
         str_causing_msg = format_message (msg.cause.message)
         cause_msg = msg.cause.message
         if who == None:
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from None {message_tracer (who, cause_msg, indent + '  ')}"
+            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from {X}{message_tracer (who, cause_msg, indent + '  ')}"
         else:
             sender = who.name
             if msg.direction == "down":

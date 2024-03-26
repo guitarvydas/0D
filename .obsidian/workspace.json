@@ -30,9 +30,19 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "aad0e655689b0d74",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.5.11"
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -159,20 +169,20 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7fb1d9bc095586b3",
+  "active": "aad0e655689b0d74",
   "lastOpenFiles": [
+    "python/#container.py#",
+    "python/std/#run.py#",
+    "python/test/#main.py#",
+    "python/test/#trace.txt#",
+    "python/test/trace.txt~",
+    "python/test/trace.txt",
     "python/test/#README.md#",
     "python/test/README.md~",
     "python/test/README.md",
     "das2json/das2json",
     "das2json/das2json.o",
     "python/#message.py#",
-    "python/#container.py#",
-    "python/std/#lib.py#",
-    "simple0d4/null.js",
-    "simple0d4/main.odin",
-    "simple0d4/dot-gitignore",
-    "simple0d4/___.drawio",
     "simple0d4/0D/python/play/readjson.md",
     "simple0d4/0D/python/README.md",
     "simple0d4/0D/odin/README.md",
