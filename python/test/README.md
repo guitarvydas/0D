@@ -1,7 +1,7 @@
 - WIP
 usage:
 $ cd ~/projects <--- choose a temp directory where you want this installed
-$ git clone 
+$ git clone https://github.com/guitarvydas/0D/tree/devpy <--- in branch devpy
 $ cd 0D/python/test
 $ make install
 $ make
