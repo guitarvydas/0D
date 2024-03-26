@@ -14,7 +14,7 @@ STD = ../std
     ${STD}/fakepipe.py \
     ${STD}/transpiler.py \
     ${STD}/stock.py \
-    ${STD}/run.py \
+    ${STD}/run.py
 
 all :
 	clear

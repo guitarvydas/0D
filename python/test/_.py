@@ -266,7 +266,6 @@ def message_tracer (eh, msg, indent):
             elif msg.direction == "through":
                 return f"\n{indent}‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
             else:
-                #return f"\n{indent}??? {full_format_message (msg)}"
                 return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
 
         
