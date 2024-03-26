@@ -57,6 +57,14 @@ def build_hierarchy (c):
         indent = indent + "  "
     return f"\n{indent}({c.name}{s})"
 
+def dump_connections (c):
+    print ()
+    print (f"--- connections ---")
+    dump_possible_connections (c)
+    for child in c.children:
+        print ()
+        dump_possible_connections (child)
+
 #
 def trimws (s):
     # remove whitespace from front and back of string

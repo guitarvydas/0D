@@ -1,0 +1,104 @@
+[
+    {
+        "file": "simple0d4.drawio",
+        "name": "main",
+        "children": [
+            {
+                "name": "Echo Envelope",
+                "id": 5
+            }
+        ],
+        "connections": [
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "a",
+                "target": {
+                    "name": "Echo Envelope",
+                    "id": 5
+                },
+                "target_port": "k"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "Echo Envelope",
+                    "id": 5
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "Echo Envelope",
+                    "id": 5
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            }
+        ]
+    },
+    {
+        "file": "simple0d4.drawio",
+        "name": "Echo Envelope",
+        "children": [
+            {
+                "name": "Echo",
+                "id": 5
+            }
+        ],
+        "connections": [
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "k",
+                "target": {
+                    "name": "Echo",
+                    "id": 5
+                },
+                "target_port": "b"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "Echo",
+                    "id": 5
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "Echo",
+                    "id": 5
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            }
+        ]
+    }
+]

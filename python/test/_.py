@@ -170,11 +170,11 @@ def raw_datum_int (i):
 # `port` refers to the name of the incoming or outgoing port of this component.
 # `datum` is the data attached to this message.
 class Message:
-    def __init__ (self, port, datum, cause):
+    def __init__ (self, port, datum, direction=None, cause=None):
         self.port = port
         self.datum = datum
         self.cause = cause
-        self.direction = None
+        self.direction = direction
 
 class Cause:
     def __init__ (self, who, message):
@@ -193,9 +193,9 @@ def clone_port (s):
 # Utility for making a `Message`. Used to safely "seed" messages
 # entering the very top of a network.
 
-def make_message (port, datum, cause):
+def make_message (port, datum, direction=None, cause=None):
     p = clone_string (port)
-    m = Message (port=p, datum=datum.clone (), cause=cause)
+    m = Message (port=p, datum=datum.clone (), direction=direction, cause=cause)
     return m
 
 # Clones a message. Primarily used internally for "fanning out" a message to multiple destinations.
@@ -205,6 +205,7 @@ def message_clone (message):
 
 # Frees a message.
 def destroy_message (msg):
+    # during debug, don't destroy any message, since we want to trace messages, thus, we need to persist ancestor messages
     pass
 
 def destroy_datum (msg):
@@ -217,6 +218,58 @@ def make_cause (eh, msg):
     # create a persistent Cause in the heap, return a pointer to it
     cause = Cause (who=eh, message=msg)
     return cause
+
+#####
+
+def format_message (m):
+    if m == None:
+        return "None"
+    else:
+        if m.cause == None:
+            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋⊥⟫'
+        else:
+            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
+
+def full_format_message (m):
+    if m == None:
+        return "None"
+    else:
+        if m.cause == None:
+            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋⊥⟫'
+        elif None == m.cause.who:
+            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋[{m.direction},None,{format_message (m.cause.message)}]⟫'
+        else:
+            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋[{m.direction},{m.cause.who.name},{format_message (m.cause.message)}]⟫'
+
+
+def message_tracer (eh, msg, indent):
+    m = format_message (msg)
+    I = '[top]'
+    if None != eh:
+        I = f'{eh.name}'
+    if msg.cause == None:
+        return f'\n{indent}{m} was injected into ‛{I}‘'
+    else:
+        who = msg.cause.who
+        str_causing_msg = format_message (msg.cause.message)
+        cause_msg = msg.cause.message
+        if who == None:
+            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from None {message_tracer (who, cause_msg, indent + '  ')}"
+        else:
+            sender = who.name
+            if msg.direction == "down":
+                return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
+            elif msg.direction == "up":
+                return f"\n{indent}‛{I}‘ output {m} because ‛{sender}‘ output {str_causing_msg}{message_tracer (who, cause_msg, indent + '  ')}"
+            elif msg.direction == "across":
+                return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
+            elif msg.direction == "through":
+                return f"\n{indent}‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
+            else:
+                #return f"\n{indent}??? {full_format_message (msg)}"
+                return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
+
+        
 enumDown = 0
 enumAcross = 1
 enumUp = 2
@@ -247,7 +300,7 @@ def container_instantiator (reg, owner, container_name, desc):
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
             else:
-                connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['source_port'], target_component)
+                connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['target_port'], target_component)
                 connectors.append (connector)
         elif proto_conn ["dir"] == enumAcross:
             connector.direction = "across"
@@ -281,7 +334,7 @@ def container_instantiator (reg, owner, container_name, desc):
     return container
 
 # The default handler for container components.
-def container_handler (eh,message):      
+def container_handler (eh,message):
     route (eh, None, message)
     while any_child_ready (eh):
         step_children (eh, message)
@@ -326,11 +379,9 @@ def sender_eq (s1, s2):
     return same_components and same_ports
 
 # Delivers the given message to the receiver of this connector.
-def deposit (parent, c, message):      
-    new_message = message_clone(message)
-    new_message.port = c.receiver.port
-    new_message.direction = c.direction
-    push_message (parent, c.receiver.component, c.receiver.queue, new_message)
+def deposit (parent, conn, message):
+    new_message = make_message (port=conn.receiver.port, datum=message.datum, direction=conn.direction, cause=make_cause (conn.sender.component, message))
+    push_message (parent, conn.receiver.component, conn.receiver.queue, new_message)
 
 
 def force_tick (parent, eh, causingMessage):      
@@ -365,6 +416,8 @@ def step_children (container, causingMessage):
                 container.state = "active"
             
             while (not (child.outq.empty ())):
+                print (f"step_children while 0 {child.name}")
+                dump_outputs (child)
                 msg = child.outq.get ()
                 route(container, child, msg)
                 destroy_message(msg)
@@ -378,7 +431,7 @@ def is_tick (msg):
 
 # Routes a single message to all matching destinations, according to
 # the container's connection network.
-def route (container, from_component, message):      
+def route (container, from_component, message):
     was_sent = False # for checking that output went somewhere (at least during bootstrap)
     if is_tick (message):
         for child in container.children:    
@@ -397,14 +450,14 @@ def route (container, from_component, message):
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
-        message_tracer (message)
+        message_tracer (container, message, '')
         dump_possible_connections (container)
         print ("***")
 
 def dump_possible_connections (container):      
     print (f"*** possible connections for {container.name}:")
     for connector in container.connections:
-        print (f"{connector.direction} ❲{connector.sender.name}❳.❲{connector.sender.port}❳ -> ❲{connector.receiver.name}❳")
+        print (f"{connector.direction} ❲{connector.sender.name}❳.“{connector.sender.port}” -> ❲{connector.receiver.name}❳.“{connector.receiver.port}”")
 
 def any_child_ready (container):
     for child in container.children:
@@ -607,9 +660,11 @@ def send (eh,port,datum,causingMessage):
 
 
 def send_string (eh,port,s,causingMessage):      
+    print (f'send_string {eh.name} {port} "{s}" "{format_message (causingMessage)}"')
     cause = make_cause (eh, causingMessage)
     datum = new_datum_string (s)
-    msg = make_message(port, datum, cause)
+    msg = make_message(port=port, datum=datum, cause=cause)
+    print (f'send_string {eh.name} putting {format_message (msg)}')
     eh.outq.put (msg)
 
 
@@ -626,38 +681,11 @@ def output_list (eh):
 # Utility for printing an array of messages.
 def print_output_list (eh):
     for m in list (eh.outq.queue):
-        print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
+        print (format_message (m))
 
 def print_output_trace_list (eh):
     for m in list (eh.outq.queue):
         print (message_tracer (eh, m, ''))
-
-def message_tracer (eh, msg, indent):
-    m = format_message (msg)
-    I = f'{eh.name}'
-    if msg.cause == None:
-        return f'\n{indent}{m} was injected into {I}'
-    else:
-        who = msg.cause.who
-        sender = who.name
-        str_causing_msg = format_message (msg.cause.message)
-        cause_msg = msg.cause.message
-        if msg.direction == "down":
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-        elif msg.direction == "up":
-            return f"\n{indent}‛{I}‘ output {m} because ‛{sender}‘ output {str_causing_msg}{message_tracer (who, cause_msg, indent + '  ')}"
-        elif msg.direction == "across":
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-        elif msg.direction == "through":
-            return f"\n{indent}‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-        else:
-            return f'\n{I} ??? {m}'
-
-def format_message (m):
-    if m == None:
-        return "None"
-    else:
-        return f'⟪{m.port}₋«{m.datum.srepr ()}»⟫'
 
 def spaces (n):
     s = ""
@@ -1016,6 +1044,14 @@ def build_hierarchy (c):
         indent = indent + "  "
     return f"\n{indent}({c.name}{s})"
 
+def dump_connections (c):
+    print ()
+    print (f"--- connections ---")
+    dump_possible_connections (c)
+    for child in c.children:
+        print ()
+        dump_possible_connections (child)
+
 #
 def trimws (s):
     # remove whitespace from front and back of string
@@ -1149,6 +1185,7 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     if not load_errors:
         injectfn (arg, main_container)
     dump_hierarchy (main_container)
+    dump_connections (main_container)
     dump_outputs (main_container)
     trace_outputs (main_container)
     print ("--- done ---")
@@ -1175,7 +1212,7 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("TOPin", arg, None )
+    msg = make_message("a", arg, None )
     main_container.handler(main_container, msg)
 
 
@@ -1183,6 +1220,7 @@ def components_to_include_in_project (reg):
     register_component (reg, Template (name = "A", instantiator = A))
     register_component (reg, Template (name = "B", instantiator = B))
     register_component (reg, Template (name = "C", instantiator = C))
+    register_component (reg, Template (name = "Echo", instantiator = Echo))
 
 
 def A_handler (eh, msg):
@@ -1205,5 +1243,15 @@ def C_handler (eh, msg):
 def C (reg, owner, name, template_data):
     name_with_id = gensym ("C")
     return make_leaf (name_with_id, owner, None, C_handler)
+
+def Echo_handler (eh, msg):
+    print (f'Echo Leaf handling {format_message (msg)}')
+    send_string (eh, "", msg.datum.srepr (), msg)
+    print (f'Echo handler {eh.name}')
+    dump_outputs (eh)
+
+def Echo (reg, owner, name, template_data):
+    name_with_id = gensym ("Echo")
+    return make_leaf (name_with_id, owner, None, Echo_handler)
 
 main ()

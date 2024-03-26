@@ -18,18 +18,19 @@ STD = ../std
 
 all :
 	clear
-	make dev1a
+	make dev0d4
 
 main: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
 	python3 _.py "0D was here" main helloworld0d.drawio.json transpile.drawio.json
 
-jsons: simple0d.drawio simple0d2.drawio simple0d3.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio arith0d.drawio
+jsons: simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio arith0d.drawio
 	# *** building jsons
 	@${das2jsondir}/das2json simple0d.drawio
 	@${das2jsondir}/das2json simple0d2.drawio
 	@${das2jsondir}/das2json simple0d3.drawio
+	@${das2jsondir}/das2json simple0d4.drawio
 	@${das2jsondir}/das2json helloworld0d.drawio
 	@${das2jsondir}/das2json transpile.drawio
 	@${das2jsondir}/das2json vsh0d.drawio
@@ -71,5 +72,10 @@ dev1: jsons
 dev0: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "pt was here" main simple0d.drawio.json
+	python3 _.py "@" main simple0d.drawio.json
+
+dev0d4: jsons
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
+	python3 _.py "@" main simple0d4.drawio.json
 

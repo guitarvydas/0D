@@ -27,6 +27,7 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     if not load_errors:
         injectfn (arg, main_container)
     dump_hierarchy (main_container)
+    dump_connections (main_container)
     dump_outputs (main_container)
     trace_outputs (main_container)
     print ("--- done ---")

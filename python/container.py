@@ -28,7 +28,7 @@ def container_instantiator (reg, owner, container_name, desc):
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
             else:
-                connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['source_port'], target_component)
+                connector.receiver = Receiver (target_component.name, target_component.inq, proto_conn ['target_port'], target_component)
                 connectors.append (connector)
         elif proto_conn ["dir"] == enumAcross:
             connector.direction = "across"
@@ -62,7 +62,7 @@ def container_instantiator (reg, owner, container_name, desc):
     return container
 
 # The default handler for container components.
-def container_handler (eh,message):      
+def container_handler (eh,message):
     route (eh, None, message)
     while any_child_ready (eh):
         step_children (eh, message)
@@ -107,11 +107,9 @@ def sender_eq (s1, s2):
     return same_components and same_ports
 
 # Delivers the given message to the receiver of this connector.
-def deposit (parent, c, message):      
-    new_message = message_clone(message)
-    new_message.port = c.receiver.port
-    new_message.direction = c.direction
-    push_message (parent, c.receiver.component, c.receiver.queue, new_message)
+def deposit (parent, conn, message):
+    new_message = make_message (port=conn.receiver.port, datum=message.datum, direction=conn.direction, cause=make_cause (conn.sender.component, message))
+    push_message (parent, conn.receiver.component, conn.receiver.queue, new_message)
 
 
 def force_tick (parent, eh, causingMessage):      
@@ -146,6 +144,8 @@ def step_children (container, causingMessage):
                 container.state = "active"
             
             while (not (child.outq.empty ())):
+                print (f"step_children while 0 {child.name}")
+                dump_outputs (child)
                 msg = child.outq.get ()
                 route(container, child, msg)
                 destroy_message(msg)
@@ -159,7 +159,7 @@ def is_tick (msg):
 
 # Routes a single message to all matching destinations, according to
 # the container's connection network.
-def route (container, from_component, message):      
+def route (container, from_component, message):
     was_sent = False # for checking that output went somewhere (at least during bootstrap)
     if is_tick (message):
         for child in container.children:    
@@ -178,14 +178,14 @@ def route (container, from_component, message):
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
-        message_tracer (message)
+        message_tracer (container, message, '')
         dump_possible_connections (container)
         print ("***")
 
 def dump_possible_connections (container):      
     print (f"*** possible connections for {container.name}:")
     for connector in container.connections:
-        print (f"{connector.direction} ❲{connector.sender.name}❳.❲{connector.sender.port}❳ -> ❲{connector.receiver.name}❳")
+        print (f"{connector.direction} ❲{connector.sender.name}❳.“{connector.sender.port}” -> ❲{connector.receiver.name}❳.“{connector.receiver.port}”")
 
 def any_child_ready (container):
     for child in container.children:

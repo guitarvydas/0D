@@ -15,12 +15,12 @@
                     "name": "",
                     "id": 0
                 },
-                "source_port": "",
+                "source_port": "a",
                 "target": {
                     "name": "Echo",
                     "id": 5
                 },
-                "target_port": ""
+                "target_port": "b"
             },
             {
                 "dir": 2,

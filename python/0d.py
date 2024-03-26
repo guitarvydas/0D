@@ -70,9 +70,11 @@ def send (eh,port,datum,causingMessage):
 
 
 def send_string (eh,port,s,causingMessage):      
+    print (f'send_string {eh.name} {port} "{s}" "{format_message (causingMessage)}"')
     cause = make_cause (eh, causingMessage)
     datum = new_datum_string (s)
-    msg = make_message(port, datum, cause)
+    msg = make_message(port=port, datum=datum, cause=cause)
+    print (f'send_string {eh.name} putting {format_message (msg)}')
     eh.outq.put (msg)
 
 
@@ -89,38 +91,11 @@ def output_list (eh):
 # Utility for printing an array of messages.
 def print_output_list (eh):
     for m in list (eh.outq.queue):
-        print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
+        print (format_message (m))
 
 def print_output_trace_list (eh):
     for m in list (eh.outq.queue):
         print (message_tracer (eh, m, ''))
-
-def message_tracer (eh, msg, indent):
-    m = format_message (msg)
-    I = f'{eh.name}'
-    if msg.cause == None:
-        return f'\n{indent}{m} was injected into {I}'
-    else:
-        who = msg.cause.who
-        sender = who.name
-        str_causing_msg = format_message (msg.cause.message)
-        cause_msg = msg.cause.message
-        if msg.direction == "down":
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-        elif msg.direction == "up":
-            return f"\n{indent}‛{I}‘ output {m} because ‛{sender}‘ output {str_causing_msg}{message_tracer (who, cause_msg, indent + '  ')}"
-        elif msg.direction == "across":
-            return f"\n{indent}‛{I}‘ sent {m} because it received {str_causing_msg} from ‛{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-        elif msg.direction == "through":
-            return f"\n{indent}‛{I}‘ through-output {m} because {I} received {str+causing_msg} from '{sender}‘{message_tracer (who, cause_msg, indent + '  ')}"
-        else:
-            return f'\n{I} ??? {m}'
-
-def format_message (m):
-    if m == None:
-        return "None"
-    else:
-        return f'⟪{m.port}₋«{m.datum.srepr ()}»⟫'
 
 def spaces (n):
     s = ""

@@ -10,7 +10,7 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("TOPin", arg, None )
+    msg = make_message("a", arg, None )
     main_container.handler(main_container, msg)
 
 
@@ -18,6 +18,7 @@ def components_to_include_in_project (reg):
     register_component (reg, Template (name = "A", instantiator = A))
     register_component (reg, Template (name = "B", instantiator = B))
     register_component (reg, Template (name = "C", instantiator = C))
+    register_component (reg, Template (name = "Echo", instantiator = Echo))
 
 
 def A_handler (eh, msg):
@@ -40,5 +41,15 @@ def C_handler (eh, msg):
 def C (reg, owner, name, template_data):
     name_with_id = gensym ("C")
     return make_leaf (name_with_id, owner, None, C_handler)
+
+def Echo_handler (eh, msg):
+    print (f'Echo Leaf handling {format_message (msg)}')
+    send_string (eh, "", msg.datum.srepr (), msg)
+    print (f'Echo handler {eh.name}')
+    dump_outputs (eh)
+
+def Echo (reg, owner, name, template_data):
+    name_with_id = gensym ("Echo")
+    return make_leaf (name_with_id, owner, None, Echo_handler)
 
 main ()
