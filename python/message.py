@@ -86,15 +86,42 @@ def message_tracer (eh, msg, indent):
         fcause = format_message (msg.cause.message)
         cause_msg = msg.cause.message
         rec = message_tracer (msg.cause.who, cause_msg, indent + '  ')
+        rec2 = message_tracer (msg.cause.who, cause_msg, indent + '    ')
         if msg.direction == "down":
-            return f"\n{indent}⇣ Container ‛{sender}‘ received {fcause} which was routed down as {m} to Child ‛{me}‘{rec}"
+            return f"\n{indent}⇣\n{indent + '    '}Container ‛{sender}‘ received {fcause}{rec2}"
+
         elif msg.direction == "up":
-            return f"\n{indent}↑ Container ‛{me}‘ created output {m} because {fcause} was routed up from Child ‛{sender}‘{rec}"
+            return f"\n{indent}↑\n{indent + '  '}∴ Container ‛{me}‘ output {m}{rec2}"
+
         elif msg.direction == "across":
-            return f"\n{indent}→ Child ‛{me}‘ created {m} due to input {fcause} which was routed across from ‛{sender}‘{rec}"
+            return f"\n{indent}Child ‛{me} received {fcause} ∴ Child ‛{me}‘ output {m}\n{indent + '  '}→{rec2}"
+
         elif msg.direction == "through":
-            return f"\n{indent}↔︎ Container ‛{me}‘ output-through {m} because {me} received {str+causing_msg} from '{sender}‘{rec}"
+            return f"\n{indent}↔︎\n{indent + '  '}Container ‛{me}‘ received {str+causing_msg} ∴ Container ‛{me}‘ output-through {m}{rec2}"
+
         else:
-            return f"{rec}"
-            #return f"\n{indent}∴ Child ‛{me}‘ created {m} in response to input message {fcause}{rec}"
+            return f"\n{indent}Child ‛{me}‘ received {fcause} ∴ Child ‛{me}‘ output {m}{rec}"
+
+# def message_tracer (eh, msg, indent):
+#     m = format_message (msg)
+
+#     if msg.cause == None:
+#         return f'\n{indent}[external injector] injected {m}'
+#     else:
+#         me = f'{eh.name}'
+#         sender = msg.cause.who.name
+#         fcause = format_message (msg.cause.message)
+#         cause_msg = msg.cause.message
+#         rec = message_tracer (msg.cause.who, cause_msg, indent + '  ')
+#         if msg.direction == "down":
+#             return f"\n{indent}⇣ Container ‛{sender}‘ received {fcause} which was routed down as {m} to Child ‛{me}‘{rec}"
+#         elif msg.direction == "up":
+#             return f"\n{indent}↑ Container ‛{me}‘ created output {m} because {fcause} was routed up from Child ‛{sender}‘{rec}"
+#         elif msg.direction == "across":
+#             return f"\n{indent}→ Child ‛{me}‘ created {m} due to input {fcause} which was routed across from ‛{sender}‘{rec}"
+#         elif msg.direction == "through":
+#             return f"\n{indent}↔︎ Container ‛{me}‘ output-through {m} because {me} received {str+causing_msg} from '{sender}‘{rec}"
+#         else:
+#             return f"{rec}"
+#             #return f"\n{indent}∴ Child ‛{me}‘ created {m} in response to input message {fcause}{rec}"
         
