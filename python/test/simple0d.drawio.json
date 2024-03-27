@@ -33,7 +33,7 @@
                     "name": "",
                     "id": 0
                 },
-                "target_port": ""
+                "target_port": "output"
             },
             {
                 "dir": 2,

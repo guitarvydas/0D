@@ -24,7 +24,7 @@ def container_instantiator (reg, owner, container_name, desc):
         if proto_conn ['dir'] == enumDown:
             # JSON: {'dir': 0, 'source': {'name': '', 'id': 0}, 'source_port': '', 'target': {'name': 'Echo', 'id': 12}, 'target_port': ''},
             connector.direction = "down"
-            connector.sender = Sender ("", self, proto_conn ['source_port'])
+            connector.sender = Sender (self.name, self, proto_conn ['source_port'])
             target_component = children_by_id [proto_conn ['target'] ['id']]
             if (target_component == None):
                 load_error (f"internal error: .Down connection target internal error {proto_conn['target']}")
@@ -51,12 +51,12 @@ def container_instantiator (reg, owner, container_name, desc):
                 print (f"internal error: .Up connection source not ok {proto_conn ['source']}")
             else:
                 connector.sender = Sender (source_component.name, source_component, proto_conn ['source_port'])
-                connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], self)
+                connector.receiver = Receiver (self.name, container.outq, proto_conn ['target_port'], self)
                 connectors.append (connector)
         elif proto_conn ['dir'] == enumThrough:
             connector.direction = "through"
-            connector.sender = Sender ("", None, proto_conn ['source_port'])
-            connector.receiver = Receiver ("", container.outq, proto_conn ['target_port'], self)
+            connector.sender = Sender (self.name, self, proto_conn ['source_port'])
+            connector.receiver = Receiver (self.name, container.outq, proto_conn ['target_port'], self)
             connectors.append (connector)
             
     container.connections = connectors
@@ -64,7 +64,8 @@ def container_instantiator (reg, owner, container_name, desc):
 
 # The default handler for container components.
 def container_handler (eh,message):
-    route (eh, None, message)
+    self = eh
+    route (container=eh, from_component=self, message=message) # references to 'self' are replaced by the container during instantiation
     while any_child_ready (eh):
         step_children (eh, message)
 
@@ -103,7 +104,7 @@ class Receiver:
 
 # Checks if two senders match, by pointer equality and port name matching.
 def sender_eq (s1, s2):
-    same_components = (s1.component == None) or (s2.component == None) or (s1.component == s2.component)
+    same_components = (s1.component == s2.component)
     same_ports = (s1.port == s2.port)
     return same_components and same_ports
 
@@ -168,7 +169,7 @@ def route (container, from_component, message):
         fromname = ""
         if from_component != None:
             fromname = from_component.name
-        from_sender = Sender (fromname, from_component, message.port)
+        from_sender = Sender (name=fromname, component=from_component, port=message.port)
         
         for connector in container.connections:
             if sender_eq (from_sender, connector.sender):   
