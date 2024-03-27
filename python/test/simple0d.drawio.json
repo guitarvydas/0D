@@ -20,7 +20,7 @@
                     "name": "Echo",
                     "id": 5
                 },
-                "target_port": "Ein"
+                "target_port": ""
             },
             {
                 "dir": 2,
@@ -33,7 +33,7 @@
                     "name": "",
                     "id": 0
                 },
-                "target_port": "output"
+                "target_port": ""
             },
             {
                 "dir": 2,

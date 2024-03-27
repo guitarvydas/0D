@@ -1,0 +1,11 @@
+--- Message Traces ---
+
+↑ Container ‛main‘ created output ⟪“”₋“@1”₋…⟫ because ⟪“”₋“@1”₋…⟫ was routed up from Child ‛main.Echo₁‘
+  ∴ Child ‛main.Echo₁‘ created ⟪“”₋“@1”₋…⟫ in response to input message ⟪“”₋“@1”₋…⟫
+    → Child ‛main.Echo₁‘ created ⟪“”₋“@1”₋…⟫ due to input ⟪“”₋“@1”₋…⟫ which was routed across from ‛main.Echo₀‘
+      ∴ Child ‛main.Echo₀‘ created ⟪“”₋“@1”₋…⟫ in response to input message ⟪“”₋“@1”₋…⟫
+        ⇣ Container ‛main‘ received ⟪“”₋“@1”₋⊥⟫ which was routed down as ⟪“”₋“@1”₋…⟫ to Child ‛main.Echo₀‘
+*          [external injector] injected ⟪“”
+
+---
+

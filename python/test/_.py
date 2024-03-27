@@ -254,15 +254,16 @@ def message_tracer (eh, msg, indent):
         cause_msg = msg.cause.message
         rec = message_tracer (msg.cause.who, cause_msg, indent + '  ')
         if msg.direction == "down":
-            return f"\n{indent}‛{sender}‘ received {fcause} which was routed down as {m} to ‛{me}‘{rec}"
+            return f"\n{indent}⇣ Container ‛{sender}‘ received {fcause} which was routed down as {m} to Child ‛{me}‘{rec}"
         elif msg.direction == "up":
-            return f"\n{indent}‛{me}‘ created {m} because {fcause} was routed up from ‛{sender}‘{rec}"
+            return f"\n{indent}↑ Container ‛{me}‘ created output {m} because {fcause} was routed up from Child ‛{sender}‘{rec}"
         elif msg.direction == "across":
-            return f"\n{indent}‛{me}‘ created {m} because {fcause} was routed across from ‛{sender}‘{rec}"
+            return f"\n{indent}→ Child ‛{me}‘ created {m} due to input {fcause} which was routed across from ‛{sender}‘{rec}"
         elif msg.direction == "through":
-            return f"\n{indent}‛{me}‘ output-through {m} because {me} received {str+causing_msg} from '{sender}‘{rec}"
+            return f"\n{indent}↔︎ Container ‛{me}‘ output-through {m} because {me} received {str+causing_msg} from '{sender}‘{rec}"
         else:
-            return f"\n{indent}‛{me}‘ created {m} because it received {fcause} from ‛{sender}‘{rec}"
+            return f"{rec}"
+            #return f"\n{indent}∴ Child ‛{me}‘ created {m} in response to input message {fcause}{rec}"
         
 enumDown = 0
 enumAcross = 1
