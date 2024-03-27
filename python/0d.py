@@ -28,7 +28,7 @@ class Eh:
         self.children = []
         self.visit_ordering = queue.Queue ()
         self.connections = []
-        self.accepted = queue.LifoQueue ()  # ordered list of messages received (most recent message is first)
+        self.routings = queue.Queue ()
         self.handler = None
         self.instance_data = None
         self.state = "idle"
@@ -64,21 +64,19 @@ def make_leaf (name, owner, instance_data, handler):
 # Sends a message on the given `port` with `data`, placing it on the output
 # of the given component.
 def send (eh,port,datum,causingMessage):      
-    cause = make_cause (eh, causingMessage)
-    msg = make_message(port, datum, cause)
-    eh.outq.put (msg)
+    msg = make_message(port, datum)
+    put_output ("send", eh, msg, causingMessage)
 
 
-def send_string (eh,port,s,causingMessage):      
-    cause = make_cause (eh, causingMessage)
+def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
-    msg = make_message(port=port, datum=datum, cause=cause)
-    eh.outq.put (msg)
+    msg = make_message(port=port, datum=datum)
+    put_output ("send", eh, msg, causingMessage)
 
 
-def forward (eh,port,msg):      
-    fwdmsg = make_message(port, msg.datum, make_cause (eh, msg))
-    eh.outq.put (fwdmsg)
+def forward (eh, port, msg, causingMessage):      
+    fwdmsg = make_message(port, msg.datum)
+    put_output ("forward", eh, msg, causingMessage)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -91,9 +89,9 @@ def print_output_list (eh):
     for m in list (eh.outq.queue):
         print (format_message (m))
 
-def print_output_trace_list (eh):
-    for m in list (eh.outq.queue):
-        print (message_tracer (eh, m, ''))
+def print_routing_trace (eh):
+    for r in list (eh.routings.queue):
+        print (routing_tracer (eh, r, ''))
 
 def spaces (n):
     s = ""
@@ -126,3 +124,7 @@ def print_specific_output (eh, port, stderr):
 def memo_accept (eh, msg):      
     # PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
     eh.accepted.put (msg)
+
+def put_output (routing_kind, eh, msg, causingMessage):
+    eh.outq.put (msg)
+    
