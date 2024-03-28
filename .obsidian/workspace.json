@@ -171,6 +171,7 @@
   },
   "active": "aad0e655689b0d74",
   "lastOpenFiles": [
+    "das2json/das2json.o",
     "python/doc/#COMPONENTS.md#",
     "python/doc/COMPONENTS.md~",
     "python/test/routing-2024-03-27-1503.png",
@@ -186,7 +187,6 @@
     "python/#routing.txt#",
     "python/#message.py#",
     "python/routing.txt~",
-    "python/routing.txt",
     "python/test/README.md",
     "simple0d4/0D/python/play/readjson.md",
     "simple0d4/0D/python/README.md",
