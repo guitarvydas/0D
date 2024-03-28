@@ -65,18 +65,19 @@ def make_leaf (name, owner, instance_data, handler):
 # of the given component.
 def send (eh,port,datum,causingMessage):      
     msg = make_message(port, datum)
-    put_output ("send", eh, msg)
+    dr_log_send (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    put_output (sender, msg)
 
 
 def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
     msg = make_message(port=port, datum=datum)
-    put_output ("send", eh, msg)
+    put_output (eh, msg)
 
 
 def forward (eh, port, msg, causingMessage):      
     fwdmsg = make_message(port, msg.datum)
-    put_output ("forward", eh, msg)
+    put_output (eh, msg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -117,6 +118,6 @@ def print_specific_output (eh, port, stderr):
             f = sys.stdout
         print (datum.srepr (), file=f)
 
-def put_output (routing_kind, eh, msg):
+def put_output (eh, msg):
     eh.outq.put (msg)
     

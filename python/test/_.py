@@ -210,6 +210,92 @@ def format_message (m):
     else:
         return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
 
+# dynamic routing descriptors
+
+drInject = "inject"
+drSend = "send"
+drForward = "forward"
+drDown = "down"
+drUp = "up"
+drAcross = "across"
+drThrough = "through"
+
+class Routing_Descriptor:
+    def __init__ (self, action=None, source=None, target=None, message=None):
+        self.action = action
+        self.source = source
+        self.target = target
+        self.message = message
+
+class Source:
+    def __init__ (self, component=None, port=""):
+        self.component = component
+        self.port = port
+
+class Target:
+    def __init__ (self, component=None, port=""):
+        self.component = component
+        self.port = port
+
+def dr_log_send (container, sender, receiver, msg):
+    source = Source (component=sender.component, port=sender.port)
+    target = Target (component=sender.component, port=sender.port)
+    rdesc = Routing_Descriptor (action=drSend, source=source, target=target, message=msg)
+    append_routing_descriptor (container, rdesc)
+
+def dr_log_forward (container, sender, receiver, msg):
+    pass # when needed, it is too frequent to bother logging
+
+def dr_log_inject (container, component, port, msg):
+    source = None
+    target = Target (component=component, port=port)
+    rdesc = Routing_Descriptor (action=drInject, source=source, target=target, message=msg)
+    append_routing_descriptor (container, rdesc)
+
+def dr_log_down (container, sender, receiver, msg):
+    source = Source (component=sender.component, port=sender.port)
+    target = Target (component=sender.component, port=sender.port)
+    rdesc = Routing_Descriptor (action=drDown, source=source, target=target, message=msg)
+    append_routing_descriptor (container, rdesc)
+
+def dr_log_up (container, sender, receiver, msg):
+    source = Source (component=sender.component, port=sender.port)
+    target = Target (component=sender.component, port=sender.port)
+    rdesc = Routing_Descriptor (action=drUp, source=source, target=target, message=msg)
+    append_routing_descriptor (container, rdesc)
+
+def dr_log_across (container, sender, receiver, msg):
+    source = Source (component=sender.component, port=sender.port)
+    target = Target (component=sender.component, port=sender.port)
+    rdesc = Routing_Descriptor (action=drAcross, source=source, target=target, message=msg)
+    append_routing_descriptor (container, rdesc)
+
+def dr_log_through (container, source_port, target_port, msg):
+    source = Source (component=container, port=source_port)
+    target = Target (component=container, port=target_port)
+    rdesc = Routing_Descriptor (action=drAcross, source=source, target=target, message=msg)
+    append_routing_descriptor (container, rdesc)
+
+
+def routing_trace (container, dynamic_routing_descriptor, indent):
+    s = ""
+    for r in list (container.routings.queue):
+        if r.action == drInject:
+            s += f'\nx {r.target.name} {r.message.port}'
+        elif r.action == drSend:
+            s += f'\n☞ {r.target.name} {r.message.port}'
+        elif r.action == drDown:
+            s += f'\n↓ {r.target.name} {r.message.port}'
+        elif r.action == drUp:
+            s += f'\n↑ {r.target.name} {r.message.port}'
+        elif r.action == drAcross:
+            s += f'\n→ {r.target.name} {r.message.port}'
+        elif r.action == drThrough:
+            s += f'\n⇶ {r.target.name} {r.message.port}'
+        elif r.action == drForward:
+            pass # too frequent ???
+
+
 enumDown = 0
 enumAcross = 1
 enumUp = 2
@@ -411,12 +497,10 @@ def print_routing_trace (eh):
     print ("print_routing_trace NIY")
     return
     for r in list (eh.routings.queue):
-        print (routing_tracer (eh, r, ''))
+        print (routing_trace (eh, r, ''))
 
-def routing_tracer (eh, dynamic_routing_descriptor, indent):
-    print ("Routing Tracer NIY")
-    
-
+def append_routing_descriptor (container, rdesc):
+    container.routings.put (rdesc)
     
 import os
 import json

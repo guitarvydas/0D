@@ -1,3 +1,5 @@
+
+
 enumDown = 0
 enumAcross = 1
 enumUp = 2
@@ -199,10 +201,8 @@ def print_routing_trace (eh):
     print ("print_routing_trace NIY")
     return
     for r in list (eh.routings.queue):
-        print (routing_tracer (eh, r, ''))
+        print (routing_trace (eh, r, ''))
 
-def routing_tracer (eh, dynamic_routing_descriptor, indent):
-    print ("Routing Tracer NIY")
-    
-
+def append_routing_descriptor (container, rdesc):
+    container.routings.put (rdesc)
     

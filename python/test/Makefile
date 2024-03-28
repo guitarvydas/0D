@@ -5,6 +5,7 @@ STD = ../std
 0D = ${0Dsrc}/gensym.py \
     ${0Dsrc}/datum.py \
     ${0Dsrc}/message.py \
+    ${0Dsrc}/dynrouting.py \
     ${0Dsrc}/container.py \
     ${0Dsrc}/registry.py \
     ${0Dsrc}/process.py \
