@@ -174,6 +174,7 @@ def route (container, from_component, message):
         
         for connector in container.connections:
             if sender_eq (from_sender, connector.sender):   
+                log_connection (container, connector, message)
                 deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
@@ -206,3 +207,22 @@ def print_routing_trace (eh):
 def append_routing_descriptor (container, desc):
     container.routings.put (desc)
     
+####
+def log_connection (container, connector, message):
+    if enumDown == connector.direction:
+        log_down (container=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+                  target_message=message)
+    elif enumUp == connector.direction:
+        log_down (source=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+                  target_message=message)
+    elif enumAcross == connector.direction:
+        log_across (container=container,
+                    source=connector.sender.component, source_port=connector.sender.port,
+                    target=connector.sender.component, target_port=connector.sender.port)
+    elif enumThrough == connector.direction:
+        log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
+                     target_port=connector.receiver.port, message=message)
+    else:
+        print (f"*** FATAL error: in log_connection")
+        exit ()
+        

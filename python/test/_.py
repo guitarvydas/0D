@@ -313,24 +313,23 @@ def fmt_down (desc):
 
 
 ####
-def make_Up_Descriptor (source=None, source_port=None, source_message=None, container=None, container_port=None, container_message=None):
+def make_Up_Descriptor (source=None, source_port=None, source_message=None, container_port=None, container_message=None):
     return {
         "action": drUp,
         "source": source,
         "source_port": source_port,
         "source_message": source_message,
-        "container": container,
-        "target": target,
-        "target_port": target_port,
-        "target_message": target_message
+        "container": source,
+        "container_port": target_port,
+        "container_message": target_message
         }
 
-def log_up (source=None, source_port=None, source_message=None, container=None, target_port=None, target_message=None):
-    rdesc = make_Up_Descriptor (source, source_port, source_message, container, target_port, target_message)
+def log_up (source=None, source_port=None, source_message=None, target_port=None, target_message=None):
+    rdesc = make_Up_Descriptor (source, source_port, source_message, target_port, target_message)
     append_routing_descriptor (container, rdesc)
 
 def fmt_up (desc):
-    return f'\n↑ {desc.container.name} {desc.source_port} ⟹ {desc.target.name} {desc.target_port}'
+    return f'\n↑ {desc.source.name} {desc.source_port} ⟹ {desc.target.name} {desc.target_port}'
 
 
 ####
@@ -355,18 +354,18 @@ def fmt_across (desc):
 
 
 ####
-def make_Through_Descriptor (container=None, source_port=None, source_message=None, target_port=None, target_message=None):
+def make_Through_Descriptor (container=None, source_port=None, source_message=None, target_port=None, message=None):
     return {
         "action": drThrough,
         "container": container,
         "source_port": source_port,
         "source_message": source_message,
         "target_port": target_port,
-        "target_message": target_message
+        "message": message
         }
 
-def log_through (contaner=None, source_port=None, source_message=None, target_port=None, target_message=None):
-    rdesc = make_Through_Descriptor (container, source, source_port, source_message, target, target_port, target_message)
+def log_through (contaner=None, source_port=None, source_message=None, target_port=None, message=None):
+    rdesc = make_Through_Descriptor (container, source, source_port, source_message, target, target_port, message)
     append_routing_descriptor (container, rdesc)
 
 def fmt_through (desc):
@@ -569,6 +568,7 @@ def route (container, from_component, message):
         
         for connector in container.connections:
             if sender_eq (from_sender, connector.sender):   
+                log_connection (container, connector, message)
                 deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
@@ -601,6 +601,25 @@ def print_routing_trace (eh):
 def append_routing_descriptor (container, desc):
     container.routings.put (desc)
     
+####
+def log_connection (container, connector, message):
+    if enumDown == connector.direction:
+        log_down (container=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+                  target_message=message)
+    elif enumUp == connector.direction:
+        log_down (source=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+                  target_message=message)
+    elif enumAcross == connector.direction:
+        log_across (container=container,
+                    source=connector.sender.component, source_port=connector.sender.port,
+                    target=connector.sender.component, target_port=connector.sender.port)
+    elif enumThrough == connector.direction:
+        log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
+                     target_port=connector.receiver.port, message=message)
+    else:
+        print (f"*** FATAL error: in log_connection")
+        exit ()
+        
 import os
 import json
 import sys
@@ -787,18 +806,20 @@ def make_leaf (name, owner, instance_data, handler):
 # of the given component.
 def send (eh,port,datum,causingMessage):      
     msg = make_message(port, datum)
-    dr_log_send (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_send (sender=eh, sender_port=port, message=msg, cause=causingMessage)
     put_output (sender, msg)
 
 
 def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
     msg = make_message(port=port, datum=datum)
+    log_send_string (sender=eh, sender_port=port, message=msg, cause=causingMessage)
     put_output (eh, msg)
 
 
 def forward (eh, port, msg, causingMessage):      
     fwdmsg = make_message(port, msg.datum)
+    log_forward (sender=eh, sender_port=port, message=msg, cause=causingMessage)
     put_output (eh, msg)
 
 # Returns a list of all output messages on a container.
@@ -1312,6 +1333,7 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     dump_hierarchy (main_container)
     dump_connections (main_container)
     dump_outputs (main_container)
+    print ("--- routing traces ---")
     print (routing_trace_all (main_container))
     print ("--- done ---")
 
