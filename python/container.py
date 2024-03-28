@@ -110,12 +110,12 @@ def sender_eq (s1, s2):
 
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, conn, message):
-    new_message = make_message (port=conn.receiver.port, datum=message.datum, direction=conn.direction, cause=make_cause (conn.sender.component, message))
+    new_message = make_message (port=conn.receiver.port, datum=message.datum)
     push_message (parent, conn.receiver.component, conn.receiver.queue, new_message)
 
 
-def force_tick (parent, eh, causingMessage):      
-    tick_msg = make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
+def force_tick (parent, eh):
+    tick_msg = make_message (".", new_datum_tick ())
     push_message (parent, eh, eh.inq, tick_msg)
     return tick_msg
 
@@ -132,12 +132,11 @@ def step_children (container, causingMessage):
         if (child != None): 
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
-                memo_accept (container, msg)
                 child.handler(child, msg)
                 destroy_message(msg)
             else:
                 if (child.state != "idle"):
-                    msg = force_tick (container, child, causingMessage)
+                    msg = force_tick (container, child)
                     child.handler(child, msg)
                     destroy_message(msg)
             
@@ -150,9 +149,9 @@ def step_children (container, causingMessage):
                 route(container, child, msg)
                 destroy_message(msg)
 
-def attempt_tick (parent, eh, causingMessage):      
+def attempt_tick (parent, eh):
     if eh.state != "idle":
-        force_tick (parent, eh, causingMessage)
+        force_tick (parent, eh)
 
 def is_tick (msg):      
     return "tick" == msg.datum.kind ()
@@ -178,8 +177,8 @@ def route (container, from_component, message):
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
-        message_tracer (container, message, '')
         dump_possible_connections (container)
+        print_routing_trace (container)
         print ("***")
 
 def dump_possible_connections (container):      
@@ -195,5 +194,15 @@ def any_child_ready (container):
 
 def child_is_ready (eh):      
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
+
+def print_routing_trace (eh):
+    print ("print_routing_trace NIY")
+    return
+    for r in list (eh.routings.queue):
+        print (routing_tracer (eh, r, ''))
+
+def routing_tracer (eh, dynamic_routing_descriptor, indent):
+    print ("Routing Tracer NIY")
+    
 
     

@@ -42,7 +42,7 @@ def dump_outputs (main_container):
 def trace_outputs (main_container):
     print ()
     print ("--- Message Traces ---")
-    print_output_trace_list (main_container)
+    print_routing_trace (main_container)
 
 def dump_hierarchy (main_container):
     print ()

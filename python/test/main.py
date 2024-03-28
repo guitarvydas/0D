@@ -10,7 +10,7 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("", arg, None)
+    msg = make_message("", arg)
     main_container.handler(main_container, msg)
 
 
