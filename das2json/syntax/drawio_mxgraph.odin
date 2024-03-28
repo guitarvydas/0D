@@ -137,9 +137,9 @@ cell_from_elem :: proc(doc: ^xml.Document, elem: xml.Element, user_object_parent
         case "target": cell.mxgraph_target = attrib.val
         case "parent": cell.mxgraph_parent = attrib.val
         case "value":  cell.value = html_unescape(attrib.val)
-        case "vertex": incl(&cell.flags, Flag_Value.Vertex)
+        case "vertex": cell.flags += {.Vertex}
         case "edge":
-            incl(&cell.flags, Flag_Value.Edge)
+	    cell.flags += {.Edge}
             cell.type = .Arrow
         case "style":
             iter := attrib.val
@@ -148,7 +148,7 @@ cell_from_elem :: proc(doc: ^xml.Document, elem: xml.Element, user_object_parent
                 switch k {
                 case "ellipse": cell.type = .Ellipse
                 case "rhombus": cell.type = .Rhombus
-                case "container": incl(&cell.flags, Flag_Value.Container)
+                case "container":  cell.flags += {.Container}
                 }
             }
         }
