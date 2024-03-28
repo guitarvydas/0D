@@ -41,8 +41,5 @@ def format_message (m):
     if m == None:
         return "None"
     else:
-        if m.cause == None:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋⊥⟫'
-        else:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
+        return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
 

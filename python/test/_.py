@@ -170,21 +170,9 @@ def raw_datum_int (i):
 # `port` refers to the name of the incoming or outgoing port of this component.
 # `datum` is the data attached to this message.
 class Message:
-    def __init__ (self, port, datum, direction=None, cause=None):
+    def __init__ (self, port, datum):
         self.port = port
         self.datum = datum
-        self.cause = cause
-        self.direction = direction
-
-class Cause:
-    def __init__ (self, who, message):
-        # trail to help trace message provenance
-        # each message is tagged with a Cause that describes who sent the message and what message
-        # was handled by "who" in causing this message to be sent (since, the cause is a message,
-        # cause also contains a message, and provenance can be traced recursively back
-        # all the way back to the beginning of time)
-        self.who = who
-        self.message = message
 
 def clone_port (s):
     return clone_string (s)
@@ -193,14 +181,14 @@ def clone_port (s):
 # Utility for making a `Message`. Used to safely "seed" messages
 # entering the very top of a network.
 
-def make_message (port, datum, direction=None, cause=None):
+def make_message (port, datum):
     p = clone_string (port)
-    m = Message (port=p, datum=datum.clone (), direction=direction, cause=cause)
+    m = Message (port=p, datum=datum.clone ())
     return m
 
 # Clones a message. Primarily used internally for "fanning out" a message to multiple destinations.
 def message_clone (message):
-    m = Message (port=clone_port (message.port), datum=message.datum.clone (), cause=message.cause)
+    m = Message (port=clone_port (message.port), datum=message.datum.clone ())
     return m
 
 # Frees a message.
@@ -214,84 +202,14 @@ def destroy_datum (msg):
 def destroy_port (msg):
     pass
 
-def make_cause (eh, msg):
-    # create a persistent Cause in the heap, return a pointer to it
-    cause = Cause (who=eh, message=msg)
-    return cause
-
 #####
 
 def format_message (m):
     if m == None:
         return "None"
     else:
-        if m.cause == None:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋⊥⟫'
-        else:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
+        return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
 
-def full_format_message (m):
-    if m == None:
-        return "None"
-    else:
-        if m.cause == None:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋⊥⟫'
-        elif None == m.cause.who:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋[{m.direction},None,{format_message (m.cause.message)}]⟫'
-        else:
-            return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋[{m.direction},{m.cause.who.name},{format_message (m.cause.message)}]⟫'
-
-
-def message_tracer (eh, msg, indent):
-    m = format_message (msg)
-
-    if msg.cause == None:
-        return f'\n{indent}[external injector] injected {m}'
-    else:
-        me = f'{eh.name}'
-        sender = msg.cause.who.name
-        fcause = format_message (msg.cause.message)
-        cause_msg = msg.cause.message
-        rec = message_tracer (msg.cause.who, cause_msg, indent + '  ')
-        rec2 = message_tracer (msg.cause.who, cause_msg, indent + '    ')
-        if msg.direction == "down":
-            return f"\n{indent}⇣\n{indent + '    '}Container ‛{sender}‘ received {fcause}{rec2}"
-
-        elif msg.direction == "up":
-            return f"\n{indent}↑\n{indent + '  '}∴ Container ‛{me}‘ output {m}{rec2}"
-
-        elif msg.direction == "across":
-            return f"\n{indent}Child ‛{me} received {fcause} ∴ Child ‛{me}‘ output {m}\n{indent + '  '}→{rec2}"
-
-        elif msg.direction == "through":
-            return f"\n{indent}↔︎\n{indent + '  '}Container ‛{me}‘ received {str+causing_msg} ∴ Container ‛{me}‘ output-through {m}{rec2}"
-
-        else:
-            return f"\n{indent}Child ‛{me}‘ received {fcause} ∴ Child ‛{me}‘ output {m}{rec}"
-
-# def message_tracer (eh, msg, indent):
-#     m = format_message (msg)
-
-#     if msg.cause == None:
-#         return f'\n{indent}[external injector] injected {m}'
-#     else:
-#         me = f'{eh.name}'
-#         sender = msg.cause.who.name
-#         fcause = format_message (msg.cause.message)
-#         cause_msg = msg.cause.message
-#         rec = message_tracer (msg.cause.who, cause_msg, indent + '  ')
-#         if msg.direction == "down":
-#             return f"\n{indent}⇣ Container ‛{sender}‘ received {fcause} which was routed down as {m} to Child ‛{me}‘{rec}"
-#         elif msg.direction == "up":
-#             return f"\n{indent}↑ Container ‛{me}‘ created output {m} because {fcause} was routed up from Child ‛{sender}‘{rec}"
-#         elif msg.direction == "across":
-#             return f"\n{indent}→ Child ‛{me}‘ created {m} due to input {fcause} which was routed across from ‛{sender}‘{rec}"
-#         elif msg.direction == "through":
-#             return f"\n{indent}↔︎ Container ‛{me}‘ output-through {m} because {me} received {str+causing_msg} from '{sender}‘{rec}"
-#         else:
-#             return f"{rec}"
-#             #return f"\n{indent}∴ Child ‛{me}‘ created {m} in response to input message {fcause}{rec}"
-        
 enumDown = 0
 enumAcross = 1
 enumUp = 2
@@ -404,12 +322,12 @@ def sender_eq (s1, s2):
 
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, conn, message):
-    new_message = make_message (port=conn.receiver.port, datum=message.datum, direction=conn.direction, cause=make_cause (conn.sender.component, message))
+    new_message = make_message (port=conn.receiver.port, datum=message.datum)
     push_message (parent, conn.receiver.component, conn.receiver.queue, new_message)
 
 
-def force_tick (parent, eh, causingMessage):      
-    tick_msg = make_message (".", new_datum_tick (), make_cause (eh, causingMessage))
+def force_tick (parent, eh):
+    tick_msg = make_message (".", new_datum_tick ())
     push_message (parent, eh, eh.inq, tick_msg)
     return tick_msg
 
@@ -426,12 +344,11 @@ def step_children (container, causingMessage):
         if (child != None): 
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
-                memo_accept (container, msg)
                 child.handler(child, msg)
                 destroy_message(msg)
             else:
                 if (child.state != "idle"):
-                    msg = force_tick (container, child, causingMessage)
+                    msg = force_tick (container, child)
                     child.handler(child, msg)
                     destroy_message(msg)
             
@@ -444,9 +361,9 @@ def step_children (container, causingMessage):
                 route(container, child, msg)
                 destroy_message(msg)
 
-def attempt_tick (parent, eh, causingMessage):      
+def attempt_tick (parent, eh):
     if eh.state != "idle":
-        force_tick (parent, eh, causingMessage)
+        force_tick (parent, eh)
 
 def is_tick (msg):      
     return "tick" == msg.datum.kind ()
@@ -472,8 +389,8 @@ def route (container, from_component, message):
     if not (was_sent): 
         print ("\n\n*** Error: ***")
         print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
-        message_tracer (container, message, '')
         dump_possible_connections (container)
+        print_routing_trace (container)
         print ("***")
 
 def dump_possible_connections (container):      
@@ -489,6 +406,16 @@ def any_child_ready (container):
 
 def child_is_ready (eh):      
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
+
+def print_routing_trace (eh):
+    print ("print_routing_trace NIY")
+    return
+    for r in list (eh.routings.queue):
+        print (routing_tracer (eh, r, ''))
+
+def routing_tracer (eh, dynamic_routing_descriptor, indent):
+    print ("Routing Tracer NIY")
+    
 
     
 import os
@@ -640,7 +567,7 @@ class Eh:
         self.children = []
         self.visit_ordering = queue.Queue ()
         self.connections = []
-        self.accepted = queue.LifoQueue ()  # ordered list of messages received (most recent message is first)
+        self.routings = queue.Queue ()
         self.handler = None
         self.instance_data = None
         self.state = "idle"
@@ -676,21 +603,19 @@ def make_leaf (name, owner, instance_data, handler):
 # Sends a message on the given `port` with `data`, placing it on the output
 # of the given component.
 def send (eh,port,datum,causingMessage):      
-    cause = make_cause (eh, causingMessage)
-    msg = make_message(port, datum, cause)
-    eh.outq.put (msg)
+    msg = make_message(port, datum)
+    put_output ("send", eh, msg)
 
 
-def send_string (eh,port,s,causingMessage):      
-    cause = make_cause (eh, causingMessage)
+def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
-    msg = make_message(port=port, datum=datum, cause=cause)
-    eh.outq.put (msg)
+    msg = make_message(port=port, datum=datum)
+    put_output ("send", eh, msg)
 
 
-def forward (eh,port,msg):      
-    fwdmsg = make_message(port, msg.datum, make_cause (eh, msg))
-    eh.outq.put (fwdmsg)
+def forward (eh, port, msg, causingMessage):      
+    fwdmsg = make_message(port, msg.datum)
+    put_output ("forward", eh, msg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -702,10 +627,6 @@ def output_list (eh):
 def print_output_list (eh):
     for m in list (eh.outq.queue):
         print (format_message (m))
-
-def print_output_trace_list (eh):
-    for m in list (eh.outq.queue):
-        print (message_tracer (eh, m, ''))
 
 def spaces (n):
     s = ""
@@ -735,9 +656,9 @@ def print_specific_output (eh, port, stderr):
             f = sys.stdout
         print (datum.srepr (), file=f)
 
-def memo_accept (eh, msg):      
-    # PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
-    eh.accepted.put (msg)
+def put_output (routing_kind, eh, msg):
+    eh.outq.put (msg)
+    
 import sys
 import re
 import subprocess
@@ -1049,7 +970,7 @@ def dump_outputs (main_container):
 def trace_outputs (main_container):
     print ()
     print ("--- Message Traces ---")
-    print_output_trace_list (main_container)
+    print_routing_trace (main_container)
 
 def dump_hierarchy (main_container):
     print ()
@@ -1207,7 +1128,7 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     dump_hierarchy (main_container)
     dump_connections (main_container)
     dump_outputs (main_container)
-    trace_outputs (main_container)
+    print_routing_trace (main_container)
     print ("--- done ---")
 
 def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):
@@ -1232,7 +1153,7 @@ def main ():
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
-    msg = make_message("", arg, None)
+    msg = make_message("", arg)
     main_container.handler(main_container, msg)
 
 

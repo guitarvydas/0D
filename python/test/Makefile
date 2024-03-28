@@ -18,7 +18,8 @@ STD = ../std
 
 all :
 	clear
-	make dev1
+	make clean
+	make dev0
 
 main: jsons
 	# *** building _.py
@@ -36,6 +37,9 @@ jsons: simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio hellow
 	@${das2jsondir}/das2json vsh0d.drawio
 	@${das2jsondir}/das2json arith0d.drawio
 	@${das2jsondir}/das2json ../std/transpile.drawio
+
+clean:
+	rm -f _.py
 
 install:
 	./makedas2json.bash ${das2jsondir}
@@ -78,4 +82,10 @@ dev0d4: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
 	python3 _.py "@0d4" main simple0d4.drawio.json
+
+devra:
+	# *** building _.py
+	@cat ${0D} ./main.py > _.py
+	python3 _.py "@0" main simple0d.drawio.json
+
 

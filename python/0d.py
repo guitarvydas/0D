@@ -65,18 +65,18 @@ def make_leaf (name, owner, instance_data, handler):
 # of the given component.
 def send (eh,port,datum,causingMessage):      
     msg = make_message(port, datum)
-    put_output ("send", eh, msg, causingMessage)
+    put_output ("send", eh, msg)
 
 
 def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
     msg = make_message(port=port, datum=datum)
-    put_output ("send", eh, msg, causingMessage)
+    put_output ("send", eh, msg)
 
 
 def forward (eh, port, msg, causingMessage):      
     fwdmsg = make_message(port, msg.datum)
-    put_output ("forward", eh, msg, causingMessage)
+    put_output ("forward", eh, msg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -88,10 +88,6 @@ def output_list (eh):
 def print_output_list (eh):
     for m in list (eh.outq.queue):
         print (format_message (m))
-
-def print_routing_trace (eh):
-    for r in list (eh.routings.queue):
-        print (routing_tracer (eh, r, ''))
 
 def spaces (n):
     s = ""
@@ -121,10 +117,6 @@ def print_specific_output (eh, port, stderr):
             f = sys.stdout
         print (datum.srepr (), file=f)
 
-def memo_accept (eh, msg):      
-    # PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
-    eh.accepted.put (msg)
-
-def put_output (routing_kind, eh, msg, causingMessage):
+def put_output (routing_kind, eh, msg):
     eh.outq.put (msg)
     
