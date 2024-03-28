@@ -14,7 +14,7 @@ def clone_port (s):
 # Utility for making a `Message`. Used to safely "seed" messages
 # entering the very top of a network.
 
-def make_message (port, datum)
+def make_message (port, datum):
     p = clone_string (port)
     m = Message (port=p, datum=datum.clone ())
     return m
