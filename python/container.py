@@ -203,6 +203,6 @@ def print_routing_trace (eh):
     for r in list (eh.routings.queue):
         print (routing_trace (eh, r, ''))
 
-def append_routing_descriptor (container, rdesc):
-    container.routings.put (rdesc)
+def append_routing_descriptor (container, desc):
+    container.routings.put (desc)
     

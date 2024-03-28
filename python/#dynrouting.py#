@@ -108,9 +108,8 @@ def make_Up_Descriptor (source=None, source_port=None, source_message=None, cont
         "source_port": source_port,
         "source_message": source_message,
         "container": container,
-        "target": target,
-        "target_port": target_port,
-        "target_message": target_message
+        "container_port": target_port,
+        "container_message": target_message
         }
 
 def log_up (source=None, source_port=None, source_message=None, container=None, target_port=None, target_message=None):
