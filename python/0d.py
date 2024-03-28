@@ -25,6 +25,7 @@ class Eh:
         self.inq = queue.Queue ()
         self.outq = queue.Queue ()
         self.owner = None
+        self.inject = injector_NIY
         self.children = []
         self.visit_ordering = queue.Queue ()
         self.connections = []
@@ -44,6 +45,7 @@ def make_container (name, owner):
     eh.name = name
     eh.owner = owner
     eh.handler = container_handler
+    #eh.inject = container_injector
     eh.state = "idle"
     eh.kind = "container"
     return eh
@@ -80,6 +82,9 @@ def forward (eh, port, msg, causingMessage):
     fwdmsg = make_message(port, msg.datum)
     log_forward (sender=eh, sender_port=port, message=msg, cause=causingMessage)
     put_output (eh, msg)
+
+def inject (eh, msg):
+    eh.inject (eh, msg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -123,3 +128,6 @@ def print_specific_output (eh, port, stderr):
 def put_output (eh, msg):
     eh.outq.put (msg)
     
+def injector_NIY (eh, msg):
+    print (f'Injector not implemented for this component "{eh.name}" kind={eh.kind} port="{msg.port}"')
+    exit ()

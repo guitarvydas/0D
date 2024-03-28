@@ -223,6 +223,6 @@ def log_connection (container, connector, message):
         log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
                      target_port=connector.receiver.port, message=message)
     else:
-        print (f"*** FATAL error: in log_connection")
+        print (f"*** FATAL error: in log_connection /{message.port}/ /{message.datum.srepr ()}/")
         exit ()
         

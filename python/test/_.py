@@ -617,7 +617,7 @@ def log_connection (container, connector, message):
         log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
                      target_port=connector.receiver.port, message=message)
     else:
-        print (f"*** FATAL error: in log_connection")
+        print (f"*** FATAL error: in log_connection /{message.port}/ /{message.datum.srepr ()}/")
         exit ()
         
 import os
@@ -766,6 +766,7 @@ class Eh:
         self.inq = queue.Queue ()
         self.outq = queue.Queue ()
         self.owner = None
+        self.inject = injector_NIY
         self.children = []
         self.visit_ordering = queue.Queue ()
         self.connections = []
@@ -785,6 +786,7 @@ def make_container (name, owner):
     eh.name = name
     eh.owner = owner
     eh.handler = container_handler
+    #eh.inject = container_injector
     eh.state = "idle"
     eh.kind = "container"
     return eh
@@ -821,6 +823,9 @@ def forward (eh, port, msg, causingMessage):
     fwdmsg = make_message(port, msg.datum)
     log_forward (sender=eh, sender_port=port, message=msg, cause=causingMessage)
     put_output (eh, msg)
+
+def inject (eh, msg):
+    eh.inject (eh, msg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -864,6 +869,9 @@ def print_specific_output (eh, port, stderr):
 def put_output (eh, msg):
     eh.outq.put (msg)
     
+def injector_NIY (eh, msg):
+    print (f'Injector not implemented for this component "{eh.name}" kind={eh.kind} port="{msg.port}"')
+    exit ()
 import sys
 import re
 import subprocess
@@ -1360,7 +1368,7 @@ def main ():
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
     msg = make_message("", arg)
-    main_container.handler(main_container, msg)
+    inject (main_container, msg)
 
 
 def components_to_include_in_project (reg):
