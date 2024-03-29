@@ -65,11 +65,10 @@ def container_instantiator (reg, owner, container_name, desc):
     return container
 
 # The default handler for container components.
-def container_handler (eh,message):
-    self = eh
-    route (container=eh, from_component=self, message=message) # references to 'self' are replaced by the container during instantiation
-    while any_child_ready (eh):
-        step_children (eh, message)
+def container_handler (container, message):
+    route (container=container, from_component=container, message=message) # references to 'self' are replaced by the container during instantiation
+    while any_child_ready (container):
+        step_children (container, message)
 
 # Frees the given container and associated data.
 def destroy_container (eh):      
@@ -136,11 +135,13 @@ def step_children (container, causingMessage):
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
                 child.handler(child, msg)
+                log_inout (container=container, component=child, in_message=msg)
                 destroy_message(msg)
             else:
                 if (child.state != "idle"):
                     msg = force_tick (container, child)
                     child.handler(child, msg)
+                    log_tick (container=container, component=child, in_message=msg)
                     destroy_message(msg)
             
             if (child.state == "active"):

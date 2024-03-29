@@ -2,6 +2,7 @@
 
 drInject = "inject"
 drSend = "send"
+drInOut = "inout"
 drForward = "forward"
 drDown = "down"
 drUp = "up"
@@ -44,7 +45,8 @@ def log_send_string (sender, sender_port, msg, cause_msg):
 
 
 def fmt_send (desc, indent):
-    return f'\n{indent}⋯ {desc ["component"].name}.“{desc ["cause_port"]}” ∴ {desc ["component"].name}.“{desc ["port"]}” {format_message (desc ["message"])}'
+    return ""
+    #return f'\n{indent}⋯ {desc ["component"].name}.“{desc ["cause_port"]}” ∴ {desc ["component"].name}.“{desc ["port"]}” {format_message (desc ["message"])}'
 def fmt_send_string (desc, indent):
     return fmt_send (desc, indent)
 
@@ -172,7 +174,51 @@ def log_through (container=None, source_port=None, source_message=None, target_p
 def fmt_through (desc, indent):
     return f'\n{indent}⇶ {desc  ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["container"].name}.“{desc ["target_port"]}” {format_message (desc ["message"])}'
 
+####
+def make_InOut_Descriptor (container=None, component=None, in_message=None, out_port=None, out_message=None):
+    return {
+        "action": drInOut,
+        "container": container,
+        "component": component,
+        "in_message": in_message,
+        "out_message": out_message,
+        "fmt" : fmt_inout
+        }
 
+def log_inout (container=None, component=None, in_message=None):
+    if component.outq.empty ():
+        log_inout_no_output (container=container, component=component, in_message=msg)
+    else:
+        log_inout_recursively (container=container, component=component, in_message=in_message, out_messages=list (component.outq.queue))
+
+def log_inout_no_output (container=None, component=None, in_message=None):
+    rdesc = make_InOut_Descriptor (container=container, component=component, in_message=in_message)
+    append_routing_descriptor (container, rdesc)
+
+def log_inout_single (container=None, component=None, in_message=None, out_message=None):
+    rdesc = make_InOut_Descriptor (container=container, component=component, in_message=in_message, out_message=out_message)
+    append_routing_descriptor (container, rdesc)
+
+def log_inout_recursively (container=None, component=None, in_message=None, out_messages=[]):
+    if [] == out_messages:
+        pass
+    else:
+        m = out_messages [0]
+        rest = out_messages [1:]
+        log_inout_single (container=container, component=component, in_message=in_message, out_message=m)
+        log_inout_recursively (container=container, component=component, in_message=in_message, out_messages=rest)
+
+def fmt_inout (desc, indent):
+    outm = desc ["out_message"]
+    if None == outm:
+        return f'          ⊥'
+    else:
+        return f'          ∴ {desc ["component"].name} {format_message (outm)}'
+
+def log_tick (container=None, component=None, in_message=None):
+    pass
+
+        
 ####
 def routing_trace_all (container):
     indent = ""
