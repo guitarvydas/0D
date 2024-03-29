@@ -423,9 +423,9 @@ def log_inout_recursively (container=None, component=None, in_message=None, out_
 def fmt_inout (desc, indent):
     outm = desc ["out_message"]
     if None == outm:
-        return f'          ⊥'
+        return f'\n{indent}  ⊥'
     else:
-        return f'          ∴ {desc ["component"].name} {format_message (outm)}'
+        return f'\n{indent}  ∴ {desc ["component"].name} {format_message (outm)}'
 
 def log_tick (container=None, component=None, in_message=None):
     pass
