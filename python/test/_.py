@@ -233,13 +233,13 @@ def make_Routing_Descriptor (action=None, component=None, port=None, message=Non
 
 
 ####
-def make_Send_Descriptor (compoment=None, port=None, message=None, cause_port=None, cause_message=None):
-    rdesc = make_Routing_Descriptor (action=drSend, souce=source, port=port, message=message)
+def make_Send_Descriptor (component=None, port=None, message=None, cause_port=None, cause_message=None):
+    rdesc = make_Routing_Descriptor (action=drSend, component=component, port=port, message=message)
     return {
         "action": drSend,
-        "component": rdesc.component,
-        "port": rdesc.port,
-        "message": rdesc.message,
+        "component": rdesc ["component"],
+        "port": rdesc ["port"],
+        "message": rdesc ["message"],
         "cause_port": cause_port,
         "cause_message": cause_message,
         "fmt": fmt_send
@@ -250,26 +250,26 @@ def log_send (sender, sender_port, msg, cause_msg):
     append_routing_descriptor (container=sender.owner, desc=send_desc)
 
 def log_send_string (sender, sender_port, msg, cause_msg):
-    send_desc = make_Send_Descriptor (component=sender, port=sender_port, message=msg, cause_port=cause_msg.port, cause_message=cause_msg)
+    send_desc = make_Send_Descriptor (sender, sender_port, msg, cause_msg.port, cause_msg)
     append_routing_descriptor (container=sender.owner, desc=send_desc)
 
 
 
-def fmt_send (desc):
-    return f'\n⋯ {desc.component.name} {desc.cause_port} ∴ {desc.component.name} {dec.port}'
-def fmt_send_string (desc):
-    return fmt_send (desc)
+def fmt_send (desc, indent):
+    return f'\n{indent}⋯ {desc ["component"].name}.❲{desc ["cause_port"]}❳ ∴ {desc ["component"].name}.❲{desc ["port"]}❳'
+def fmt_send_string (desc, indent):
+    return fmt_send (desc, indent)
 
 
 ####
-def make_Send_Descriptor (compoment=None, port=None, message=None, cause_port=None, cause_message=None):
-    rdesc = make_Routing_Descriptor (action=drSend, souce=source, port=port, message=message)
+def make_Forward_Descriptor (component=None, port=None, message=None, cause_port=None, cause_message=None):
+    rdesc = make_Routing_Descriptor (action=drSend, component=component, port=port, message=message)
     fmt_forward = lambda desc : ''
     return {
         "action": drForward,
-        "component": rdesc.component,
-        "port": rdesc.port,
-        "message": rdesc.message,
+        "component": rdesc ["component"],
+        "port": rdesc ["port"],
+        "message": rdesc ["message"],
         "cause_port": cause_port,
         "cause_message": cause_message,
         "fmt": fmt_forward
@@ -278,18 +278,27 @@ def make_Send_Descriptor (compoment=None, port=None, message=None, cause_port=No
 def log_forward (sender, sender_port, msg, cause_msg):
     pass # when needed, it is too frequent to bother logging
 
+def fmt_forward (desc):
+    print (f"*** Error fmt_forward {desc}")
+    quit ()
+
 ####
-def log_inject (receiver=None, port=None, msg=None):
-    rdesc = make_Routing_Descriptor (action=drInject, component=Receiver, port=port, message=message)
+def make_Inject_Descriptor (receiver=None, port=None, message=None):
+    rdesc = make_Routing_Descriptor (action=drInject, component=receiver, port=port, message=message)
     return {
         "action": drInject,
-        "component": rdesc.component,
-        "port": rdesc.port,
-        "message": rdesc.message,
+        "component": rdesc ["component"],
+        "port": rdesc ["port"],
+        "message": rdesc ["message"],
+        "fmt" : fmt_inject
         }
 
-def fmt_inject (desc):
-    return f'\n⟹ {desc.component.name} {desc.port}'
+def log_inject (receiver, port, msg):
+    inject_desc = make_Inject_Descriptor (receiver=receiver, port=port, message=msg)
+    append_routing_descriptor (container=receiver, desc=inject_desc)
+
+def fmt_inject (desc, indent):
+    return f'\n{indent}⟹  {desc ["component"].name}.❲{desc ["port"]}❳'
 
 
 ####
@@ -301,35 +310,37 @@ def make_Down_Descriptor (container=None, source_port=None, source_message=None,
         "source_message": source_message,
         "target": target,
         "target_port": target_port,
-        "target_message": target_message
+        "target_message": target_message,
+        "fmt" : fmt_down
         }
 
 def log_down (container=None, source_port=None, source_message=None, target=None, target_port=None, target_message=None):
     rdesc = make_Down_Descriptor (container, source_port, source_message, target, target_port, target_message)
     append_routing_descriptor (container, rdesc)
 
-def fmt_down (desc):
-    return f'\n↓ {desc.container.name} {desc.source_port} ⟹ {desc.target.name} {desc.target_port}'
+def fmt_down (desc, indent):
+    return f'\n{indent}↓ {desc ["container"].name}.❲{desc ["source_port"]}❳ ➔ {desc ["target"].name}.❲{desc ["target_port"]}❳'
 
 
 ####
-def make_Up_Descriptor (source=None, source_port=None, source_message=None, container_port=None, container_message=None):
+def make_Up_Descriptor (source=None, source_port=None, source_message=None, container=None, container_port=None, container_message=None):
     return {
         "action": drUp,
         "source": source,
         "source_port": source_port,
         "source_message": source_message,
-        "container": source,
-        "container_port": target_port,
-        "container_message": target_message
+        "container": container,
+        "container_port": container_port,
+        "container_message": container_message,
+        "fmt" : fmt_up
         }
 
-def log_up (source=None, source_port=None, source_message=None, target_port=None, target_message=None):
-    rdesc = make_Up_Descriptor (source, source_port, source_message, target_port, target_message)
+def log_up (source=None, source_port=None, source_message=None, container=None, target_port=None, target_message=None):
+    rdesc = make_Up_Descriptor (source, source_port, source_message, container, target_port, target_message)
     append_routing_descriptor (container, rdesc)
 
-def fmt_up (desc):
-    return f'\n↑ {desc.source.name} {desc.source_port} ⟹ {desc.target.name} {desc.target_port}'
+def fmt_up (desc, indent):
+    return f'\n{indent}↑ {desc ["source"].name}.❲{desc ["source_port"]}❳ ➔ {desc ["container"].name}.❲{desc ["container_port"]}❳'
 
 
 ####
@@ -342,15 +353,16 @@ def make_Across_Descriptor (container=None, source=None, source_port=None, sourc
         "source_message": source_message,
         "target": target,
         "target_port": target_port,
-        "target_message": target_message
+        "target_message": target_message,
+        "fmt" : fmt_across
         }
 
 def log_across (contaner=None, source=None, source_port=None, source_message=None, target=None, target_port=None, target_message=None):
     rdesc = make_Across_Descriptor (container, source, source_port, source_message, target, target_port, target_message)
     append_routing_descriptor (container, rdesc)
 
-def fmt_across (desc):
-    return f'\n→ {desc.container.name} {desc.source_port} ⟹ {desc.target.name} {desc.target_port}'
+def fmt_across (desc, indent):
+    return f'\n{indent}→ {desc["container"].name}.❲{desc ["source_port"]} ➔ {desc ["target"].name}.❲{desc ["target_port"]}'
 
 
 ####
@@ -361,33 +373,34 @@ def make_Through_Descriptor (container=None, source_port=None, source_message=No
         "source_port": source_port,
         "source_message": source_message,
         "target_port": target_port,
-        "message": message
+        "message": message,
+        "fmt" : fmt_through
         }
 
 def log_through (contaner=None, source_port=None, source_message=None, target_port=None, message=None):
     rdesc = make_Through_Descriptor (container, source, source_port, source_message, target, target_port, message)
     append_routing_descriptor (container, rdesc)
 
-def fmt_through (desc):
-    return f'\n⇶ {desc.container.name} {desc.source_port} ⟹ {desc.target.name} {desc.target_port}'
+def fmt_through (desc, indent):
+    return f'\n{indent}⇶ {desc  ["container"].name}.❲{desc ["source_port"]}❳ ➔ {desc ["target"].name}.❲{desc ["target_port"]}❳'
 
 
 ####
 def routing_trace_all (container):
     indent = ""
-    recursive_routing_trace (container, list (container.routings.queue), indent)
+    return recursive_routing_trace (container, list (container.routings.queue), indent)
 
 def recursive_routing_trace (container, lis, indent):
     if [] == lis:
-        pass
+        return ''
     else:
         desc = first (lis)
-        formatted = desc ["fmt"] (desc)
-        return formatted + recursive_routing_trace (rest (lis), indent + '  ')
+        formatted = desc ["fmt"] (desc, indent)
+        return formatted + recursive_routing_trace (container, rest (lis), indent + '  ')
 
 ####
 def first (arr): # called "car" in Lisp
-    return (arr [0:1])
+    return (arr [0])
 
 def rest (arr): # called "cdr" in Lisp
     return (arr [1:])
@@ -603,23 +616,27 @@ def append_routing_descriptor (container, desc):
     
 ####
 def log_connection (container, connector, message):
-    if enumDown == connector.direction:
+    if "down" == connector.direction:
         log_down (container=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
                   target_message=message)
-    elif enumUp == connector.direction:
-        log_down (source=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+    elif "up" == connector.direction:
+        log_up (source=connector.sender.component, source_port=connector.sender.port, container=container, target_port=connector.receiver.port,
                   target_message=message)
-    elif enumAcross == connector.direction:
+    elif "across" == connector.direction:
         log_across (container=container,
                     source=connector.sender.component, source_port=connector.sender.port,
                     target=connector.sender.component, target_port=connector.sender.port)
-    elif enumThrough == connector.direction:
+    elif "through" == connector.direction:
         log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
                      target_port=connector.receiver.port, message=message)
     else:
-        print (f"*** FATAL error: in log_connection /{message.port}/ /{message.datum.srepr ()}/")
+        print (f"*** FATAL error: in log_connection /{connector.direction}/ /{message.port}/ /{message.datum.srepr ()}/")
         exit ()
         
+####
+def container_injector (container, message):
+    log_inject (receiver=container, port=message.port, msg=message)
+    container_handler (container, message)
 import os
 import json
 import sys
@@ -786,7 +803,7 @@ def make_container (name, owner):
     eh.name = name
     eh.owner = owner
     eh.handler = container_handler
-    #eh.inject = container_injector
+    eh.inject = container_injector
     eh.state = "idle"
     eh.kind = "container"
     return eh
@@ -808,20 +825,20 @@ def make_leaf (name, owner, instance_data, handler):
 # of the given component.
 def send (eh,port,datum,causingMessage):      
     msg = make_message(port, datum)
-    log_send (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_send (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
     put_output (sender, msg)
 
 
 def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
     msg = make_message(port=port, datum=datum)
-    log_send_string (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_send_string (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
     put_output (eh, msg)
 
 
 def forward (eh, port, msg, causingMessage):      
     fwdmsg = make_message(port, msg.datum)
-    log_forward (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
     put_output (eh, msg)
 
 def inject (eh, msg):

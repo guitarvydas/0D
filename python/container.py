@@ -209,20 +209,24 @@ def append_routing_descriptor (container, desc):
     
 ####
 def log_connection (container, connector, message):
-    if enumDown == connector.direction:
+    if "down" == connector.direction:
         log_down (container=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
                   target_message=message)
-    elif enumUp == connector.direction:
-        log_down (source=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+    elif "up" == connector.direction:
+        log_up (source=connector.sender.component, source_port=connector.sender.port, container=container, target_port=connector.receiver.port,
                   target_message=message)
-    elif enumAcross == connector.direction:
+    elif "across" == connector.direction:
         log_across (container=container,
                     source=connector.sender.component, source_port=connector.sender.port,
                     target=connector.sender.component, target_port=connector.sender.port)
-    elif enumThrough == connector.direction:
+    elif "through" == connector.direction:
         log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
                      target_port=connector.receiver.port, message=message)
     else:
-        print (f"*** FATAL error: in log_connection /{message.port}/ /{message.datum.srepr ()}/")
+        print (f"*** FATAL error: in log_connection /{connector.direction}/ /{message.port}/ /{message.datum.srepr ()}/")
         exit ()
         
+####
+def container_injector (container, message):
+    log_inject (receiver=container, port=message.port, msg=message)
+    container_handler (container, message)

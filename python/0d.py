@@ -45,7 +45,7 @@ def make_container (name, owner):
     eh.name = name
     eh.owner = owner
     eh.handler = container_handler
-    #eh.inject = container_injector
+    eh.inject = container_injector
     eh.state = "idle"
     eh.kind = "container"
     return eh
@@ -67,20 +67,20 @@ def make_leaf (name, owner, instance_data, handler):
 # of the given component.
 def send (eh,port,datum,causingMessage):      
     msg = make_message(port, datum)
-    log_send (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_send (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
     put_output (sender, msg)
 
 
 def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
     msg = make_message(port=port, datum=datum)
-    log_send_string (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_send_string (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
     put_output (eh, msg)
 
 
 def forward (eh, port, msg, causingMessage):      
     fwdmsg = make_message(port, msg.datum)
-    log_forward (sender=eh, sender_port=port, message=msg, cause=causingMessage)
+    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
     put_output (eh, msg)
 
 def inject (eh, msg):
