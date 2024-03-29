@@ -208,7 +208,7 @@ def format_message (m):
     if m == None:
         return "None"
     else:
-        return f'⟪“{m.port}”₋“{m.datum.srepr ()}”₋…⟫'
+        return f'⟪“{m.port}”₋“{m.datum.srepr ()}”⟫'
 
 # dynamic routing descriptors
 
@@ -256,7 +256,7 @@ def log_send_string (sender, sender_port, msg, cause_msg):
 
 
 def fmt_send (desc, indent):
-    return f'\n{indent}⋯ {desc ["component"].name}.❲{desc ["cause_port"]}❳ ∴ {desc ["component"].name}.❲{desc ["port"]}❳'
+    return f'\n{indent}⋯ {desc ["component"].name}.“{desc ["cause_port"]}” ∴ {desc ["component"].name}.“{desc ["port"]}” {format_message (desc ["message"])}'
 def fmt_send_string (desc, indent):
     return fmt_send (desc, indent)
 
@@ -298,7 +298,7 @@ def log_inject (receiver, port, msg):
     append_routing_descriptor (container=receiver, desc=inject_desc)
 
 def fmt_inject (desc, indent):
-    return f'\n{indent}⟹  {desc ["component"].name}.❲{desc ["port"]}❳'
+    return f'\n{indent}⟹  {desc ["component"].name}.“{desc ["port"]}” {format_message (desc ["message"])}'
 
 
 ####
@@ -319,7 +319,7 @@ def log_down (container=None, source_port=None, source_message=None, target=None
     append_routing_descriptor (container, rdesc)
 
 def fmt_down (desc, indent):
-    return f'\n{indent}↓ {desc ["container"].name}.❲{desc ["source_port"]}❳ ➔ {desc ["target"].name}.❲{desc ["target_port"]}❳'
+    return f'\n{indent}↓ {desc ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["target"].name}.“{desc ["target_port"]}” {format_message (desc ["target_message"])}'
 
 
 ####
@@ -340,7 +340,7 @@ def log_up (source=None, source_port=None, source_message=None, container=None, 
     append_routing_descriptor (container, rdesc)
 
 def fmt_up (desc, indent):
-    return f'\n{indent}↑ {desc ["source"].name}.❲{desc ["source_port"]}❳ ➔ {desc ["container"].name}.❲{desc ["container_port"]}❳'
+    return f'\n{indent}↑ {desc ["source"].name}.“{desc ["source_port"]}” ➔ {desc ["container"].name}.“{desc ["container_port"]}” {format_message (desc ["container_message"])}'
 
 
 ####
@@ -357,12 +357,12 @@ def make_Across_Descriptor (container=None, source=None, source_port=None, sourc
         "fmt" : fmt_across
         }
 
-def log_across (contaner=None, source=None, source_port=None, source_message=None, target=None, target_port=None, target_message=None):
+def log_across (container=None, source=None, source_port=None, source_message=None, target=None, target_port=None, target_message=None):
     rdesc = make_Across_Descriptor (container, source, source_port, source_message, target, target_port, target_message)
     append_routing_descriptor (container, rdesc)
 
 def fmt_across (desc, indent):
-    return f'\n{indent}→ {desc["container"].name}.❲{desc ["source_port"]} ➔ {desc ["target"].name}.❲{desc ["target_port"]}'
+    return f'\n{indent}→ {desc["source"].name}.“{desc ["source_port"]}” ➔ {desc ["target"].name}.“{desc ["target_port"]}”  {format_message (desc ["target_message"])}'
 
 
 ####
@@ -382,7 +382,7 @@ def log_through (contaner=None, source_port=None, source_message=None, target_po
     append_routing_descriptor (container, rdesc)
 
 def fmt_through (desc, indent):
-    return f'\n{indent}⇶ {desc  ["container"].name}.❲{desc ["source_port"]}❳ ➔ {desc ["target"].name}.❲{desc ["target_port"]}❳'
+    return f'\n{indent}⇶ {desc  ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["target"].name}.“{desc ["target_port"]}” {format_message (desc ["message"])}'
 
 
 ####
@@ -625,7 +625,7 @@ def log_connection (container, connector, message):
     elif "across" == connector.direction:
         log_across (container=container,
                     source=connector.sender.component, source_port=connector.sender.port,
-                    target=connector.sender.component, target_port=connector.sender.port)
+                    target=connector.receiver.component, target_port=connector.receiver.port)
     elif "through" == connector.direction:
         log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
                      target_port=connector.receiver.port, message=message)

@@ -218,7 +218,7 @@ def log_connection (container, connector, message):
     elif "across" == connector.direction:
         log_across (container=container,
                     source=connector.sender.component, source_port=connector.sender.port,
-                    target=connector.sender.component, target_port=connector.sender.port)
+                    target=connector.receiver.component, target_port=connector.receiver.port)
     elif "through" == connector.direction:
         log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
                      target_port=connector.receiver.port, message=message)

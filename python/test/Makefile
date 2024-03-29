@@ -20,7 +20,7 @@ STD = ../std
 all :
 	clear
 	make clean
-	make dev0
+	make dev1
 
 main: jsons
 	# *** building _.py
@@ -83,10 +83,5 @@ dev0d4: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
 	python3 _.py "@0d4" main simple0d4.drawio.json
-
-devra:
-	# *** building _.py
-	@cat ${0D} ./main.py > _.py
-	python3 _.py "@0" main simple0d.drawio.json
 
 
