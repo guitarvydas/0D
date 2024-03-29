@@ -165,12 +165,12 @@ def make_Through_Descriptor (container=None, source_port=None, source_message=No
         "fmt" : fmt_through
         }
 
-def log_through (contaner=None, source_port=None, source_message=None, target_port=None, message=None):
-    rdesc = make_Through_Descriptor (container, source, source_port, source_message, target, target_port, message)
+def log_through (container=None, source_port=None, source_message=None, target_port=None, message=None):
+    rdesc = make_Through_Descriptor (container, source_port, source_message, target_port, message)
     append_routing_descriptor (container, rdesc)
 
 def fmt_through (desc, indent):
-    return f'\n{indent}⇶ {desc  ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["target"].name}.“{desc ["target_port"]}” {format_message (desc ["message"])}'
+    return f'\n{indent}⇶ {desc  ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["container"].name}.“{desc ["target_port"]}” {format_message (desc ["message"])}'
 
 
 ####

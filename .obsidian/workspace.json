@@ -171,6 +171,10 @@
   },
   "active": "aad0e655689b0d74",
   "lastOpenFiles": [
+    "python/test/main1a.py~",
+    "python/test/main1a.py",
+    "python/test/#main1a.py#",
+    "python/test/#main.py#",
     "python/doc/TRACE.md",
     "python/test/#TRACE.md#",
     "python/test/TRACE.md~",
@@ -182,9 +186,6 @@
     "python/doc/routing-2024-03-27-1503.png",
     "python/doc/routing-2024-03-27-1503.excalidraw",
     "python/std/#run.py#",
-    "python/dynrouting.py~",
-    "python/dynrouting.py",
-    "das2json/das2json",
     "python/doc/COMPONENTS.md",
     "python/test/routing-2024-03-27-1503.png",
     "python/COMPONENTS.md",
@@ -215,7 +216,6 @@
     "doc/ExampleIncludeCode.md",
     "doc/EXAMPLE.md",
     "templates/EXAMPLE.md",
-    "TODO.md",
-    "templates/README.md"
+    "TODO.md"
   ]
 }

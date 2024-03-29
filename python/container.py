@@ -113,6 +113,7 @@ def sender_eq (s1, s2):
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, conn, message):
     new_message = make_message (port=conn.receiver.port, datum=message.datum)
+    log_connection (parent, conn, new_message)
     push_message (parent, conn.receiver.component, conn.receiver.queue, new_message)
 
 
@@ -174,15 +175,16 @@ def route (container, from_component, message):
         
         for connector in container.connections:
             if sender_eq (from_sender, connector.sender):   
-                log_connection (container, connector, message)
                 deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
-        print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
         dump_possible_connections (container)
         print_routing_trace (container)
         print ("***")
+        print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
+        print ("***")
+        exit ()
 
 def dump_possible_connections (container):      
     print (f"*** possible connections for {container.name}:")
@@ -199,10 +201,8 @@ def child_is_ready (eh):
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
 
 def print_routing_trace (eh):
-    print ("print_routing_trace NIY")
-    return
     for r in list (eh.routings.queue):
-        print (routing_trace (eh, r, ''))
+        print (routing_trace_all (eh))
 
 def append_routing_descriptor (container, desc):
     container.routings.put (desc)
@@ -218,9 +218,9 @@ def log_connection (container, connector, message):
     elif "across" == connector.direction:
         log_across (container=container,
                     source=connector.sender.component, source_port=connector.sender.port,
-                    target=connector.receiver.component, target_port=connector.receiver.port)
+                    target=connector.receiver.component, target_port=connector.receiver.port, target_message=message)
     elif "through" == connector.direction:
-        log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
+        log_through (container=container, source_port=connector.sender.port, source_message=None,
                      target_port=connector.receiver.port, message=message)
     else:
         print (f"*** FATAL error: in log_connection /{connector.direction}/ /{message.port}/ /{message.datum.srepr ()}/")

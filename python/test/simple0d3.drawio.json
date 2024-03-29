@@ -17,7 +17,7 @@
             },
             {
                 "name": "C",
-                "id": 17
+                "id": 16
             }
         ],
         "connections": [
@@ -37,6 +37,19 @@
             {
                 "dir": 1,
                 "source": {
+                    "name": "B",
+                    "id": 11
+                },
+                "source_port": "Bout",
+                "target": {
+                    "name": "C",
+                    "id": 16
+                },
+                "target_port": "Cin"
+            },
+            {
+                "dir": 1,
+                "source": {
                     "name": "A",
                     "id": 4
                 },
@@ -50,21 +63,8 @@
             {
                 "dir": 1,
                 "source": {
-                    "name": "B",
-                    "id": 11
-                },
-                "source_port": "Bout",
-                "target": {
                     "name": "C",
-                    "id": 17
-                },
-                "target_port": "Cin"
-            },
-            {
-                "dir": 1,
-                "source": {
-                    "name": "C",
-                    "id": 17
+                    "id": 16
                 },
                 "source_port": "Cout",
                 "target": {
@@ -76,8 +76,8 @@
             {
                 "dir": 2,
                 "source": {
-                    "name": "C",
-                    "id": 17
+                    "name": "B",
+                    "id": 11
                 },
                 "source_port": "\u2717",
                 "target": {
@@ -89,8 +89,8 @@
             {
                 "dir": 2,
                 "source": {
-                    "name": "B",
-                    "id": 11
+                    "name": "C",
+                    "id": 16
                 },
                 "source_port": "\u2717",
                 "target": {

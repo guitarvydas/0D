@@ -20,7 +20,12 @@ STD = ../std
 all :
 	clear
 	make clean
+	make dev0
 	make dev1
+	make dev1a
+	# make dev2
+	# make dev3
+	# make dev4
 
 main: jsons
 	# *** building _.py
@@ -51,22 +56,22 @@ install:
 
 dev4: jsons
 	# *** building _.py
-	@cat ${0D} ./main.py > _.py
+	@cat ${0D} ./main4.py > _.py
 	python3 _.py ex1.math main arith0d.drawio.json transpile.drawio.json
 
 dev3: jsons
 	# *** building _.py
-	@cat ${0D} ./main.py > _.py
+	@cat ${0D} ./main3.py > _.py
 	python3 _.py "@3" main vsh0d.drawio.json transpile.drawio.json
 
 dev2: jsons
 	# *** building _.py
-	@cat ${0D} ./main.py > _.py
+	@cat ${0D} ./main2.py > _.py
 	python3 _.py "@2" main helloworld0d.drawio.json transpile.drawio.json
 
 dev1a: jsons
 	# *** building _.py
-	@cat ${0D} ./main.py > _.py
+	@cat ${0D} ./main1a.py > _.py
 	python3 _.py "@1a" main simple0d3.drawio.json
 
 dev1: jsons

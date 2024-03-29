@@ -377,12 +377,12 @@ def make_Through_Descriptor (container=None, source_port=None, source_message=No
         "fmt" : fmt_through
         }
 
-def log_through (contaner=None, source_port=None, source_message=None, target_port=None, message=None):
-    rdesc = make_Through_Descriptor (container, source, source_port, source_message, target, target_port, message)
+def log_through (container=None, source_port=None, source_message=None, target_port=None, message=None):
+    rdesc = make_Through_Descriptor (container, source_port, source_message, target_port, message)
     append_routing_descriptor (container, rdesc)
 
 def fmt_through (desc, indent):
-    return f'\n{indent}⇶ {desc  ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["target"].name}.“{desc ["target_port"]}” {format_message (desc ["message"])}'
+    return f'\n{indent}⇶ {desc  ["container"].name}.“{desc ["source_port"]}” ➔ {desc ["container"].name}.“{desc ["target_port"]}” {format_message (desc ["message"])}'
 
 
 ####
@@ -520,6 +520,7 @@ def sender_eq (s1, s2):
 # Delivers the given message to the receiver of this connector.
 def deposit (parent, conn, message):
     new_message = make_message (port=conn.receiver.port, datum=message.datum)
+    log_connection (parent, conn, new_message)
     push_message (parent, conn.receiver.component, conn.receiver.queue, new_message)
 
 
@@ -581,15 +582,16 @@ def route (container, from_component, message):
         
         for connector in container.connections:
             if sender_eq (from_sender, connector.sender):   
-                log_connection (container, connector, message)
                 deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
         print ("\n\n*** Error: ***")
-        print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
         dump_possible_connections (container)
         print_routing_trace (container)
         print ("***")
+        print (f"{container.name}: message '{message.port}' from {fromname} dropped on floor...")
+        print ("***")
+        exit ()
 
 def dump_possible_connections (container):      
     print (f"*** possible connections for {container.name}:")
@@ -606,10 +608,8 @@ def child_is_ready (eh):
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
 
 def print_routing_trace (eh):
-    print ("print_routing_trace NIY")
-    return
     for r in list (eh.routings.queue):
-        print (routing_trace (eh, r, ''))
+        print (routing_trace_all (eh))
 
 def append_routing_descriptor (container, desc):
     container.routings.put (desc)
@@ -625,9 +625,9 @@ def log_connection (container, connector, message):
     elif "across" == connector.direction:
         log_across (container=container,
                     source=connector.sender.component, source_port=connector.sender.port,
-                    target=connector.receiver.component, target_port=connector.receiver.port)
+                    target=connector.receiver.component, target_port=connector.receiver.port, target_message=message)
     elif "through" == connector.direction:
-        log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
+        log_through (container=container, source_port=connector.sender.port, source_message=None,
                      target_port=connector.receiver.port, message=message)
     else:
         print (f"*** FATAL error: in log_connection /{connector.direction}/ /{message.port}/ /{message.datum.srepr ()}/")
@@ -1389,7 +1389,12 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
+    # for dev0, dev1
     register_component (reg, Template (name = "Echo", instantiator = Echo))
+    # for dev1a
+    register_component (reg, Template (name = "A", instantiator = A))
+    register_component (reg, Template (name = "B", instantiator = B))
+    register_component (reg, Template (name = "C", instantiator = C))
 
 
 def Echo_handler (eh, msg):
@@ -1398,5 +1403,29 @@ def Echo_handler (eh, msg):
 def Echo (reg, owner, name, template_data):
     name_with_id = gensym ("Echo")
     return make_leaf (name_with_id, owner, None, Echo_handler)
+
+def A_handler (eh, msg):
+    send_string (eh, "Aout", "a", msg)
+    #send_string (eh, "Aout", msg.datum.srepr (), msg)
+
+def A (reg, owner, name, template_data):
+    name_with_id = gensym ("A")
+    return make_leaf (name_with_id, owner, None, A_handler)
+
+def B_handler (eh, msg):
+    send_string (eh, "Bout", "b", msg)
+    #send_string (eh, "Bout", msg.datum.srepr (), msg)
+
+def B (reg, owner, name, template_data):
+    name_with_id = gensym ("B")
+    return make_leaf (name_with_id, owner, None, B_handler)
+
+def C_handler (eh, msg):
+    send_string (eh, "Cout", "c", msg)
+    #send_string (eh, "Cout", msg.datum.srepr (), msg)
+
+def C (reg, owner, name, template_data):
+    name_with_id = gensym ("C")
+    return make_leaf (name_with_id, owner, None, C_handler)
 
 main ()
