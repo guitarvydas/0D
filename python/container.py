@@ -1,3 +1,5 @@
+
+
 enumDown = 0
 enumAcross = 1
 enumUp = 2
@@ -172,6 +174,7 @@ def route (container, from_component, message):
         
         for connector in container.connections:
             if sender_eq (from_sender, connector.sender):   
+                log_connection (container, connector, message)
                 deposit (container, connector, message)
                 was_sent = True
     if not (was_sent): 
@@ -199,10 +202,31 @@ def print_routing_trace (eh):
     print ("print_routing_trace NIY")
     return
     for r in list (eh.routings.queue):
-        print (routing_tracer (eh, r, ''))
+        print (routing_trace (eh, r, ''))
 
-def routing_tracer (eh, dynamic_routing_descriptor, indent):
-    print ("Routing Tracer NIY")
+def append_routing_descriptor (container, desc):
+    container.routings.put (desc)
     
-
-    
+####
+def log_connection (container, connector, message):
+    if "down" == connector.direction:
+        log_down (container=container, source_port=connector.sender.port, target=connector.receiver.component, target_port=connector.receiver.port,
+                  target_message=message)
+    elif "up" == connector.direction:
+        log_up (source=connector.sender.component, source_port=connector.sender.port, container=container, target_port=connector.receiver.port,
+                  target_message=message)
+    elif "across" == connector.direction:
+        log_across (container=container,
+                    source=connector.sender.component, source_port=connector.sender.port,
+                    target=connector.sender.component, target_port=connector.sender.port)
+    elif "through" == connector.direction:
+        log_through (container=container, source_port=connector.sender.port, source_message=NIY (),
+                     target_port=connector.receiver.port, message=message)
+    else:
+        print (f"*** FATAL error: in log_connection /{connector.direction}/ /{message.port}/ /{message.datum.srepr ()}/")
+        exit ()
+        
+####
+def container_injector (container, message):
+    log_inject (receiver=container, port=message.port, msg=message)
+    container_handler (container, message)

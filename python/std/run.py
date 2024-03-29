@@ -29,7 +29,8 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     dump_hierarchy (main_container)
     dump_connections (main_container)
     dump_outputs (main_container)
-    print_routing_trace (main_container)
+    print ("--- routing traces ---")
+    print (routing_trace_all (main_container))
     print ("--- done ---")
 
 def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):
