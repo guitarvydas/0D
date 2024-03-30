@@ -580,11 +580,15 @@ def push_message (parent, receiver, inq, m):
     parent.visit_ordering.put (receiver)
 
 
+def is_self (child, container):
+    # in an earlier version "self" was denoted as None
+    return child == container
+
 def step_children (container, causingMessage):      
     container.state = "idle"
     for child in list (container.visit_ordering.queue):
         # child == container represents self, skip it
-        if (child != container): 
+        if (not (is_self (child, container))):
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
                 child.handler(child, msg)
@@ -623,7 +627,7 @@ def route (container, from_component, message):
         was_sent = True
     else:
         fromname = ""
-        if from_component != container:
+        if (not (is_self (from_component, container))):
             fromname = from_component.name
         from_sender = Sender (name=fromname, component=from_component, port=message.port)
         
