@@ -252,7 +252,7 @@ def shell_out_handler (eh, msg):
 
 def string_constant_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("strconst")
-    cmd = template_data.split ()
+    cmd = template_data
     return make_leaf (name_with_id, owner, cmd, string_constant_handler)
 
 def string_constant_handler (eh, msg):

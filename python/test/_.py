@@ -1205,7 +1205,7 @@ def shell_out_handler (eh, msg):
 
 def string_constant_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("strconst")
-    cmd = template_data.split ()
+    cmd = template_data
     return make_leaf (name_with_id, owner, cmd, string_constant_handler)
 
 def string_constant_handler (eh, msg):
@@ -1350,9 +1350,11 @@ def ohmjs_handle (eh, msg):
     inst = eh.instance_data
     if msg.port == "grammar name":
         inst.grammar_name = clone_string (msg.datum.srepr ())
+        print (f'ohmjs handle grammar_name={inst.grammar_name}')
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "grammar":
         inst.grammar_filename = clone_string (msg.datum.srepr ())
+        print (f'ohmjs handle grammar_filename={inst.grammar_filename}')
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "semantics":
         inst.semantics_filename = clone_string (msg.datum.srepr ())
@@ -1452,6 +1454,7 @@ def start_function (arg, main_container):
 
 def components_to_include_in_project (reg):
     register_component (reg, Template (name = "Echo", instantiator = Echo))
+    register_component (reg, Template (name = "str_null_js", instantiator = str_null_js))
 
 
 def Echo_handler (eh, msg):
@@ -1460,5 +1463,14 @@ def Echo_handler (eh, msg):
 def Echo (reg, owner, name, template_data):
     name_with_id = gensym ("Echo")
     return make_leaf (name_with_id, owner, None, Echo_handler)
+
+def str_null_js_handler (eh, msg):
+    send_string (eh, "", "null.js", msg)
+
+def str_null_js (reg, owner, name, template_data):
+    name_with_id = gensym ("str_null_js")
+    return make_leaf (name_with_id, owner, None, str_null_js_handler)
+
+
 
 main ()
