@@ -5,3 +5,5 @@ package*.json
 .#*
 junk*
 *.bkp
+#*
+_.*

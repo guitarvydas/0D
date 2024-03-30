@@ -23,7 +23,7 @@ all :
 	make dev0
 	make dev1
 	make dev1a
-	# make dev2
+	make dev2
 	# make dev3
 	# make dev4
 

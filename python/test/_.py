@@ -655,8 +655,7 @@ def child_is_ready (eh):
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
 
 def print_routing_trace (eh):
-    for r in list (eh.routings.queue):
-        print (routing_trace_all (eh))
+    print (routing_trace_all (eh))
 
 def append_routing_descriptor (container, desc):
     container.routings.put (desc)
@@ -1436,12 +1435,7 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
-    # for dev0, dev1
     register_component (reg, Template (name = "Echo", instantiator = Echo))
-    # for dev1a
-    register_component (reg, Template (name = "A", instantiator = A))
-    register_component (reg, Template (name = "B", instantiator = B))
-    register_component (reg, Template (name = "C", instantiator = C))
 
 
 def Echo_handler (eh, msg):
@@ -1450,29 +1444,5 @@ def Echo_handler (eh, msg):
 def Echo (reg, owner, name, template_data):
     name_with_id = gensym ("Echo")
     return make_leaf (name_with_id, owner, None, Echo_handler)
-
-def A_handler (eh, msg):
-    send_string (eh, "Aout", "a", msg)
-    #send_string (eh, "Aout", msg.datum.srepr (), msg)
-
-def A (reg, owner, name, template_data):
-    name_with_id = gensym ("A")
-    return make_leaf (name_with_id, owner, None, A_handler)
-
-def B_handler (eh, msg):
-    send_string (eh, "Bout", "b", msg)
-    #send_string (eh, "Bout", msg.datum.srepr (), msg)
-
-def B (reg, owner, name, template_data):
-    name_with_id = gensym ("B")
-    return make_leaf (name_with_id, owner, None, B_handler)
-
-def C_handler (eh, msg):
-    send_string (eh, "Cout", "c", msg)
-    #send_string (eh, "Cout", msg.datum.srepr (), msg)
-
-def C (reg, owner, name, template_data):
-    name_with_id = gensym ("C")
-    return make_leaf (name_with_id, owner, None, C_handler)
 
 main ()

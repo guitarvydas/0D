@@ -202,8 +202,7 @@ def child_is_ready (eh):
     return (not (eh.outq.empty ())) or (not (eh.inq.empty ())) or ( eh.state != "idle") or (any_child_ready (eh))
 
 def print_routing_trace (eh):
-    for r in list (eh.routings.queue):
-        print (routing_trace_all (eh))
+    print (routing_trace_all (eh))
 
 def append_routing_descriptor (container, desc):
     container.routings.put (desc)
