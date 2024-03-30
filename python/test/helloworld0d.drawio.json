@@ -5,11 +5,11 @@
         "children": [
             {
                 "name": "Echo",
-                "id": 4
+                "id": 6
             },
             {
                 "name": "Echo",
-                "id": 6
+                "id": 12
             },
             {
                 "name": "Echo",
@@ -17,7 +17,7 @@
             },
             {
                 "name": "Echo",
-                "id": 19
+                "id": 18
             }
         ],
         "connections": [
@@ -43,7 +43,20 @@
                 "source_port": "",
                 "target": {
                     "name": "Echo",
-                    "id": 4
+                    "id": 18
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 1,
+                "source": {
+                    "name": "Echo",
+                    "id": 6
+                },
+                "source_port": "",
+                "target": {
+                    "name": "Echo",
+                    "id": 12
                 },
                 "target_port": ""
             },
@@ -64,7 +77,7 @@
                 "dir": 2,
                 "source": {
                     "name": "Echo",
-                    "id": 19
+                    "id": 12
                 },
                 "source_port": "",
                 "target": {
@@ -77,7 +90,7 @@
                 "dir": 2,
                 "source": {
                     "name": "Echo",
-                    "id": 4
+                    "id": 18
                 },
                 "source_port": "",
                 "target": {
