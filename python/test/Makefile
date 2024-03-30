@@ -24,22 +24,21 @@ all :
 	make dev1
 	make dev1a
 	make dev2
-	# make dev3
-	# make dev4
+	make dev3
+	make dev4
 
 main: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
 	python3 _.py "0D was here" main helloworld0d.drawio.json transpile.drawio.json
 
-jsons: simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio transpile.drawio vsh0d.drawio arith0d.drawio
+jsons: simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio ../std/transpile.drawio vsh0d.drawio arith0d.drawio
 	# *** building jsons
 	@${das2jsondir}/das2json simple0d.drawio
 	@${das2jsondir}/das2json simple0d2.drawio
 	@${das2jsondir}/das2json simple0d3.drawio
 	@${das2jsondir}/das2json simple0d4.drawio
 	@${das2jsondir}/das2json helloworld0d.drawio
-	@${das2jsondir}/das2json transpile.drawio
 	@${das2jsondir}/das2json vsh0d.drawio
 	@${das2jsondir}/das2json arith0d.drawio
 	@${das2jsondir}/das2json ../std/transpile.drawio

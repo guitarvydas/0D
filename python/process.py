@@ -25,3 +25,15 @@ def first_char (s):
 def first_char_is (s, c):
     return c == first_char (s)
     
+# this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
+# I'll keep it for now, during bootstrapping, since it mimics what is done in the Odin prototype - both need to be revamped
+def run_command (eh, cmd, s):
+    ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
+    if not (ret.returncode == 0):
+        if ret.stderr != None:
+            return ["", ret.stderr]
+        else:
+            return ["", f"error in shell_out {ret.returncode}"]
+    else:
+        return [ret.stdout, None]
+    

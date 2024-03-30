@@ -117,7 +117,7 @@
                     "name": "'null.js",
                     "id": 23
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 0,
@@ -130,7 +130,7 @@
                     "name": "'Arithmetic",
                     "id": 20
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 0,
@@ -143,7 +143,7 @@
                     "name": "'arith.ohm",
                     "id": 17
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 0,
@@ -156,7 +156,7 @@
                     "name": "'arithjs.rwr",
                     "id": 4
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 0,
@@ -177,7 +177,7 @@
                     "name": "'null.js",
                     "id": 23
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Transpile",
                     "id": 9
@@ -190,7 +190,7 @@
                     "name": "'arith.ohm",
                     "id": 17
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Transpile",
                     "id": 9
@@ -203,7 +203,7 @@
                     "name": "'arithjs.rwr",
                     "id": 4
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Transpile",
                     "id": 9
@@ -216,7 +216,7 @@
                     "name": "'Arithmetic",
                     "id": 20
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Transpile",
                     "id": 9

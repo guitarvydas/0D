@@ -8,11 +8,11 @@
                 "id": 7
             },
             {
-                "name": "'0d/odin/std/rwr.sem.js'",
+                "name": "'0d/odin/std/rwr.sem.js",
                 "id": 13
             },
             {
-                "name": "'0d/odin/std/rwr.ohm'",
+                "name": "'0d/odin/std/rwr.ohm",
                 "id": 17
             },
             {
@@ -24,7 +24,7 @@
                 "id": 27
             },
             {
-                "name": "'RWR'",
+                "name": "'RWR",
                 "id": 30
             },
             {
@@ -114,10 +114,10 @@
                 },
                 "source_port": "input",
                 "target": {
-                    "name": "'0d/odin/std/rwr.sem.js'",
+                    "name": "'0d/odin/std/rwr.sem.js",
                     "id": 13
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 0,
@@ -127,10 +127,10 @@
                 },
                 "source_port": "input",
                 "target": {
-                    "name": "'0d/odin/std/rwr.ohm'",
+                    "name": "'0d/odin/std/rwr.ohm",
                     "id": 17
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 0,
@@ -140,18 +140,18 @@
                 },
                 "source_port": "input",
                 "target": {
-                    "name": "'RWR'",
+                    "name": "'RWR",
                     "id": 30
                 },
-                "target_port": "\u237a"
+                "target_port": ""
             },
             {
                 "dir": 1,
                 "source": {
-                    "name": "'RWR'",
+                    "name": "'RWR",
                     "id": 30
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Ohm (using file names)",
                     "id": 31
@@ -226,10 +226,10 @@
             {
                 "dir": 1,
                 "source": {
-                    "name": "'0d/odin/std/rwr.sem.js'",
+                    "name": "'0d/odin/std/rwr.sem.js",
                     "id": 13
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Ohm (using file names)",
                     "id": 31
@@ -239,10 +239,10 @@
             {
                 "dir": 1,
                 "source": {
-                    "name": "'0d/odin/std/rwr.ohm'",
+                    "name": "'0d/odin/std/rwr.ohm",
                     "id": 17
                 },
-                "source_port": "\u237a",
+                "source_port": "",
                 "target": {
                     "name": "Ohm (using file names)",
                     "id": 31

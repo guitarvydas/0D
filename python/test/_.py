@@ -399,7 +399,7 @@ def make_InOut_Descriptor (container=None, component=None, in_message=None, out_
 
 def log_inout (container=None, component=None, in_message=None):
     if component.outq.empty ():
-        log_inout_no_output (container=container, component=component, in_message=msg)
+        log_inout_no_output (container=container, component=component, in_message=in_message)
     else:
         log_inout_recursively (container=container, component=component, in_message=in_message, out_messages=list (component.outq.queue))
 
@@ -806,6 +806,18 @@ def first_char (s):
 def first_char_is (s, c):
     return c == first_char (s)
     
+# this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
+# I'll keep it for now, during bootstrapping, since it mimics what is done in the Odin prototype - both need to be revamped
+def run_command (eh, cmd, s):
+    ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
+    if not (ret.returncode == 0):
+        if ret.stderr != None:
+            return ["", ret.stderr]
+        else:
+            return ["", f"error in shell_out {ret.returncode}"]
+    else:
+        return [ret.stdout, None]
+    
 # Data for an asyncronous component - effectively, a function with input
 # and output queues of messages.
 #
@@ -886,9 +898,9 @@ def send_string (eh, port, s, causingMessage):
     put_output (eh, msg)
 
 
-def forward (eh, port, msg, causingMessage):      
+def forward (eh, port, msg):
     fwdmsg = make_message(port, msg.datum)
-    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
+    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=msg)
     put_output (eh, msg)
 
 def inject (eh, msg):
@@ -919,7 +931,7 @@ def set_idle (eh):
 
 # Utility for printing a specific output message.
 def fetch_first_output (eh, port):
-    for msg in eh.outq:
+    for msg in list (eh.outq.queue):
         if (msg.port == port):
             return msg.datum
     return None
@@ -989,32 +1001,34 @@ def literal_instantiate (instance_name, owner):
 
 
 def literal_handler (eh, msg):      
-    send_string (eh, "⍺", eh.instance_data, msg)
+    send_string (eh, "", eh.instance_data, msg)
 
 
 ####
 
 class TwoMessages:
     def __init__ (self, first=None, second=None):
-        pass
+        self.first = first
+        self.second = second
 
 # Deracer_States :: enum { idle, waitingForFirst, waitingForSecond }
 
 class Deracer_Instance_Data:
-    def __init__ (self, state="idle", buffer=[]):
-        pass
+    def __init__ (self, state="idle", buffer=None):
+        self.state=state
+        self.buffer=buffer
 
 def reclaim_Buffers_from_heap (inst):      
     pass
 
 def deracer_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("deracer")
-    inst = Deracer_Instance_Data ()
+    inst = Deracer_Instance_Data (buffer=TwoMessages ())
     inst.state = "idle"
     eh = make_leaf (name=name_with_id, owner=owner, instance_data=inst, handler=deracer_handler)
     return eh
 
-def send_first_then_second (eh, inst):      
+def send_first_then_second (eh, inst):
     forward (eh, "1", inst.buffer.first)
     forward (eh, "2", inst.buffer.second)
     reclaim_Buffers_from_heap (inst)
@@ -1172,6 +1186,7 @@ def maybe_stringconcat (eh, inst, msg):
 
 ####
 
+# this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
 def shell_out_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("shell_out")
     cmd = template_data.split ()
@@ -1180,19 +1195,16 @@ def shell_out_instantiate (reg, owner, name, template_data):
 def shell_out_handler (eh, msg):
     cmd = eh.instance_data
     s = msg.datum.srepr ()
-    ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
-    if not (ret.returncode == 0):
-        if ret.stderr != None:
-            send_string (eh, "✗", ret.stderr, msg)
-        else:
-            send_string (eh, "✗", "error in shell_out {ret.returncode}", msg)
+    [stdout, stderr] = run_command (eh, cmd, s)
+    if stderr != None:
+        send_string (eh, "✗", stderr, msg)
     else:
-        send_string (eh, "", ret.stdout, msg)
+        send_string (eh, "", stdout, msg)
 
 ####
 
 def string_constant_instantiate (reg, owner, name, template_data):
-    name_with_id = gensym ("shell_out")
+    name_with_id = gensym ("strconst")
     cmd = template_data.split ()
     return make_leaf (name_with_id, owner, cmd, string_constant_handler)
 
@@ -1308,10 +1320,10 @@ def fakepipename_handler (eh, msg):
     send_string (eh, "", f"/tmp/fakepipe{rand}", msg)
 
 class OhmJS_Instance_Data:
-    def _init_ (self):
-        self.grammarname = None
-        self.grammarfilename = None
-        self.semanticsfilename = None
+    def __init__ (self):
+        self.grammar_name = None
+        self.grammar_filename = None
+        self.semantics_filename = None
         self.s = None
 
 def ohmjs_instantiate (reg, owner, name, template_data):
@@ -1320,30 +1332,30 @@ def ohmjs_instantiate (reg, owner, name, template_data):
     return make_leaf (instance_name, owner, inst, ohmjs_handle)
 
 def ohmjs_maybe (eh, inst, causingMsg):
-    if None != inst.grammarname and None != inst.grammarfilename and None != inst.semanticsfilename and None != inst.s:
-        cmd = "0d/python/std/ohmjs.js {inst.grammarname} {inst.grammarfilename} {inst.semanticsfilename}"
-        [captured_output, err] = run_command (cmd, inst.s)
+    if None != inst.grammar_name and None != inst.grammar_filename and None != inst.semantics_filename and None != inst.s:
+        cmd = "0d/python/std/ohmjs.js {inst.grammar_name} {inst.grammar_filename} {inst.semantics_filename}"
+        [captured_output, err] = run_command (eh, cmd, inst.s)
 
         errstring = trimws (err)
         if len (errstring) == 0:
             send_string (eh, "", trimws (captured_output), causingMsg)
         else:
             send_string (eh, "✗", errstring, causingMsg)
-        inst.grammarName = None
-        inst.grammarfilename = None
-        inst.semanticsfilename = None
+        inst.grammar_name = None
+        inst.grammar_filename = None
+        inst.semantics_filename = None
         inst.s = None
 
 def ohmjs_handle (eh, msg):
     inst = eh.instance_data
     if msg.port == "grammar name":
-        inst.grammarname = clone_string (msg.datum.srepr ())
+        inst.grammar_name = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "grammar":
-        inst.grammarfilename = clone_string (msg.datum.srepr ())
+        inst.grammar_filename = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "semantics":
-        inst.semanticsfilename = clone_string (msg.datum.srepr ())
+        inst.semantics_filename = clone_string (msg.datum.srepr ())
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "input":
         inst.s = clone_string (msg.datum.srepr ())

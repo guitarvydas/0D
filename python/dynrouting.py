@@ -187,7 +187,7 @@ def make_InOut_Descriptor (container=None, component=None, in_message=None, out_
 
 def log_inout (container=None, component=None, in_message=None):
     if component.outq.empty ():
-        log_inout_no_output (container=container, component=component, in_message=msg)
+        log_inout_no_output (container=container, component=component, in_message=in_message)
     else:
         log_inout_recursively (container=container, component=component, in_message=in_message, out_messages=list (component.outq.queue))
 

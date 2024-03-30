@@ -48,32 +48,34 @@ def literal_instantiate (instance_name, owner):
 
 
 def literal_handler (eh, msg):      
-    send_string (eh, "⍺", eh.instance_data, msg)
+    send_string (eh, "", eh.instance_data, msg)
 
 
 ####
 
 class TwoMessages:
     def __init__ (self, first=None, second=None):
-        pass
+        self.first = first
+        self.second = second
 
 # Deracer_States :: enum { idle, waitingForFirst, waitingForSecond }
 
 class Deracer_Instance_Data:
-    def __init__ (self, state="idle", buffer=[]):
-        pass
+    def __init__ (self, state="idle", buffer=None):
+        self.state=state
+        self.buffer=buffer
 
 def reclaim_Buffers_from_heap (inst):      
     pass
 
 def deracer_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("deracer")
-    inst = Deracer_Instance_Data ()
+    inst = Deracer_Instance_Data (buffer=TwoMessages ())
     inst.state = "idle"
     eh = make_leaf (name=name_with_id, owner=owner, instance_data=inst, handler=deracer_handler)
     return eh
 
-def send_first_then_second (eh, inst):      
+def send_first_then_second (eh, inst):
     forward (eh, "1", inst.buffer.first)
     forward (eh, "2", inst.buffer.second)
     reclaim_Buffers_from_heap (inst)
@@ -231,6 +233,7 @@ def maybe_stringconcat (eh, inst, msg):
 
 ####
 
+# this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
 def shell_out_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("shell_out")
     cmd = template_data.split ()
@@ -239,19 +242,16 @@ def shell_out_instantiate (reg, owner, name, template_data):
 def shell_out_handler (eh, msg):
     cmd = eh.instance_data
     s = msg.datum.srepr ()
-    ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
-    if not (ret.returncode == 0):
-        if ret.stderr != None:
-            send_string (eh, "✗", ret.stderr, msg)
-        else:
-            send_string (eh, "✗", "error in shell_out {ret.returncode}", msg)
+    [stdout, stderr] = run_command (eh, cmd, s)
+    if stderr != None:
+        send_string (eh, "✗", stderr, msg)
     else:
-        send_string (eh, "", ret.stdout, msg)
+        send_string (eh, "", stdout, msg)
 
 ####
 
 def string_constant_instantiate (reg, owner, name, template_data):
-    name_with_id = gensym ("shell_out")
+    name_with_id = gensym ("strconst")
     cmd = template_data.split ()
     return make_leaf (name_with_id, owner, cmd, string_constant_handler)
 

@@ -78,9 +78,9 @@ def send_string (eh, port, s, causingMessage):
     put_output (eh, msg)
 
 
-def forward (eh, port, msg, causingMessage):      
+def forward (eh, port, msg):
     fwdmsg = make_message(port, msg.datum)
-    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
+    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=msg)
     put_output (eh, msg)
 
 def inject (eh, msg):
@@ -111,7 +111,7 @@ def set_idle (eh):
 
 # Utility for printing a specific output message.
 def fetch_first_output (eh, port):
-    for msg in eh.outq:
+    for msg in list (eh.outq.queue):
         if (msg.port == port):
             return msg.datum
     return None
