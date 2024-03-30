@@ -178,9 +178,9 @@ def syncfilewrite_handler (eh, msg):
         inst.filename = msg.datum.srepr ()
     elif "input" == msg.port:
         contents = msg.datum.srepr ()
-        f = open (inst.filename)
+        f = open (inst.filename, "w")
         if f != None:
-            f.write (msg.datum)
+            f.write (msg.datum.srepr ())
             f.close ()
         else:
             send_string (eh, "✗", f"open error on file {inst.filename}", msg)
@@ -252,8 +252,8 @@ def shell_out_handler (eh, msg):
 
 def string_constant_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("strconst")
-    cmd = template_data
-    return make_leaf (name_with_id, owner, cmd, string_constant_handler)
+    s = template_data
+    return make_leaf (name_with_id, owner, s, string_constant_handler)
 
 def string_constant_handler (eh, msg):
     s = eh.instance_data
@@ -262,6 +262,7 @@ def string_constant_handler (eh, msg):
 ####
 
 def string_make_persistent (s):
+    # this is here for non-GC languages like Odin, it is a no-op for GC languages like Python
     return s
 def string_clone (s):
     return s

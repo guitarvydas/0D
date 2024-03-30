@@ -29,11 +29,9 @@ def ohmjs_handle (eh, msg):
     inst = eh.instance_data
     if msg.port == "grammar name":
         inst.grammar_name = clone_string (msg.datum.srepr ())
-        print (f'ohmjs handle grammar_name={inst.grammar_name}')
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "grammar":
         inst.grammar_filename = clone_string (msg.datum.srepr ())
-        print (f'ohmjs handle grammar_filename={inst.grammar_filename}')
         ohmjs_maybe (eh, inst, msg)
     elif msg.port == "semantics":
         inst.semantics_filename = clone_string (msg.datum.srepr ())

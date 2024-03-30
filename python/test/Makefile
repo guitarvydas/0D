@@ -26,7 +26,7 @@ all :
 	make dev1a
 	make dev2
 	make dev3
-	# make dev4
+	make dev4
 
 main: jsons
 	# *** building _.py
