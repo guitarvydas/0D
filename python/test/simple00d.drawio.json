@@ -4,12 +4,20 @@
         "name": "main",
         "children": [
             {
-                "name": "strtest",
-                "id": 4
+                "name": "'test",
+                "id": 5
             },
             {
-                "name": "'test",
+                "name": "strtest",
                 "id": 9
+            },
+            {
+                "name": "'_0D_/test",
+                "id": 14
+            },
+            {
+                "name": "'_00_/test",
+                "id": 15
             }
         ],
         "connections": [
@@ -22,7 +30,7 @@
                 "source_port": "",
                 "target": {
                     "name": "'test",
-                    "id": 9
+                    "id": 5
                 },
                 "target_port": ""
             },
@@ -35,15 +43,67 @@
                 "source_port": "",
                 "target": {
                     "name": "strtest",
-                    "id": 4
+                    "id": 9
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "",
+                "target": {
+                    "name": "'_00_/test",
+                    "id": 15
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "",
+                "target": {
+                    "name": "'_0D_/test",
+                    "id": 14
                 },
                 "target_port": ""
             },
             {
                 "dir": 2,
                 "source": {
+                    "name": "'_00_/test",
+                    "id": 15
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "gen00"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "'test",
+                    "id": 5
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "gen"
+            },
+            {
+                "dir": 2,
+                "source": {
                     "name": "strtest",
-                    "id": 4
+                    "id": 9
                 },
                 "source_port": "",
                 "target": {
@@ -55,15 +115,15 @@
             {
                 "dir": 2,
                 "source": {
-                    "name": "'test",
-                    "id": 9
+                    "name": "'_0D_/test",
+                    "id": 14
                 },
                 "source_port": "",
                 "target": {
                     "name": "",
                     "id": 0
                 },
-                "target_port": "gen"
+                "target_port": "gen0D"
             }
         ]
     },

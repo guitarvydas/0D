@@ -955,10 +955,14 @@ import sys
 import re
 import subprocess
 
-def string_constant (str):      
-    quoted_name = f"'{str}'"
-    return Template (name = quoted_name, instantiator = literal_instantiate)
+root_project = ""
+root_0D = ""
 
+def set_environment (rproject, r0D):
+    global root_project
+    global root_0D
+    root_project = rproject
+    root_0D = r0D
 
 ####
 
@@ -989,19 +993,6 @@ def trash_instantiate (reg, owner, name, template_data):
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
-
-
-####
-def literal_instantiate (instance_name, owner):      
-    name = re.sub (r"^.*'", "", instance_name)  # strip parent names from front
-    quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
-    name_with_id = gensym (quoted)
-    pstr = string_make_persistent (quoted)
-    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handler=literal_handler)
-
-
-def literal_handler (eh, msg):      
-    send_string (eh, "", eh.instance_data, msg)
 
 
 ####
@@ -1204,8 +1195,15 @@ def shell_out_handler (eh, msg):
 ####
 
 def string_constant_instantiate (reg, owner, name, template_data):
+    global root_project
+    global root_0D
     name_with_id = gensym ("strconst")
     s = template_data
+    if root_project != "":
+        s  = re.sub ("_00_", root_project, s)
+    if root_0D != "":
+        s  = re.sub ("_0D_", root_0D, s)
+    print (f'--- string_constant_instantiate rp={root_project} r0D={root_0D}')
     return make_leaf (name_with_id, owner, s, string_constant_handler)
 
 def string_constant_handler (eh, msg):
@@ -1221,17 +1219,22 @@ def string_clone (s):
     return s
 import sys
 
-# usage: app arg main diagram_filename1 diagram_filename2 ...
+# usage: app ${_00_} ${_0D_} arg main diagram_filename1 diagram_filename2 ...
+# where ${_00_} is the root directory for the project
+# where ${_0D_} is the root directory for 0D (e.g. 0D/odin or 0D/python)
+
 def parse_command_line_args ():
-    # return a 3-element array [arg, main_container_name, [diagram_names]]
-    if (len (sys.argv) < (3+1)):
-        load_error ("usage: app <arg> <main tab name> <diagram file name 1> ...")
+    # return a 5-element array [root_project, root_0D, arg, main_container_name, [diagram_names]]
+    if (len (sys.argv) < (5+1)):
+        load_error ("usage: ${_00_} ${_0D_} app <arg> <main tab name> <diagram file name 1> ...")
         return None
     else:
-        arg = sys.argv [1]
-        main_container_name = sys.argv [2]
-        diagram_source_files = sys.argv [3:]
-        return [arg, main_container_name, diagram_source_files]
+        root_project = sys.argv [1]
+        root_0D = sys.argv [2]
+        arg = sys.argv [3]
+        main_container_name = sys.argv [4]
+        diagram_source_files = sys.argv [5:]
+        return [root_project, root_0D, arg, main_container_name, diagram_source_files]
 
 def initialize_component_palette (diagram_source_files, project_specific_components_subroutine):
     reg = make_component_registry ()
@@ -1391,7 +1394,8 @@ def initialize_stock_components (reg):
     # register_component (reg, string_constant ("0d/python/std/rwr.ohm"))
     # register_component (reg, string_constant ("0d/python/std/rwr.sem.js"))
 # run prints only the output on port "output", whereas run_demo prints all outputs
-def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -1401,7 +1405,8 @@ def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
-def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run_all_outputs (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -1411,7 +1416,8 @@ def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, 
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
-def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run_demo (pregistry, root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -1425,7 +1431,8 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     print (routing_trace_all (main_container))
     print ("--- done ---")
 
-def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run_demo_debug (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -1439,11 +1446,13 @@ def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, i
 
 def main ():
     arg_array = parse_command_line_args ()
-    arg = arg_array [0]
-    main_container_name = arg_array [1]
-    diagram_names = arg_array [2]
+    root_project = arg_array [0]
+    root_0D = arg_array [1]
+    arg = arg_array [2]
+    main_container_name = arg_array [3]
+    diagram_names = arg_array [4]
     palette = initialize_component_palette (diagram_names, components_to_include_in_project)
-    run_demo (palette, arg, main_container_name, diagram_names, start_function)
+    run_demo (palette, root_project, root_0D, arg, main_container_name, diagram_names, start_function)
 
 def start_function (arg, main_container):
     arg = new_datum_string (arg)
@@ -1452,24 +1461,14 @@ def start_function (arg, main_container):
 
 
 def components_to_include_in_project (reg):
-    register_component (reg, Template (name = "Echo", instantiator = Echo))
-    register_component (reg, Template (name = "str_null_js", instantiator = str_null_js))
+    register_component (reg, Template (name = "strtest", instantiator = strtest))
 
 
-def Echo_handler (eh, msg):
-    send_string (eh, "", msg.datum.srepr (), msg)
+def strtest_handler (eh, msg):
+    send_string (eh, "", "test", msg)
 
-def Echo (reg, owner, name, template_data):
-    name_with_id = gensym ("Echo")
-    return make_leaf (name_with_id, owner, None, Echo_handler)
-
-def str_null_js_handler (eh, msg):
-    send_string (eh, "", "null.js", msg)
-
-def str_null_js (reg, owner, name, template_data):
-    name_with_id = gensym ("str_null_js")
-    return make_leaf (name_with_id, owner, None, str_null_js_handler)
-
-
+def strtest (reg, owner, name, template_data):
+    name_with_id = gensym ("strtest")
+    return make_leaf (name_with_id, owner, None, strtest_handler)
 
 main ()

@@ -1,5 +1,6 @@
 # run prints only the output on port "output", whereas run_demo prints all outputs
-def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -9,7 +10,8 @@ def run (pregistry, arg, main_container_name, diagram_source_files, injectfn):
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
-def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run_all_outputs (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -19,7 +21,8 @@ def run_all_outputs (pregistry, arg, main_container_name, diagram_source_files, 
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
-def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run_demo (pregistry, root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:
@@ -33,7 +36,8 @@ def run_demo (pregistry, arg, main_container_name, diagram_source_files, injectf
     print (routing_trace_all (main_container))
     print ("--- done ---")
 
-def run_demo_debug (pregistry, arg, main_container_name, diagram_source_files, injectfn):
+def run_demo_debug (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+    set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
     if None == main_container:

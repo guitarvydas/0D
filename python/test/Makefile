@@ -1,3 +1,5 @@
+_00_=.
+_0D_=../../0D/python
 das2jsondir=../../das2json/
 0Dsrc = ../
 STD = ../std
@@ -21,12 +23,12 @@ all :
 	clear
 	make clean
 	make dev00
-	make dev0
-	make dev1
-	make dev1a
-	make dev2
-	make dev3
-	make dev4
+	# make dev0
+	# make dev1
+	# make dev1a
+	# make dev2
+	# make dev3
+	# make dev4
 
 main: jsons
 	# *** building _.py
@@ -58,41 +60,36 @@ install:
 dev4: jsons
 	# *** building _.py
 	@cat ${0D} ./main4.py > _.py
-	python3 _.py ex1.math main arith0d.drawio.json transpile.drawio.json
+	python3 _.py ${_00_} ${_0D_} ex1.math main arith0d.drawio.json transpile.drawio.json
 
 dev3: jsons
 	# *** building _.py
 	@cat ${0D} ./main3.py > _.py
-	python3 _.py "@3" main vsh0d.drawio.json transpile.drawio.json
+	python3 _.py ${_00_} ${_0D_} "@3" main vsh0d.drawio.json transpile.drawio.json
 
 dev2: jsons
 	# *** building _.py
 	@cat ${0D} ./main2.py > _.py
-	python3 _.py "@2" main helloworld0d.drawio.json transpile.drawio.json
+	python3 _.py ${_00_} ${_0D_} "@2" main helloworld0d.drawio.json transpile.drawio.json
 
 dev1a: jsons
 	# *** building _.py
 	@cat ${0D} ./main1a.py > _.py
-	python3 _.py "@1a" main simple0d3.drawio.json
+	python3 _.py ${_00_} ${_0D_} "@1a" main simple0d3.drawio.json
 
 dev1: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "@1" main simple0d2.drawio.json
+	python3 _.py ${_00_} ${_0D_} "@1" main simple0d2.drawio.json
 
 dev0: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
-	python3 _.py "@0" main simple0d.drawio.json
-
-dev0d4: jsons
-	# *** building _.py
-	@cat ${0D} ./main.py > _.py
-	python3 _.py "@0d4" main simple0d4.drawio.json
+	python3 _.py  ${_00_} ${_0D_} "@0" main simple0d.drawio.json
 
 dev00: jsons
 	# *** building _.py
 	@cat ${0D} ./main00.py > _.py
-	python3 _.py "@00" main simple00d.drawio.json
+	python3 _.py ${_00_} ${_0D_} "@00" main simple00d.drawio.json
 
 

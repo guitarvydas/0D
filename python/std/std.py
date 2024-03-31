@@ -2,10 +2,14 @@ import sys
 import re
 import subprocess
 
-def string_constant (str):      
-    quoted_name = f"'{str}'"
-    return Template (name = quoted_name, instantiator = literal_instantiate)
+root_project = ""
+root_0D = ""
 
+def set_environment (rproject, r0D):
+    global root_project
+    global root_0D
+    root_project = rproject
+    root_0D = r0D
 
 ####
 
@@ -36,19 +40,6 @@ def trash_instantiate (reg, owner, name, template_data):
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
-
-
-####
-def literal_instantiate (instance_name, owner):      
-    name = re.sub (r"^.*'", "", instance_name)  # strip parent names from front
-    quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
-    name_with_id = gensym (quoted)
-    pstr = string_make_persistent (quoted)
-    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handler=literal_handler)
-
-
-def literal_handler (eh, msg):      
-    send_string (eh, "", eh.instance_data, msg)
 
 
 ####
@@ -251,8 +242,15 @@ def shell_out_handler (eh, msg):
 ####
 
 def string_constant_instantiate (reg, owner, name, template_data):
+    global root_project
+    global root_0D
     name_with_id = gensym ("strconst")
     s = template_data
+    if root_project != "":
+        s  = re.sub ("_00_", root_project, s)
+    if root_0D != "":
+        s  = re.sub ("_0D_", root_0D, s)
+    print (f'--- string_constant_instantiate rp={root_project} r0D={root_0D}')
     return make_leaf (name_with_id, owner, s, string_constant_handler)
 
 def string_constant_handler (eh, msg):

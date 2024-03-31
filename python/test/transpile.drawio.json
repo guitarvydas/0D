@@ -8,11 +8,11 @@
                 "id": 7
             },
             {
-                "name": "'../std/rwr.sem.js",
+                "name": "'_0D_/std/rwr.sem.js",
                 "id": 13
             },
             {
-                "name": "'../std/rwr.ohm",
+                "name": "'_0D_/std/rwr.ohm",
                 "id": 17
             },
             {
@@ -114,7 +114,7 @@
                 },
                 "source_port": "input",
                 "target": {
-                    "name": "'../std/rwr.sem.js",
+                    "name": "'_0D_/std/rwr.sem.js",
                     "id": 13
                 },
                 "target_port": ""
@@ -127,7 +127,7 @@
                 },
                 "source_port": "input",
                 "target": {
-                    "name": "'../std/rwr.ohm",
+                    "name": "'_0D_/std/rwr.ohm",
                     "id": 17
                 },
                 "target_port": ""
@@ -226,7 +226,7 @@
             {
                 "dir": 1,
                 "source": {
-                    "name": "'../std/rwr.sem.js",
+                    "name": "'_0D_/std/rwr.sem.js",
                     "id": 13
                 },
                 "source_port": "",
@@ -239,7 +239,7 @@
             {
                 "dir": 1,
                 "source": {
-                    "name": "'../std/rwr.ohm",
+                    "name": "'_0D_/std/rwr.ohm",
                     "id": 17
                 },
                 "source_port": "",
