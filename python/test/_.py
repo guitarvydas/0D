@@ -1236,7 +1236,7 @@ def parse_command_line_args ():
         diagram_source_files = sys.argv [5:]
         return [root_project, root_0D, arg, main_container_name, diagram_source_files]
 
-def initialize_component_palette (diagram_source_files, project_specific_components_subroutine):
+def initialize_component_palette (root_project, root_0D, diagram_source_files, project_specific_components_subroutine):
     reg = make_component_registry ()
     for diagram_source in diagram_source_files:
         all_containers_within_single_file = json2internal (diagram_source)
@@ -1244,7 +1244,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
-    project_specific_components_subroutine (reg) # add user specified components (probably only leaves)
+    project_specific_components_subroutine (root_project, root_0D, reg) # add user specified components (probably only leaves)
     return reg
 
 
@@ -1401,7 +1401,7 @@ def run (pregistry,  root_project, root_0D, arg, main_container_name, diagram_so
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
-        injectfn (arg, main_container)
+        injectfn (root_project, root_0D, arg, main_container)
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
@@ -1412,7 +1412,7 @@ def run_all_outputs (pregistry,  root_project, root_0D, arg, main_container_name
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
-        injectfn (arg, main_container)
+        injectfn (root_project, root_0D, arg, main_container)
     print_error_maybe (main_container)
     dump_outputs (main_container)
 
@@ -1423,7 +1423,7 @@ def run_demo (pregistry, root_project, root_0D, arg, main_container_name, diagra
     if None == main_container:
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     if not load_errors:
-        injectfn (arg, main_container)
+        injectfn (root_project, root_0D, arg, main_container)
     dump_hierarchy (main_container)
     dump_connections (main_container)
     dump_outputs (main_container)
@@ -1431,7 +1431,7 @@ def run_demo (pregistry, root_project, root_0D, arg, main_container_name, diagra
     print (routing_trace_all (main_container))
     print ("--- done ---")
 
-def run_demo_debug (pregistry,  root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
+def run_demo_debug (pregistry, root_project, root_0D, arg, main_container_name, diagram_source_files, injectfn):
     set_environment (root_project, root_0D)
     # get entrypoint container
     main_container = get_component_instance(pregistry, main_container_name, owner=None)
@@ -1439,36 +1439,46 @@ def run_demo_debug (pregistry,  root_project, root_0D, arg, main_container_name,
         load_error (f"Couldn't find container with page name {main_container_name} in files {diagram_source_files} (check tab names, or disable compression?)")
     dump_hierarchy (main_container)
     if not load_errors:
-        injectfn (arg, main_container)
+        injectfn (root_project, root_0D, arg, main_container)
     dump_outputs (main_container)
     print ("--- done ---")
 
 
 def main ():
     arg_array = parse_command_line_args ()
-    root_project = arg_array [0]
+    root_project = arg_array [0] 
     root_0D = arg_array [1]
     arg = arg_array [2]
     main_container_name = arg_array [3]
     diagram_names = arg_array [4]
-    palette = initialize_component_palette (diagram_names, components_to_include_in_project)
+    palette = initialize_component_palette (root_project, root_0D, diagram_names, components_to_include_in_project)
     run_demo (palette, root_project, root_0D, arg, main_container_name, diagram_names, start_function)
 
-def start_function (arg, main_container):
+def start_function (root_project, root_0D, arg, main_container):
     arg = new_datum_string (arg)
     msg = make_message("", arg)
     inject (main_container, msg)
 
 
-def components_to_include_in_project (reg):
-    register_component (reg, Template (name = "strtest", instantiator = strtest))
+def components_to_include_in_project (root_project, root_0D, reg):
+    register_component (reg, Template (name = "Echo", instantiator = Echo))
+    register_component (reg, Template (name = "str_null_js", instantiator = str_null_js))
 
 
-def strtest_handler (eh, msg):
-    send_string (eh, "", "test", msg)
+def Echo_handler (eh, msg):
+    send_string (eh, "", msg.datum.srepr (), msg)
 
-def strtest (reg, owner, name, template_data):
-    name_with_id = gensym ("strtest")
-    return make_leaf (name_with_id, owner, None, strtest_handler)
+def Echo (reg, owner, name, template_data):
+    name_with_id = gensym ("Echo")
+    return make_leaf (name_with_id, owner, None, Echo_handler)
+
+def str_null_js_handler (eh, msg):
+    send_string (eh, "", "null.js", msg)
+
+def str_null_js (reg, owner, name, template_data):
+    name_with_id = gensym ("str_null_js")
+    return make_leaf (name_with_id, owner, None, str_null_js_handler)
+
+
 
 main ()

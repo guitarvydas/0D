@@ -17,7 +17,7 @@ def parse_command_line_args ():
         diagram_source_files = sys.argv [5:]
         return [root_project, root_0D, arg, main_container_name, diagram_source_files]
 
-def initialize_component_palette (diagram_source_files, project_specific_components_subroutine):
+def initialize_component_palette (root_project, root_0D, diagram_source_files, project_specific_components_subroutine):
     reg = make_component_registry ()
     for diagram_source in diagram_source_files:
         all_containers_within_single_file = json2internal (diagram_source)
@@ -25,7 +25,7 @@ def initialize_component_palette (diagram_source_files, project_specific_compone
         for container in all_containers_within_single_file:
             register_component (reg, Template (name=container ['name'] , template_data=container, instantiator=container_instantiator))
     initialize_stock_components (reg)
-    project_specific_components_subroutine (reg) # add user specified components (probably only leaves)
+    project_specific_components_subroutine (root_project, root_0D, reg) # add user specified components (probably only leaves)
     return reg
 
 

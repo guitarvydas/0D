@@ -23,12 +23,12 @@ all :
 	clear
 	make clean
 	make dev00
-	# make dev0
-	# make dev1
-	# make dev1a
-	# make dev2
-	# make dev3
-	# make dev4
+	make dev0
+	make dev1
+	make dev1a
+	make dev2
+	make dev3
+	make dev4
 
 main: jsons
 	# *** building _.py
@@ -79,12 +79,12 @@ dev1a: jsons
 
 dev1: jsons
 	# *** building _.py
-	@cat ${0D} ./main.py > _.py
+	@cat ${0D} ./main1.py > _.py
 	python3 _.py ${_00_} ${_0D_} "@1" main simple0d2.drawio.json
 
 dev0: jsons
 	# *** building _.py
-	@cat ${0D} ./main.py > _.py
+	@cat ${0D} ./main0.py > _.py
 	python3 _.py  ${_00_} ${_0D_} "@0" main simple0d.drawio.json
 
 dev00: jsons
