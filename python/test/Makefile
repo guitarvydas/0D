@@ -30,13 +30,14 @@ all :
 	make dev3
 	make dev4
 	make abc
+	make llm
 
 main: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
 	python3 _.py "0D was here" main helloworld0d.drawio.json transpile.drawio.json
 
-jsons: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio ../std/transpile.drawio vsh0d.drawio arith0d.drawio abc0d.drawio
+jsons: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio ../std/transpile.drawio vsh0d.drawio arith0d.drawio abc0d.drawio llm0d.drawio
 	# *** building jsons
 	@${das2jsondir}/das2json simple00d.drawio
 	@${das2jsondir}/das2json simple0d.drawio
@@ -47,6 +48,7 @@ jsons: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple
 	@${das2jsondir}/das2json vsh0d.drawio
 	@${das2jsondir}/das2json arith0d.drawio
 	@${das2jsondir}/das2json abc0d.drawio
+	@${das2jsondir}/das2json llm0d.drawio
 	@${das2jsondir}/das2json ../std/transpile.drawio
 
 clean:
@@ -54,8 +56,13 @@ clean:
 
 install:
 	./makedas2json.bash ${das2jsondir}
+	pip install tssplit
 
-
+llm: jsons
+	# note: to run this, you must set the environment variable OPENAI_API_KEY to your openai key (put a few $s into your account)
+	(cd agency ; make)
+	@cat ${0D} ./mainllm.py > _.py
+	python3 _.py ${_00_} ${_0D_} ! main llm0d.drawio.json transpile.drawio.json
 
 abc: jsons
 	# *** building _.py

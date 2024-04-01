@@ -956,6 +956,7 @@ def injector_NIY (eh, msg):
 import sys
 import re
 import subprocess
+import shlex
 
 root_project = ""
 root_0D = ""
@@ -1183,7 +1184,7 @@ def maybe_stringconcat (eh, inst, msg):
 # this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
 def shell_out_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("shell_out")
-    cmd = template_data.split ()
+    cmd = shlex.split (template_data)
     return make_leaf (name_with_id, owner, cmd, shell_out_handler)
 
 def shell_out_handler (eh, msg):
@@ -1475,24 +1476,7 @@ def start_function (root_project, root_0D, arg, main_container):
 
 
 def components_to_include_in_project (root_project, root_0D, reg):
-    register_component (reg, Template (name = "Echo", instantiator = Echo))
-    register_component (reg, Template (name = "str_null_js", instantiator = str_null_js))
-
-
-def Echo_handler (eh, msg):
-    send_string (eh, "", msg.datum.srepr (), msg)
-
-def Echo (reg, owner, name, template_data):
-    name_with_id = gensym ("Echo")
-    return make_leaf (name_with_id, owner, None, Echo_handler)
-
-def str_null_js_handler (eh, msg):
-    send_string (eh, "", "null.js", msg)
-
-def str_null_js (reg, owner, name, template_data):
-    name_with_id = gensym ("str_null_js")
-    return make_leaf (name_with_id, owner, None, str_null_js_handler)
-
+    pass
 
 
 main ()

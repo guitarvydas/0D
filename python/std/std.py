@@ -1,6 +1,7 @@
 import sys
 import re
 import subprocess
+import shlex
 
 root_project = ""
 root_0D = ""
@@ -228,7 +229,7 @@ def maybe_stringconcat (eh, inst, msg):
 # this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
 def shell_out_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("shell_out")
-    cmd = template_data.split ()
+    cmd = shlex.split (template_data)
     return make_leaf (name_with_id, owner, cmd, shell_out_handler)
 
 def shell_out_handler (eh, msg):

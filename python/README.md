@@ -4,9 +4,9 @@ usage:
 - cd <local dir>/0D/python/test
 - make
 
-tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio
+tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio abc0d.drawio
 
-todo: abc0d delay0d llm0d
+todo: delay0d llm0d
 
 
 see doc/TRACE.md
