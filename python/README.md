@@ -1,4 +1,13 @@
-WIP: begin converting 0D to Python3
+convert 0D to Python3
+
+usage: 
+- cd test
+- make
+
+tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio
+
+todo: abdc0d delay0d llm0d
+
 
 see doc/TRACE.md
 

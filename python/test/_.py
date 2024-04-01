@@ -208,7 +208,7 @@ def format_message (m):
     if m == None:
         return "None"
     else:
-        return f'⟪“{m.port}”₋“{m.datum.srepr ()}”⟫'
+        return f'⟪“{m.port}”⦂“{m.datum.srepr ()}”⟫'
 
 # dynamic routing descriptors
 
