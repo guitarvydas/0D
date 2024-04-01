@@ -28,14 +28,15 @@ all :
 	make dev1a
 	make dev2
 	make dev3
-		make dev4
+	make dev4
+	make abc
 
 main: jsons
 	# *** building _.py
 	@cat ${0D} ./main.py > _.py
 	python3 _.py "0D was here" main helloworld0d.drawio.json transpile.drawio.json
 
-jsons: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio ../std/transpile.drawio vsh0d.drawio arith0d.drawio
+jsons: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio ../std/transpile.drawio vsh0d.drawio arith0d.drawio abc0d.drawio
 	# *** building jsons
 	@${das2jsondir}/das2json simple00d.drawio
 	@${das2jsondir}/das2json simple0d.drawio
@@ -45,6 +46,7 @@ jsons: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple
 	@${das2jsondir}/das2json helloworld0d.drawio
 	@${das2jsondir}/das2json vsh0d.drawio
 	@${das2jsondir}/das2json arith0d.drawio
+	@${das2jsondir}/das2json abc0d.drawio
 	@${das2jsondir}/das2json ../std/transpile.drawio
 
 clean:
@@ -54,6 +56,11 @@ install:
 	./makedas2json.bash ${das2jsondir}
 
 
+
+abc: jsons
+	# *** building _.py
+	@cat ${0D} ./mainabc.py > _.py
+	python3 _.py ${_00_} ${_0D_} test.abc main abc0d.drawio.json transpile.drawio.json
 
 # dev helpers
 

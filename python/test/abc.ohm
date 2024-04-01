@@ -1,0 +1,15 @@
+ABC {
+TopLevel = Expression
+
+  Expression =
+    | ID "=" Expression Expression? -- assignment
+    | Expression "+" Expression Expression? -- plus
+    | Atom -- atom
+
+  Atom = Variable | number
+  
+    Variable = "a" .. "z"
+    ID = Variable
+    number = dig+
+    dig = "0" .. "9"
+}

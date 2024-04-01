@@ -1,0 +1,14 @@
+ABC {
+TopLevel [exprs] = ‛«exprs»’
+
+Expression_assignment [id _eq e rec?] = ‛\n«id» = «e»; «rec»’
+Expression_plus [left _plus right rec?] = ‛«left» + «right» «rec»’
+Expression_atom [a] = ‛«a»’
+
+Atom [a] = ‛«a»’
+
+Variable [c] = ‛«c»’
+ID [v] = ‛«v»’
+number [digits+] = ‛«digits»’
+dig [c] = ‛«c»’
+}
