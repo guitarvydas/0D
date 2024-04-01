@@ -725,9 +725,9 @@ def delete_decls (d):
 def make_component_registry ():
     return Component_Registry ()
 
-def register_component (reg, template):
+def register_component (reg, template, ok_to_overwrite=False):
     name = mangle_name (template.name)
-    if name in reg.templates:
+    if name in reg.templates and not ok_to_overwrite:
         load_error (f"Component {template.name} already declared")
     reg.templates[name] = template
     return reg
@@ -800,7 +800,7 @@ def generate_shell_components (reg, container_list):
                     name = child_descriptor ["name"]
                     s = name [1:]
                     generated_leaf = Template (name=name, instantiator=string_constant_instantiate, template_data=s)
-                    register_component (reg, generated_leaf)
+                    register_component (reg, generated_leaf, ok_to_overwrite=True)
 
 def first_char (s):
     return s[0]

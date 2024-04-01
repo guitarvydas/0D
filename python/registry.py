@@ -36,9 +36,9 @@ def delete_decls (d):
 def make_component_registry ():
     return Component_Registry ()
 
-def register_component (reg, template):
+def register_component (reg, template, ok_to_overwrite=False):
     name = mangle_name (template.name)
-    if name in reg.templates:
+    if name in reg.templates and not ok_to_overwrite:
         load_error (f"Component {template.name} already declared")
     reg.templates[name] = template
     return reg

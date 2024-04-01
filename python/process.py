@@ -19,7 +19,7 @@ def generate_shell_components (reg, container_list):
                     name = child_descriptor ["name"]
                     s = name [1:]
                     generated_leaf = Template (name=name, instantiator=string_constant_instantiate, template_data=s)
-                    register_component (reg, generated_leaf)
+                    register_component (reg, generated_leaf, ok_to_overwrite=True)
 
 def first_char (s):
     return s[0]
