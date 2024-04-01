@@ -173,6 +173,7 @@ def syncfilewrite_handler (eh, msg):
         if f != None:
             f.write (msg.datum.srepr ())
             f.close ()
+            send (eh, "done", new_datum_bang (), msg)
         else:
             send_string (eh, "✗", f"open error on file {inst.filename}", msg)
 

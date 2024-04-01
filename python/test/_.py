@@ -890,7 +890,7 @@ def make_leaf (name, owner, instance_data, handler):
 def send (eh,port,datum,causingMessage):      
     msg = make_message(port, datum)
     log_send (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
-    put_output (sender, msg)
+    put_output (eh, msg)
 
 
 def send_string (eh, port, s, causingMessage):
@@ -1128,6 +1128,7 @@ def syncfilewrite_handler (eh, msg):
         if f != None:
             f.write (msg.datum.srepr ())
             f.close ()
+            send (eh, "done", new_datum_bang (), msg)
         else:
             send_string (eh, "✗", f"open error on file {inst.filename}", msg)
 
