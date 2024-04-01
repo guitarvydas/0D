@@ -434,7 +434,8 @@ def log_tick (container=None, component=None, in_message=None):
 ####
 def routing_trace_all (container):
     indent = ""
-    return recursive_routing_trace (container, list (container.routings.queue), indent)
+    lis = list (container.routings.queue)
+    return recursive_routing_trace (container, lis, indent)
 
 def recursive_routing_trace (container, lis, indent):
     if [] == lis:
@@ -584,6 +585,20 @@ def is_self (child, container):
     # in an earlier version "self" was denoted as None
     return child == container
 
+def step_child (child, msg):
+    before_state = child.state
+    child.handler(child, msg)
+    after_state = child.state
+    return [before_state == "idle" and after_state != "idle", 
+            before_state != "idle" and after_state != "idle",
+            before_state != "idle" and after_state == "idle"]
+
+def save_message (eh, msg):
+    eh.saved_messages.put (msg)
+
+def fetch_saved_message_and_clear (eh):
+    return eh.saved_messages.get ()
+
 def step_children (container, causingMessage):      
     container.state = "idle"
     for child in list (container.visit_ordering.queue):
@@ -591,8 +606,15 @@ def step_children (container, causingMessage):
         if (not (is_self (child, container))):
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
-                child.handler(child, msg)
-                log_inout (container=container, component=child, in_message=msg)
+                [began_long_run, continued_long_run, ended_long_run] = step_child (child, msg)
+                if began_long_run:
+                    save_message (child, msg)
+                elif continued_long_run:
+                    pass
+                elif ended_long_run:
+                    log_inout (container=container, component=child, in_message=fetch_saved_message_and_clear (child))
+                else:
+                    log_inout (container=container, component=child, in_message=msg)
                 destroy_message(msg)
             else:
                 if (child.state != "idle"):
@@ -847,6 +869,7 @@ class Eh:
         self.inq = queue.Queue ()
         self.outq = queue.Queue ()
         self.owner = None
+        self.saved_messages = queue.LifoQueue () ## stack of saved message(s)
         self.inject = injector_NIY
         self.children = []
         self.visit_ordering = queue.Queue ()
@@ -1456,8 +1479,6 @@ def run_demo_debug (pregistry, root_project, root_0D, arg, main_container_name, 
         injectfn (root_project, root_0D, arg, main_container)
     dump_outputs (main_container)
     print ("--- done ---")
-
-
 def main ():
     arg_array = parse_command_line_args ()
     root_project = arg_array [0] 
@@ -1476,7 +1497,44 @@ def start_function (root_project, root_0D, arg, main_container):
 
 
 def components_to_include_in_project (root_project, root_0D, reg):
-    pass
+    register_component (reg, Template (name = "Echo", instantiator = Echo))
+    register_component (reg, Template (name = "Sleep", instantiator = sleep))
 
+
+def Echo_handler (eh, msg):
+    send_string (eh, "", msg.datum.srepr (), msg)
+
+def Echo (reg, owner, name, template_data):
+    name_with_id = gensym ("Echo")
+    return make_leaf (name_with_id, owner, None, Echo_handler)
+
+
+SLEEPDELAY = 1000000
+
+class Sleep_Info:
+    def __init__ (self, counter=0, saved_message=None):
+        self.counter = counter
+        self.saved_message = saved_message
+
+def first_time (m):
+    return not is_tick (m)
+
+def sleep_handler (eh, msg):
+    info = eh.instance_data
+    if first_time (msg):
+        info.saved_message = msg
+        set_active (eh) ## tell engine to keep running this component with 'ticks'
+    count = info.counter
+    count += 1
+    if count >= SLEEPDELAY:
+        set_idle (eh) ## tell engine that we're finally done
+        forward (eh=eh, port="", msg=info.saved_message)
+        count = 0
+    info.counter = count
+
+def sleep (reg, owner, name, template_data):
+    name_with_id = gensym ("sleep")
+    info = Sleep_Info ()
+    return make_leaf (name_with_id, owner, info, sleep_handler)
 
 main ()

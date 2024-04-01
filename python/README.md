@@ -6,9 +6,7 @@ usage:
 - cd <local dir>/0D/python/test
 - make
 
-tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio abc0d.drawio llm0d.drawio
-
-todo: delay0d
+tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio abc0d.drawio llm0d.drawio delay0d
 
 
 see doc/TRACE.md

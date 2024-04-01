@@ -222,7 +222,8 @@ def log_tick (container=None, component=None, in_message=None):
 ####
 def routing_trace_all (container):
     indent = ""
-    return recursive_routing_trace (container, list (container.routings.queue), indent)
+    lis = list (container.routings.queue)
+    return recursive_routing_trace (container, lis, indent)
 
 def recursive_routing_trace (container, lis, indent):
     if [] == lis:

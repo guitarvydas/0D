@@ -131,6 +131,20 @@ def is_self (child, container):
     # in an earlier version "self" was denoted as None
     return child == container
 
+def step_child (child, msg):
+    before_state = child.state
+    child.handler(child, msg)
+    after_state = child.state
+    return [before_state == "idle" and after_state != "idle", 
+            before_state != "idle" and after_state != "idle",
+            before_state != "idle" and after_state == "idle"]
+
+def save_message (eh, msg):
+    eh.saved_messages.put (msg)
+
+def fetch_saved_message_and_clear (eh):
+    return eh.saved_messages.get ()
+
 def step_children (container, causingMessage):      
     container.state = "idle"
     for child in list (container.visit_ordering.queue):
@@ -138,8 +152,15 @@ def step_children (container, causingMessage):
         if (not (is_self (child, container))):
             if (not (child.inq.empty ())):
                 msg = child.inq.get ()
-                child.handler(child, msg)
-                log_inout (container=container, component=child, in_message=msg)
+                [began_long_run, continued_long_run, ended_long_run] = step_child (child, msg)
+                if began_long_run:
+                    save_message (child, msg)
+                elif continued_long_run:
+                    pass
+                elif ended_long_run:
+                    log_inout (container=container, component=child, in_message=fetch_saved_message_and_clear (child))
+                else:
+                    log_inout (container=container, component=child, in_message=msg)
                 destroy_message(msg)
             else:
                 if (child.state != "idle"):

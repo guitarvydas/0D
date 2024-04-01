@@ -25,6 +25,7 @@ class Eh:
         self.inq = queue.Queue ()
         self.outq = queue.Queue ()
         self.owner = None
+        self.saved_messages = queue.LifoQueue () ## stack of saved message(s)
         self.inject = injector_NIY
         self.children = []
         self.visit_ordering = queue.Queue ()
