@@ -56,7 +56,6 @@ clean:
 
 install:
 	./makedas2json.bash ${das2jsondir}
-	pip install tssplit
 
 llm: jsons
 	# note: to run this, you must set the environment variable OPENAI_API_KEY to your openai key (put a few $s into your account)

@@ -1,12 +1,14 @@
-convert 0D to Python3
+compile diagrams to Python, execute the results
+
+(diagram editor == draw.io)
 
 usage: 
 - cd <local dir>/0D/python/test
 - make
 
-tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio abc0d.drawio
+tests: simple00d.drawio simple0d.drawio simple0d2.drawio simple0d3.drawio simple0d4.drawio helloworld0d.drawio vsh0d.drawio arith0d.drawio abc0d.drawio llm0d.drawio
 
-todo: delay0d llm0d
+todo: delay0d
 
 
 see doc/TRACE.md
