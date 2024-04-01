@@ -153,7 +153,7 @@ def ensure_string_datum_handler (eh, msg):
 
 class Syncfilewrite_Data:
     def __init__ (self):
-        filename = ""
+        self.filename = ""
 
 # temp copy for bootstrap, sends "done" (error during bootstrap if not wired)
 
@@ -180,9 +180,9 @@ def syncfilewrite_handler (eh, msg):
 
 class StringConcat_Instance_Data:
     def __init__ (self):
-        buffer1 = None
-        buffer2 = None
-        count = 0
+        self.buffer1 = None
+        self.buffer2 = None
+        self.count = 0
 
 def stringconcat_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("stringconcat")
@@ -250,7 +250,6 @@ def string_constant_instantiate (reg, owner, name, template_data):
         s  = re.sub ("_00_", root_project, s)
     if root_0D != "":
         s  = re.sub ("_0D_", root_0D, s)
-    print (f'--- string_constant_instantiate rp={root_project} r0D={root_0D}')
     return make_leaf (name_with_id, owner, s, string_constant_handler)
 
 def string_constant_handler (eh, msg):

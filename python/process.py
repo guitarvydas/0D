@@ -1,3 +1,5 @@
+import subprocess
+
 def generate_shell_components (reg, container_list):
     # [
     #     {'file': 'simple0d.drawio', 'name': 'main', 'children': [{'name': 'Echo', 'id': 5}], 'connections': [...]},
@@ -29,7 +31,7 @@ def first_char_is (s, c):
 # I'll keep it for now, during bootstrapping, since it mimics what is done in the Odin prototype - both need to be revamped
 def run_command (eh, cmd, s):
     ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
-    if not (ret.returncode == 0):
+    if  not (ret.returncode == 0):
         if ret.stderr != None:
             return ["", ret.stderr]
         else:

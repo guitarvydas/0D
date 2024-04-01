@@ -1,5 +1,5 @@
 _00_=.
-_0D_=../../0D/python
+_0D_=..
 das2jsondir=../../das2json/
 0Dsrc = ../
 STD = ../std
@@ -28,7 +28,7 @@ all :
 	make dev1a
 	make dev2
 	make dev3
-	make dev4
+		make dev4
 
 main: jsons
 	# *** building _.py
