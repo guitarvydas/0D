@@ -32,7 +32,7 @@ def initialize_component_palette (root_project, root_0D, diagram_source_files, p
 def print_error_maybe (main_container):
     error_port = "✗"
     err = fetch_first_output (main_container, error_port)
-    if (err != None) and (0 < len (trimws (err))):
+    if (err != None) and (0 < len (trimws (err.repr ()))):
         print ("--- !!! ERRORS !!! ---")
         print_specific_output (main_container, error_port, False)
 
