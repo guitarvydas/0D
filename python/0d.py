@@ -117,7 +117,7 @@ def fetch_first_output (eh, port):
             return msg.datum
     return None
 
-def print_specific_output (eh, port, stderr):
+def print_specific_output (eh, port="", stderr=False):
     datum = fetch_first_output (eh, port)
     if datum != None:
         if stderr:              # I don't remember why I found it useful to print to stderr during bootstrapping, so I've left it in...
