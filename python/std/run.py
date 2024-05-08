@@ -19,5 +19,6 @@ def run (pregistry, root_project, root_0D, arg, main_container_name, diagram_sou
     if show_traces:
         print ("--- routing traces ---")
         print (routing_trace_all (main_container))
-    print ("--- done ---")
+    if show_all_outputs:
+        print ("--- done ---")
 
