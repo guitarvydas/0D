@@ -14,10 +14,10 @@
         var more = _more.rwr ().join ('');
         var _result = `{
 ${rule}${more}
-    _terminal: function () { return this.sourceString; },
-    _iter: function (...children) { return children.map(c => c.rwr ()); },
-    spaces: function (x) { return this.sourceString; },
-    space: function (x) { return this.sourceString; }
+    _terminal: function () { _ruleEnter ("_terminal"); _ruleExit ("_terminal"); return this.sourceString; },
+    _iter: function (...children) {_ruleEnter ("_iter"); _ruleExit ("_iter");  return children.map(c => c.rwr ()); },
+    spaces: function (x) {_ruleEnter ("spaces"); _ruleExit ("spaces");  return this.sourceString; },
+    space: function (x) {_ruleEnter ("space"); _ruleExit ("space");  return this.sourceString; }
 }
 `; 
         _ruleExit ("top");
