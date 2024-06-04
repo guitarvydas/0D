@@ -1,11 +1,16 @@
 import sys
 import re
 import subprocess
+import shlex
 
-def string_constant (str):      
-    quoted_name = f"'{str}'"
-    return Template (name = quoted_name, instantiator = literal_instantiate)
+root_project = ""
+root_0D = ""
 
+def set_environment (rproject, r0D):
+    global root_project
+    global root_0D
+    root_project = rproject
+    root_0D = r0D
 
 ####
 
@@ -32,48 +37,37 @@ def probe_handler (eh, msg):
     
 def trash_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("trash")
-    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handle=trash_handler)
+    return make_leaf (name=name_with_id, owner=owner, instance_data=None, handler=trash_handler)
 def trash_handler (eh, msg):
     # to appease dumped-on-floor checker
     pass
 
 
 ####
-def literal_instantiate (instance_name, owner):      
-    name = re.sub (r"^.*'", "", instance_name)  # strip parent names from front
-    quoted = re.sub ("<br>", "\n", name) # replace HTML newlines with real newlines
-    name_with_id = gensym (quoted)
-    pstr = string_make_persistent (quoted)
-    return make_leaf (name=name_with_id, owner=owner, instance_data=pstr, handle=literal_handler)
-
-
-def literal_handler (eh, msg):      
-    send_string (eh, "⍺", eh.instance_data, msg)
-
-
-####
 
 class TwoMessages:
     def __init__ (self, first=None, second=None):
-        pass
+        self.first = first
+        self.second = second
 
 # Deracer_States :: enum { idle, waitingForFirst, waitingForSecond }
 
 class Deracer_Instance_Data:
-    def __init__ (self, state="idle", buffer=[]):
-        pass
+    def __init__ (self, state="idle", buffer=None):
+        self.state=state
+        self.buffer=buffer
 
 def reclaim_Buffers_from_heap (inst):      
     pass
 
 def deracer_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("deracer")
-    inst = Deracer_Instance_Data ()
+    inst = Deracer_Instance_Data (buffer=TwoMessages ())
     inst.state = "idle"
     eh = make_leaf (name=name_with_id, owner=owner, instance_data=inst, handler=deracer_handler)
     return eh
 
-def send_first_then_second (eh, inst):      
+def send_first_then_second (eh, inst):
     forward (eh, "1", inst.buffer.first)
     forward (eh, "2", inst.buffer.second)
     reclaim_Buffers_from_heap (inst)
@@ -122,7 +116,10 @@ def low_level_read_text_file_instantiate (reg, owner, name, template_data):
 
 def low_level_read_text_file_handler (eh, msg):      
     fname = msg.datum.srepr ()
-    f = open (fname)
+    try:
+        f = open (fname)
+    except Exception as e:
+        f = None
     if f != None:
         data = f.read ()
         if data!= None:
@@ -132,7 +129,7 @@ def low_level_read_text_file_handler (eh, msg):
             send_string (eh, "✗", emsg, msg)
         f.close ()
     else:
-        emsg = f"open error on file {f}"
+        emsg = f"open error on file {fname}"
         send_string (eh, "✗", emsg, msg)
     
 
@@ -144,8 +141,8 @@ def ensure_string_datum_instantiate (reg, owner, name, template_data):
     return make_leaf (name_with_id, owner, None, ensure_string_datum_handler)
 
 
-def ensure_string_datum_handler (eh, msg):      
-    if isinstance (msg.datum, str):
+def ensure_string_datum_handler (eh, msg):
+    if "string" == msg.datum.kind ():
         forward (eh, "", msg)
     else:
         emsg = f"*** ensure: type error (expected a string datum) but got {msg.datum}"
@@ -157,7 +154,7 @@ def ensure_string_datum_handler (eh, msg):
 
 class Syncfilewrite_Data:
     def __init__ (self):
-        filename = ""
+        self.filename = ""
 
 # temp copy for bootstrap, sends "done" (error during bootstrap if not wired)
 
@@ -173,10 +170,11 @@ def syncfilewrite_handler (eh, msg):
         inst.filename = msg.datum.srepr ()
     elif "input" == msg.port:
         contents = msg.datum.srepr ()
-        f = open (inst.filename)
+        f = open (inst.filename, "w")
         if f != None:
-            f.write (msg.datum)
+            f.write (msg.datum.srepr ())
             f.close ()
+            send (eh, "done", new_datum_bang (), msg)
         else:
             send_string (eh, "✗", f"open error on file {inst.filename}", msg)
 
@@ -184,9 +182,9 @@ def syncfilewrite_handler (eh, msg):
 
 class StringConcat_Instance_Data:
     def __init__ (self):
-        buffer1 = None
-        buffer2 = None
-        count = 0
+        self.buffer1 = None
+        self.buffer2 = None
+        self.count = 0
 
 def stringconcat_instantiate (reg, owner, name, template_data):      
     name_with_id = gensym ("stringconcat")
@@ -228,26 +226,42 @@ def maybe_stringconcat (eh, inst, msg):
 
 ####
 
+# this needs to be rewritten to use the low-level "shell_out" component, this can be done solely as a diagram without using python code here
 def shell_out_instantiate (reg, owner, name, template_data):
     name_with_id = gensym ("shell_out")
-    cmd = template_data.split ()
+    cmd = shlex.split (template_data)
     return make_leaf (name_with_id, owner, cmd, shell_out_handler)
 
 def shell_out_handler (eh, msg):
     cmd = eh.instance_data
     s = msg.datum.srepr ()
-    ret = subprocess.run (cmd, capture_output=True, input=s, encoding='utf-8')
-    if not (ret.returncode == 0):
-        if ret.stderr != None:
-            send_string (eh, "✗", ret.stderr, msg)
-        else:
-            send_string (eh, "✗", "error in shell_out {ret.returncode}", msg)
+    [stdout, stderr] = run_command (eh, cmd, s)
+    if stderr != None:
+        send_string (eh, "✗", stderr, msg)
     else:
-        send_string (eh, "", ret.stdout, msg)
+        send_string (eh, "", stdout, msg)
+
+####
+
+def string_constant_instantiate (reg, owner, name, template_data):
+    global root_project
+    global root_0D
+    name_with_id = gensym ("strconst")
+    s = template_data
+    if root_project != "":
+        s  = re.sub ("_00_", root_project, s)
+    if root_0D != "":
+        s  = re.sub ("_0D_", root_0D, s)
+    return make_leaf (name_with_id, owner, s, string_constant_handler)
+
+def string_constant_handler (eh, msg):
+    s = eh.instance_data
+    send_string (eh, "", s, msg)
 
 ####
 
 def string_make_persistent (s):
+    # this is here for non-GC languages like Odin, it is a no-op for GC languages like Python
     return s
 def string_clone (s):
     return s

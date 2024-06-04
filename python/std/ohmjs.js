@@ -14,6 +14,7 @@ let argv;
 let grammarName;
 let grammarFileName;
 let rwrFileName;
+let currentRuleName = "???";
 
 
 function makeAST (grammarName, grammarText) {
@@ -82,6 +83,7 @@ function _traceSpaces () {
 }
 
 function _ruleEnter (ruleName) {
+    currentRuleName = ruleName;
     if (_tracing) {
         _traceDepth += 1;
         var s = _traceSpaces ();
@@ -138,11 +140,11 @@ function processCST (opName, asst, cst) {
     } catch (e) {
 	_tracing = true;
 	fs.writeFileSync ('/tmp/src', src);
-	throw Error (`error during processing of the AST, src written to /tmp/src\n${e}\n${grammarName} ${grammarFileName} ${rwrFileName}`);
+	throw Error (`error applying semantics [rule "${currentRuleName}" in "${opName}"] during processing of the AST, input src written to /tmp/src\n${e}\ngrammar=${grammarName} grammarFilename=${grammarFileName} semanticsFilename=${rwrFileName}`);
 	try {
 	    return (asst (cst) [opName]) ();
 	} catch (eagain) {
-	    throw (`error during processing of the AST, src written to /tmp/src\n${e}\n${grammarName} ${grammarFileName} ${rwrFileName}\n${eagain.message}`);
+	    throw (`error applying semantics [rule "${currentRuleName}" in "${opName}"] during processing of the AST, input src written to /tmp/src\n${e}\ngrammar=${grammarName} grammarFilename=${grammarFileName} semanticsFilename=${rwrFileName}\n${eagain.message}`);
 	}
     }
 }

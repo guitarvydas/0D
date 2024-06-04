@@ -30,9 +30,19 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "aad0e655689b0d74",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.5.11"
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -159,42 +169,53 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7fb1d9bc095586b3",
+  "active": "aad0e655689b0d74",
   "lastOpenFiles": [
-    "python/test/vsh0d.drawio.json",
-    "python/test/vsh0d.drawio",
-    "das2json/das2json",
-    "das2json/das2json.o",
-    "python/#container.py#",
-    "python/test/simple0d2.drawio.json",
-    "python/test/simple0d2.drawio",
+    "python/py0D.py",
+    "python/Makefile~",
+    "python/Makefile",
+    "python/test/arith0d-main.drawio.svg",
+    "python/doc/attic/routing-2024-03-27-1503.svg",
+    "python/doc/attic/routing-2024-03-27-1503.png",
+    "python/doc/attic/routing-2024-03-27-1503.excalidraw",
+    "python/doc/attic",
+    "python/doc/untitled folder",
+    "python/doc/routing-2024-03-27-1503-2024-04-03.excalidraw",
+    "python/doc/routing-2024-03-27-1503-2024-04-03.png",
+    "python/doc/routing-2024-03-27-1503-2034-04-04.svg",
     "python/#0d.py#",
-    "python/test/transpile.drawio.json",
-    "python/test/transpile.drawio",
-    "python/test/helloworld0d.drawio",
+    "rt/0d.rt",
+    "rt/#0d.rt#",
+    "rt",
+    "python/test/agency/assets/dracula.png",
+    "python/test/agency/examples/README.md",
+    "python/test/agency/README.md",
+    "python/doc/TRACE.md",
+    "python/test/TRACE.md",
+    "python/doc/routing-2024-03-27-1503.svg",
+    "python/doc/routing-2024-03-27-1503.png",
+    "python/doc/COMPONENTS.md",
+    "python/test/routing-2024-03-27-1503.png",
+    "python/COMPONENTS.md",
+    "python/test/routing-2024-03-27-1503.svg",
+    "python/test/README.md",
+    "simple0d4/0D/python/play/readjson.md",
+    "simple0d4/0D/python/README.md",
+    "simple0d4/0D/odin/README.md",
+    "simple0d4/0D/doc/ExampleIncludeCode.md",
+    "simple0d4/0D/das2json/README.md",
+    "simple0d4/0D/README.md",
+    "simple0d4/0D/0D projects overview.md",
     "python/play/readjson.md",
     "python/README.md",
     "python/odin/README.md",
     "odin/README.md",
     "das2json/README.md",
-    "das2json/examples/example screenshot.png",
-    "das2json/examples/Screenshot 2024-03-10 at 3.25.44 PM.png",
     "das2json/README.md.md",
     "das2json/Untitled.md",
     "README.md",
     "0D projects overview.md",
-    "examples/top-main.drawio.svg",
-    "examples/dc0d-Game.drawio.svg",
-    "examples/gen0d-main.drawio.svg",
-    "examples/ptpascal0d-main.drawio.svg",
-    "examples/find-and-replace-main.drawio.svg",
-    "examples/find-and-replace-screenshot.png",
-    "examples/Screenshot 2024-02-19 at 5.53.41 PM.png",
-    "examples/zzz-find-and-replace-screenshot.png",
     "doc/ExampleIncludeCode.md",
-    "doc/EXAMPLE.md",
-    "templates/EXAMPLE.md",
-    "TODO.md",
-    "templates/README.md"
+    "doc/EXAMPLE.md"
   ]
 }

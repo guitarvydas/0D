@@ -1,0 +1,165 @@
+[
+    {
+        "file": "simple0d3.drawio",
+        "name": "main",
+        "children": [
+            {
+                "name": "Z",
+                "id": 3
+            },
+            {
+                "name": "A",
+                "id": 4
+            },
+            {
+                "name": "B",
+                "id": 11
+            },
+            {
+                "name": "C",
+                "id": 16
+            }
+        ],
+        "connections": [
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "",
+                "target": {
+                    "name": "A",
+                    "id": 4
+                },
+                "target_port": "Ain"
+            },
+            {
+                "dir": 1,
+                "source": {
+                    "name": "B",
+                    "id": 11
+                },
+                "source_port": "Bout",
+                "target": {
+                    "name": "C",
+                    "id": 16
+                },
+                "target_port": "Cin"
+            },
+            {
+                "dir": 1,
+                "source": {
+                    "name": "A",
+                    "id": 4
+                },
+                "source_port": "Aout",
+                "target": {
+                    "name": "B",
+                    "id": 11
+                },
+                "target_port": "Bin"
+            },
+            {
+                "dir": 1,
+                "source": {
+                    "name": "C",
+                    "id": 16
+                },
+                "source_port": "Cout",
+                "target": {
+                    "name": "Z",
+                    "id": 3
+                },
+                "target_port": "Zin"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "B",
+                    "id": 11
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "C",
+                    "id": 16
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "A",
+                    "id": 4
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "Z",
+                    "id": 3
+                },
+                "source_port": "Zout",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "Z",
+                    "id": 3
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            }
+        ]
+    },
+    {
+        "file": "simple0d3.drawio",
+        "name": "Z",
+        "children": [
+
+        ],
+        "connections": [
+            {
+                "dir": 3,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "Zin",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "Zout"
+            }
+        ]
+    }
+]

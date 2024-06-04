@@ -25,10 +25,12 @@ class Eh:
         self.inq = queue.Queue ()
         self.outq = queue.Queue ()
         self.owner = None
+        self.saved_messages = queue.LifoQueue () ## stack of saved message(s)
+        self.inject = injector_NIY
         self.children = []
         self.visit_ordering = queue.Queue ()
         self.connections = []
-        self.accepted = queue.LifoQueue ()  # ordered list of messages received (most recent message is first)
+        self.routings = queue.Queue ()
         self.handler = None
         self.instance_data = None
         self.state = "idle"
@@ -44,6 +46,7 @@ def make_container (name, owner):
     eh.name = name
     eh.owner = owner
     eh.handler = container_handler
+    eh.inject = container_injector
     eh.state = "idle"
     eh.kind = "container"
     return eh
@@ -64,21 +67,25 @@ def make_leaf (name, owner, instance_data, handler):
 # Sends a message on the given `port` with `data`, placing it on the output
 # of the given component.
 def send (eh,port,datum,causingMessage):      
-    cause = make_cause (eh, causingMessage)
-    msg = make_message(port, datum, cause)
-    eh.outq.put (msg)
+    msg = make_message(port, datum)
+    log_send (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
+    put_output (eh, msg)
 
 
-def send_string (eh,port,s,causingMessage):      
-    cause = make_cause (eh, causingMessage)
+def send_string (eh, port, s, causingMessage):
     datum = new_datum_string (s)
-    msg = make_message(port, datum, cause)
-    eh.outq.put (msg)
+    msg = make_message(port=port, datum=datum)
+    log_send_string (sender=eh, sender_port=port, msg=msg, cause_msg=causingMessage)
+    put_output (eh, msg)
 
 
-def forward (eh,port,msg):      
-    fwdmsg = make_message(port, msg.datum, make_cause (eh, msg))
-    eh.outq.put (fwdmsg)
+def forward (eh, port, msg):
+    fwdmsg = make_message(port, msg.datum)
+    log_forward (sender=eh, sender_port=port, msg=msg, cause_msg=msg)
+    put_output (eh, msg)
+
+def inject (eh, msg):
+    eh.inject (eh, msg)
 
 # Returns a list of all output messages on a container.
 # For testing / debugging purposes.
@@ -89,7 +96,13 @@ def output_list (eh):
 # Utility for printing an array of messages.
 def print_output_list (eh):
     for m in list (eh.outq.queue):
-        print (f"⟪{m.port}₋«{m.datum.srepr ()}»⟫")
+        print (format_message (m))
+
+def spaces (n):
+    s = ""
+    for i in range (n):
+        s = s + " "
+    return s
 
 def set_active (eh):      
     eh.state = "active"
@@ -99,12 +112,12 @@ def set_idle (eh):
 
 # Utility for printing a specific output message.
 def fetch_first_output (eh, port):
-    for msg in eh.outq:
+    for msg in list (eh.outq.queue):
         if (msg.port == port):
             return msg.datum
     return None
 
-def print_specific_output (eh, port, stderr):
+def print_specific_output (eh, port="", stderr=False):
     datum = fetch_first_output (eh, port)
     if datum != None:
         if stderr:              # I don't remember why I found it useful to print to stderr during bootstrapping, so I've left it in...
@@ -113,6 +126,9 @@ def print_specific_output (eh, port, stderr):
             f = sys.stdout
         print (datum.srepr (), file=f)
 
-def memo_accept (eh, msg):      
-    # PENGTODO: this is MVI, it can be done better ... PE: rewrite this to be less inefficient
-    eh.accepted.put (msg)
+def put_output (eh, msg):
+    eh.outq.put (msg)
+    
+def injector_NIY (eh, msg):
+    print (f'Injector not implemented for this component "{eh.name}" kind={eh.kind} port="{msg.port}"')
+    exit ()

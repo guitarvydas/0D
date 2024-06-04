@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["Hello World from 0D", "main", "simple0d.drawio.json"]
+            "args": ["@", "main", "simple0d.drawio.json", "transpile.drawio.json"]
         },
         {
             "name": "Python Debugger: Current File",

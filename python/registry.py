@@ -36,9 +36,9 @@ def delete_decls (d):
 def make_component_registry ():
     return Component_Registry ()
 
-def register_component (reg, template):
+def register_component (reg, template, ok_to_overwrite=False):
     name = mangle_name (template.name)
-    if name in reg.templates:
+    if name in reg.templates and not ok_to_overwrite:
         load_error (f"Component {template.name} already declared")
     reg.templates[name] = template
     return reg
@@ -49,19 +49,25 @@ def register_multiple_components (reg, templates):
 
 def get_component_instance (reg, full_name, owner):
     template_name = mangle_name (full_name)
-    template = reg.templates[template_name]
-    if (template == None):
-        load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
-        return None
+    if template_name in reg.templates:
+        template = reg.templates[template_name]
+        if (template == None):
+            load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
+            return None
+        else:
+            owner_name = ""
+            instance_name = f"{template_name}"
+            if None != owner:
+                owner_name = owner.name
+                instance_name = f"{owner_name}.{template_name}"
+            else:
+                instance_name = f"{template_name}"
+            instance = template.instantiator (reg, owner, instance_name, template.template_data)
+            instance.depth = calculate_depth (instance)
+            return instance
     else:
-        owner_name = ""
-        instance_name = f"{template_name}"
-        if None != owner:
-            owner_name = owner.name
-            instance_name = f"{owner_name}.{template_name}"
-        instance = template.instantiator (reg, owner, instance_name, template.template_data)
-        instance.depth = calculate_depth (instance)
-        return instance
+            load_error (f"Registry Error: Can't find component {template_name} (does it need to be declared in components_to_include_in_project?")
+            return None
 
 def calculate_depth (eh):
     if eh.owner == None:

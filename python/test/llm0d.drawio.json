@@ -1,0 +1,53 @@
+[
+    {
+        "file": "llm0d.drawio",
+        "name": "main",
+        "children": [
+            {
+                "name": "$ ./agency/main -model gpt-3.5-turbo -maxTokens 1000 -temp=1 -prompt \"Translate to Lithuanian\" \"I want some black bread\"",
+                "id": 6
+            }
+        ],
+        "connections": [
+            {
+                "dir": 0,
+                "source": {
+                    "name": "",
+                    "id": 0
+                },
+                "source_port": "",
+                "target": {
+                    "name": "$ ./agency/main -model gpt-3.5-turbo -maxTokens 1000 -temp=1 -prompt \"Translate to Lithuanian\" \"I want some black bread\"",
+                    "id": 6
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ ./agency/main -model gpt-3.5-turbo -maxTokens 1000 -temp=1 -prompt \"Translate to Lithuanian\" \"I want some black bread\"",
+                    "id": 6
+                },
+                "source_port": "",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": ""
+            },
+            {
+                "dir": 2,
+                "source": {
+                    "name": "$ ./agency/main -model gpt-3.5-turbo -maxTokens 1000 -temp=1 -prompt \"Translate to Lithuanian\" \"I want some black bread\"",
+                    "id": 6
+                },
+                "source_port": "\u2717",
+                "target": {
+                    "name": "",
+                    "id": 0
+                },
+                "target_port": "\u2717"
+            }
+        ]
+    }
+]
