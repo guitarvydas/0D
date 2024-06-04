@@ -11,7 +11,7 @@ char =
   | "«" nonBracketChar* "»" -- eval
   | "\\" "n" -- newline
   | "\\" any -- esc
-  | ~"’" ~"]]" any     -- raw
+  | ~"‛" ~"’" ~"]]" any     -- raw
 nonBracketChar = ~"»" ~"«"  ~"’" ~"]]" any
 name = nameFirst nameRest*
 nameFirst = "_" | letter
