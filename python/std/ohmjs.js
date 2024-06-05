@@ -128,7 +128,7 @@ function hangOperationOntoAsst (asst, opName, opFileName) {
 	compiledSemantics = eval (evalableSemanticsFunctionsString);
 	return asst.addOperation (opName, compiledSemantics);
     } catch (e) {
-	throw Error (`while loading operation ${opName}: ${evalableSemanticsFunctionsString}: ${e.message}\n${grammarName} ${grammarFileName} ${rwrFileName}\n[try using node.js on the code below, to get better error reporting]`);
+	throw Error (`while loading operation ${opName}: ${evalableSemanticsFunctionsString}: ${e.message}\n$grammarName="{grammarName}" grammFilename="${grammarFileName}" rwrFilename="${rwrFileName}"\n[try using "node ${rwrFileName}", to get better error reporting]`);
     }
 }
 /////
