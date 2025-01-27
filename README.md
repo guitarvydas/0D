@@ -4,6 +4,24 @@ drawware: component-based software using diagrams as source code
 
 [0D means "zero dependency" - a prerequisite for using diagrams to create software LEGO(R) blocks]
 
+# disclaimer
+
+This directory, in its current form, contains 0D written in Odin and in Python.
+
+Some cleanup is still required (volunteers welcome) to make this an off-the-shelf Python and Javascript based solution. All of the pieces are here, but the Makefiles need to be revamped.
+
+# das2json in Javascript
+An experimental version of das2json.js has been added to the das2json directory.
+
+It should be possible to use the Python version of 0D along with
+`node das2json.js <filename.drawio>`
+to replace all uses of Odin with Python and Javascript, making this work on a larger variety of machines.
+
+# usage
+## Python version
+See python/README.md
+
+## Odin version
 to create a new project:
 
 1. create a fresh directory for the project
