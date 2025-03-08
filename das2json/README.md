@@ -24,6 +24,7 @@ The `das2json` command inhales a `.drawio` file and creates a `.json` file calle
 
 The `.json` file can be read and processed using JSON libraries of many popular programming languages, including the `jq` command-line tool.
 
+
 ## Example Usage
 The easiest way to look at files produced by this tool is to edit a simple diagram and to edit the `.json` file created by `das2json`. Run 
 
@@ -150,6 +151,16 @@ The output `.json` file contains one JSON Object for each separate *tab* saved o
 Components that are referenced in the diagrams, but, not implemented on any *tab* are assumed to be *Leaf* components and must be defined in the underlying language using raw textual source code.
 ### Conventions
 - We usually use the name `main` as the tab-name for the top-most diagram in a multiple drawing edit (saved as a single `.drawio` file).
+
+# Javascript Version
+## Usage 
+`node das2json.js ???.drawio`
+## About
+The Javascript version of das2json was written by A.I. (Claude 3.5 Sonnet).
+## Github Repo
+This 0D directory only contains `das2json.js`.
+
+This version of das2json was created in a [separate project](https://github.com/guitarvydas/jdas2json) which can be found in a separate public repo.
 
 # Authors
 Zac Nowicki
